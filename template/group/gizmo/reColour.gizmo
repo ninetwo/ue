@@ -1,0 +1,43 @@
+#! /opt/Nuke6.3v2/Nuke6.3 -nx
+version 6.3 v2
+Gizmo {
+ inputs 2
+ help "Shuffle copies the rgb from col into img and (optionally) premults them together."
+ note_font "Bitstream Vera Sans"
+ mapsize {0.15 0.15}
+ addUserKnob {20 User}
+ addUserKnob {6 premult l premult? +STARTLINE}
+ premult true
+}
+ Input {
+  inputs 0
+  name img
+  xpos 149
+  ypos -180
+  number 1
+ }
+ Input {
+  inputs 0
+  name col
+  xpos 24
+  ypos -102
+ }
+ ShuffleCopy {
+  inputs 2
+  name ShuffleCopy2
+  xpos 149
+  ypos -102
+ }
+ Premult {
+  name Premult2
+  selected true
+  xpos 149
+  ypos -76
+  disable {{!parent.premult i}}
+ }
+ Output {
+  name Output1
+  xpos 149
+  ypos 24
+ }
+end_group

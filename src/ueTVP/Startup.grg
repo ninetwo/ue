@@ -1,0 +1,6 @@
+tv_WriteProjectString "ue" "proj" "testproj"
+tv_WriteProjectString "ue" "grp" "testgrp"
+tv_WriteProjectString "ue" "asst" "testasst"
+
+//print "Set up project!"
+

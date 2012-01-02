@@ -1,0 +1,8 @@
+export UE_PATH=/home/thoms/Development/ue
+
+export PATH=$PATH:$UE_PATH/bin:$UE_PATH/src
+export PYTHONPATH=$UE_PATH/src:/usr/local/lib/python2.6
+
+alias uedev='cd $UE_PATH'
+alias uesp='source $UE_PATH/src/tools/ueSetProject.sh'
+

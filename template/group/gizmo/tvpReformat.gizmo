@@ -1,0 +1,30 @@
+#! /opt/Nuke6.3v2/Nuke6.3 -nx
+version 6.3 v2
+Gizmo {
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 85
+  ypos -15
+ }
+ Transform {
+  rotate 90
+  center {744 1024}
+  name Transform1
+  xpos 85
+  ypos 25
+ }
+ Reformat {
+  format "2048 1488 0 0 2048 1488 1 tvp"
+  resize none
+  name Reformat1
+  xpos 85
+  ypos 51
+ }
+ Output {
+  name Output1
+  xpos 85
+  ypos 151
+ }
+end_group

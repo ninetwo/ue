@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [[ $UE_PATH == "" ]]; then
+  echo "Source the ue_env_setup before running `basename $0`"
+  exit 0
+fi
+
+ln -s $UE_PATH/src/wrapper/maya.sh $UE_PATH/bin/maya
+ln -s $UE_PATH/src/wrapper/nuke.sh $UE_PATH/bin/nuke
+ln -s $UE_PATH/src/wrapper/tvpaint.sh $UE_PATH/bin/tvpaint
+ln -s $UE_PATH/src/wrapper/rv.sh $UE_PATH/bin/rv
+ln -s $UE_PATH/src/tools/ueAddFiles.py $UE_PATH/bin/ueAddFiles
+ln -s $UE_PATH/src/tools/ueCreateAsset.py $UE_PATH/bin/ueCreateAsset
+ln -s $UE_PATH/src/tools/ueCreateGroup.py $UE_PATH/bin/ueCreateGroup
+ln -s $UE_PATH/src/tools/ueCreateProject.py $UE_PATH/bin/ueCreateProject
+ln -s $UE_PATH/src/tools/ueListElements.py $UE_PATH/bin/ueListElements
+ln -s $UE_PATH/src/tools/ueListAssets.py $UE_PATH/bin/ueListAssets
+ln -s $UE_PATH/src/tools/ueListGroups.py $UE_PATH/bin/ueListGroups
+ln -s $UE_PATH/src/tools/ueListProjects.py $UE_PATH/bin/ueListProjects
+

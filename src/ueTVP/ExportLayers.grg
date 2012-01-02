@@ -1,0 +1,144 @@
+tv_ClipCurrentId
+selectedClip=result
+
+tv_ClipName
+clipName=result
+
+// Check we're trying to export a valid clip
+IF CMP(clipName, "none")==1 || CMP(clipName, "X")==1 || CMP(clipName, "BG")==1
+  tv_Warn "Cannot export this clip, select a layer clip to export."
+  EXIT
+END
+
+// Check an X-Sheet clip exists to export from and save its ID
+xSheet=0
+run=1
+clipPos=0
+WHILE run
+  tv_ClipEnumId -1 clipPos
+  clipId=result
+  IF CMP(clipId, "none")==1
+    run=0
+  ELSE
+    tv_ClipName clipId
+    id=result
+    IF CMP(id, "X")==1
+      xSheet=clipId
+    END
+    clipPos=clipPos+1
+  END
+END
+
+IF xSheet == 0
+  tv_Warn "Cannot export this clip, no X-Sheet clip found."
+  EXIT
+END
+
+tv_Request "Export clip '"clipName"'?|Export|Abort"
+
+IF result == 0
+  EXIT
+END
+
+//tv_ProjectDuplicate
+//tv_ResizePage 1488 2048 2
+
+// A bit of a hack to make sure we get proper alpha exported
+tv_Background "NONE"
+
+tv_ClipSelect xSheet
+
+tv_Background "NONE"
+
+// Hide all the layers in the X-Sheet except
+// for the one we want to export
+run=1
+xSheetLayersCount=0
+layerPos=0
+WHILE run
+  tv_LayerGetId layerPos
+  layerId=result
+  IF CMP(layerId, "none")==1
+    run=0
+  ELSE
+    tv_LayerInfo layerId
+    PARSE result layerDisplay layerPosition layerOpacity layerName layerType
+    IF CMP(layerDisplay, "ON")==1 && CMP(layerName, clipName)==0
+      tv_LayerDisplay layerId "OFF"
+      xSheetLayers[xSheetLayersCount]=layerPosition
+      xSheetLayersCount=xSheetLayersCount+1
+    END
+  END
+  layerPos=layerPos+1
+END
+xSheetLayersCount=xSheetLayersCount-1
+
+tv_ClipSelect selectedClip
+
+// Build an array of layers to export
+run=1
+n=0
+layerPos=1
+WHILE run
+  tv_LayerGetId layerPos
+  layerId=result
+  IF CMP(layerId, "none")==1
+    run=0
+  ELSE
+    tv_LayerInfo layerId
+    PARSE result layerDisplay layerPosition blah
+    IF CMP(layerDisplay, "ON")==1
+      exportLayers[n]=layerPosition
+      n=n+1
+    END
+  END
+  layerPos=layerPos+1
+END
+
+// Hide all the layers
+FOR i=0 TO n-1
+  tv_LayerGetId exportLayers[i]
+  tv_LayerDisplay result "OFF"
+END
+
+// Turn layers on one by one and export from the X-Sheet clip
+FOR i=0 TO n-1
+  tv_LayerGetId exportLayers[i]
+  layerId=result
+  tv_LayerInfo layerId
+  PARSE result layerDisplay layerPosition layerOpacity layerName layerType
+  tv_LayerDisplay layerId "ON"
+  tv_InfoBar "Exporting "clipName":"layerName
+  tv_ClipSelect xSheet
+  tv_AlphaSaveMode "PreMultiply"
+  tv_SaveMode "PNG" 
+  tv_SaveSequence "/work/devproj3/tmp/"clipName"_"layerName"_0001.png"
+  tv_ClipSelect selectedClip
+  tv_LayerDisplay layerId "OFF"
+END
+
+// Show all the layers
+FOR i=0 TO n-1
+  tv_LayerGetId exportLayers[i]
+  tv_LayerDisplay result "ON"
+END
+
+tv_ClipSelect xSheet
+
+// Now we're done, un-hide the X-Sheet layers
+FOR i=0 To xSheetLayersCount
+  tv_LayerGetId xSheetLayers[i]
+  tv_LayerDisplay result "ON"
+END
+
+// Set everything back to normal
+tv_Background "CHECK"
+
+tv_ClipSelect selectedClip
+
+tv_Background "CHECK"
+
+tv_ProjectClose
+
+tv_Warn "'"clipName"' succesfully exported!"
+

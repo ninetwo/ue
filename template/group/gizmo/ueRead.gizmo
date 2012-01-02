@@ -1,0 +1,31 @@
+#! /opt/Nuke6.3v2/Nuke6.3 -nx
+version 6.3 v2
+Gizmo {
+ inputs 0
+ postage_stamp true
+ addUserKnob {20 User}
+ addUserKnob {1 proj l project}
+ addUserKnob {1 grp l group -STARTLINE}
+ addUserKnob {1 asst l asset -STARTLINE}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {1 elclass l class}
+ addUserKnob {1 eltype l type}
+ addUserKnob {1 elname l name}
+ addUserKnob {3 vers l version}
+ label "[value proj]:[value grp]:[value asst]\n[value elname]:[value eltype]:[value elclass] v[value vers]"
+}
+ Read {
+  inputs 0
+  file "\[python getReadPath()]"
+  origset true
+  name Read1
+  selected true
+  xpos 222
+  ypos -237
+ }
+ Output {
+  name Output1
+  xpos 222
+  ypos -100
+ }
+end_group

@@ -1,0 +1,103 @@
+{
+"PROJECT_DIRS": {
+                 "bin": ["template/proj/bin/*"],
+                 "etc": {
+                         "nuke": ["template/proj/etc/nuke/*"],
+                         "maya": ["template/proj/etc/maya/*"]
+                        },
+                 "seq": null,
+                 "tmp": null
+                },
+
+"GROUP_DIRS": {"default": [{
+                            "etc": null
+                           },
+                           "seq"],
+               "lib":     [{
+                            "etc": null
+                           },
+                           ""]
+              },
+
+"ASSET_DIRS": {"default": [{
+                            "etc":    null,
+                            "render": null,
+                            "tmp":    null,
+                            "":       ["template/asst/workspace.mel"]
+                           },
+                           ""],
+               "lib":     [{
+                            "etc":     null,
+                            "tmp":     null
+                           },
+                           ""]
+              },
+"ASSET_CLASSES": {"o":   {
+                          "name": "Output",
+                          "desc": "Final footage output"
+                         },
+                  "tvp": {
+                          "name": "TVPaint",
+                          "desc": "TVPaint .tvpp document"
+                         },
+                  "cel": {
+                          "name": "Cel",
+                          "desc": "Cel image sequence",
+                          "pathprepend": "cel",
+                          "pathappend":  "%%version%%"
+                         },
+                  "bg":  {
+                          "name": "Background",
+                          "desc": "Background image"
+                         },
+                  "c":   {
+                          "name": "Comp script",
+                          "desc": "Comp script"
+                         },
+                  "cp":  {
+                          "name": "Comp render",
+                          "desc": "Render from comp script",
+                          "pathprepend": "render",
+                          "pathappend":  "%%version%%"
+                         },
+                  "rn":  {
+                          "name": "3D render",
+                          "desc": "Render from 3D",
+                          "pathprepend": "render",
+                          "pathappend":  "%%version%%"
+                         },
+                  "giz": {
+                          "name": "Nuke Gizmo",
+                          "desc": "Nuke Gizmo",
+                          "pathprepend": "gizmo"
+                         },
+                  "scp": {
+                          "name": "Nuke scriptlet",
+                          "desc": "Nuke scriptlet",
+                          "pathprepend": "scriptlets"
+                         },
+                  "ani": {
+                          "name": "Animatic footage",
+                          "desc": "Animatic footage"
+                         },
+                  "obj": {
+                          "name": "Geometry",
+                          "desc": "Geometry"
+                         },
+                  "cam": {
+                          "name": "Camera",
+                          "desc": "Camera"
+                         }
+                 },
+
+"ENVS": {
+         "STARTFRAME":  1,
+         "ENDFRAME":    96,
+         "FRAMERATE":   24,
+         "ASPECTRATIO": 1.0,
+         "XRES":        1920,
+         "YRES":        1080,
+         "XPAD":        40,
+         "YPAD":        40
+        }
+}
