@@ -52,8 +52,16 @@ nuke.menu("Nuke").addCommand(ueMenu+"/Save New &Version",
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 ueNukeLoad.addGizmos()
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
-nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead)
+nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead, "r")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueChecker", ueChecker)
+
+nuke.menu("Node Graph").addCommand("ueRead", ueRead)
+nuke.menu("Node Graph").addCommand("ueChecker", ueChecker)
+
+# Set the standard read node shortcut to shift+r since we're
+# overriding the r key above.
+nuke.menu("Nodes").addCommand("Image/Read", 'nukescripts.create_read()',
+                              "Shift+r", icon="Read.png")
 
 # Favorites
 nuke.addFavoriteDir("asst root",

@@ -12,7 +12,7 @@ checker = \
           "Framerate":  {
                          "desc": "Framerate",
                          "eval": "float(nuke.root().knob(\"fps\").value()) != float(os.getenv(\"FRAMERATE\"))",
-                         "update": "nuke.root().knob(\"fps\").setValue(float(os.getenv(\"FRAMERATE\"))",
+                         "update": "nuke.root().knob(\"fps\").setValue(float(os.getenv(\"FRAMERATE\")))",
                          "curval": "float(nuke.root().knob(\"fps\").value())",
                          "newval": "float(os.getenv(\"FRAMERATE\"))"
                         },
@@ -29,8 +29,9 @@ checker = \
                          "update": "nuke.root().knob(\"last_frame\").setValue(float(os.getenv(\"ENDFRAME\")))",
                          "curval": "float(nuke.root().knob(\"last_frame\").value())",
                          "newval": "float(os.getenv(\"ENDFRAME\"))"
-                        }
-                       },
+                       }
+        },
+ "test": {
          "Project":    {
                         "desc": "Project",
                         "eval": "nuke.root.knob(\"proj\").value() != os.getenv(\"PROJ\")",
@@ -59,6 +60,7 @@ checker = \
                         "curval": "nuke.root().knob(\"asst_root\").value()",
                         "newval": "os.getenv(\"ASST_ROOT\")"
                        },
+        }
 }
 
 #
