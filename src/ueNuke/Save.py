@@ -1,15 +1,61 @@
-import os, sys
+#import os, sys
 
 import nuke, nukescripts
 
-import ueCore.AssetUtils as ueAssetUtils
-import ueCore.CreateUtils as ueCreateUtils
+#import ueCore.AssetUtils as ueAssetUtils
+#import ueCore.CreateUtils as ueCreateUtils
 
 import ueNuke
 import ueNuke.Utilities as ueNukeUtils
 
-__CLASS__ = "c"
+import ueCommon.Save as ueCommonSave
 
+_elclass = "c"
+
+def ueSave():
+    if nuke.root().name() == "Root":
+        ueSaveAs()
+        return
+
+    if not ueNuke.ueScriptSanityCheck():
+        return
+
+    nuke.scriptSave(nuke.root().knob("name").value())
+
+def ueSaveVers():
+    root = nuke.root()
+
+    if root.name() == "Root":
+        ueSaveAs()
+        return
+
+    if not ueNuke.ueScriptSanityCheck():
+        return
+
+    proj = root.knob("proj").value()
+    grp = root.knob("grp").value()
+    asst = root.knob("asst").value()
+    elclass = _elclass
+    eltype = root.knob("uetype").value()
+    name = root.knob("uename").value()
+
+    ueNukeUtils.saveUtility(proj, grp, asst, elclass, eltype, name)
+
+def ueSaveAs():
+    if not ueNuke.ueScriptSanityCheck():
+        return
+
+    p = nukescripts.registerWidgetAsPanel("ueCommonSave.Save", "ueSave",
+                                          "ue.panel.ueSave", create=True)
+    ueCommonSave.setClasses(["c"])
+
+    if p.showModalDialog():
+        e = ueCommonSave.getValues()
+        ueNukeUtils.saveUtility(e[0], e[1], e[2], e[3], e[4], e[5])
+
+    nukescripts.unregisterPanel("ue.panel.ueSave", lambda: "return")
+
+"""
 def ueSave():
     if nuke.root().name() == "Root":
         ueSaveAs()
@@ -150,4 +196,5 @@ class UeSavePanel(nukescripts.PythonPanel):
                 if not n in [4, 6]:
                     self.elKnobs[n].setEnabled(False)
                     self.elKnobs[n].setValues([])
+"""
 

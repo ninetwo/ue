@@ -1,11 +1,28 @@
-import os, sys
-import re, glob
+import os#, sys
+#import re, glob
 
 import nuke, nukescripts
 
-import ueCore.AssetUtils as ueAssetUtils
+#import ueCore.AssetUtils as ueAssetUtils
 import ueCore.CreateUtils as ueCreateUtils
 
+import ueCommon.Open as ueCommonOpen
+
+def ueOpen():
+    p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
+                                          "ue.panel.ueOpen", create=True)
+    p.setMinimumSize(200, 450)
+    ueCommonOpen.setClasses(["c"])
+
+    if p.showModalDialog():
+        e = ueCommonOpen.getValues()
+        nkPath = ueCreateUtils.getVersionPath(e[0], e[1], e[2], e[3], e[4], e[5], e[6])
+        nkFile = ueCreateUtils.getElementName(e[0], e[1], e[2], e[3], e[4], e[5], e[6])
+        nuke.scriptOpen(os.path.join(nkPath, nkFile+".nk"))
+
+    nukescripts.unregisterPanel("ue.panel.ueOpen", lambda: "return")
+
+"""
 def ueOpen():
     p = UeOpenPanel()
 
@@ -124,4 +141,5 @@ class UeOpenPanel(nukescripts.PythonPanel):
             for n in range(idx, len(self.elKnobs)):
                 self.elKnobs[n].setEnabled(False)
                 self.elKnobs[n].setValues([])
+"""
 

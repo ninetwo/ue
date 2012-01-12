@@ -32,7 +32,7 @@ def listAssets():
         assets = json.loads(f.read())
         f.close()
 
-    for a in assets:
+    for a in sorted(assets):
         if "paths" in settings:
             print "%s -> %s" % (a, assets[a]["path"])
         else:

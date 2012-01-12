@@ -123,6 +123,15 @@ FOR i=0 TO n-1
   tv_LayerDisplay result "ON"
 END
 
+// Export a layer list
+FOR i=0 TO n-1
+  tv_LayerGetId exportLayers[i]
+  layerId=result
+  tv_LayerInfo layerId
+  PARSE result layerDisplay layerPosition layerOpacity layerName layerType
+  tv_WriteTextFile "Append" "/work/devproj3/tmp/"clipName"_layerList.txt" layerName
+END
+
 tv_ClipSelect xSheet
 
 // Now we're done, un-hide the X-Sheet layers
@@ -137,8 +146,6 @@ tv_Background "CHECK"
 tv_ClipSelect selectedClip
 
 tv_Background "CHECK"
-
-tv_ProjectClose
 
 tv_Warn "'"clipName"' succesfully exported!"
 

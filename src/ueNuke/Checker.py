@@ -31,8 +31,8 @@ class CheckerPanel(QtGui.QWidget):
 
         n = 0
 
-        self.checkArea.layout().addWidget(QtGui.QLabel("Current value"), n, 1)
-        self.checkArea.layout().addWidget(QtGui.QLabel("Project value"), n, 2)
+        self.checkArea.layout().addWidget(QtGui.QLabel("Current\nvalue"), n, 1)
+        self.checkArea.layout().addWidget(QtGui.QLabel("Project\nvalue"), n, 2)
 
         n += 1
         for check in self.checks:

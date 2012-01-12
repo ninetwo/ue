@@ -118,16 +118,20 @@ class AnimationTab(QtGui.QWidget):
         self.layout().setSpacing(2)
 
         self.elclass = "cel"
+        self.layerListFile = os.getenv("ASST_ROOT")
 
         self.layerList = QtGui.QListWidget()
         self.passList = QtGui.QListWidget()
         self.versList = QtGui.QListWidget()
+        self.layerListPicker = QtGui.QLineEdit()
+        self.layerListPickerButton = QtGui.QPushButton("...")
         self.layerButton = QtGui.QPushButton("insert layer")
         self.passButton = QtGui.QPushButton("insert pass")
 
         zero = QtGui.QWidget()
         one = QtGui.QWidget()
         two = QtGui.QWidget()
+        three = QtGui.QWidget()
 
         zero.setLayout(QtGui.QHBoxLayout())
         zero.layout().setContentsMargins(2, 2, 2, 2)
@@ -138,6 +142,9 @@ class AnimationTab(QtGui.QWidget):
         two.setLayout(QtGui.QHBoxLayout())
         two.layout().setContentsMargins(2, 2, 2, 2)
         two.layout().setSpacing(2)
+        three.setLayout(QtGui.QHBoxLayout())
+        three.layout().setContentsMargins(2, 2, 2, 2)
+        three.layout().setSpacing(2)
 
         zero.layout().addWidget(QtGui.QLabel("layers"))
         zero.layout().addWidget(QtGui.QLabel("passes"))
@@ -145,12 +152,15 @@ class AnimationTab(QtGui.QWidget):
         one.layout().addWidget(self.layerList)
         one.layout().addWidget(self.passList)
         one.layout().addWidget(self.versList)
-        two.layout().addWidget(self.layerButton)
-        two.layout().addWidget(self.passButton)
+        two.layout().addWidget(self.layerListPicker)
+        two.layout().addWidget(self.layerListPickerButton)
+        three.layout().addWidget(self.layerButton)
+        three.layout().addWidget(self.passButton)
 
         self.layout().addWidget(zero)
         self.layout().addWidget(one)
         self.layout().addWidget(two)
+        self.layout().addWidget(three)
 
         self.reload()
 
@@ -160,6 +170,9 @@ class AnimationTab(QtGui.QWidget):
         self.connect(self.passList,
                      QtCore.SIGNAL("itemSelectionChanged()"),
                      self.loadVersions)
+        self.connect(self.layerListPickerButton,
+                     QtCore.SIGNAL("clicked()"),
+                     self.fileBrowser)
         self.connect(self.layerButton,
                      QtCore.SIGNAL("clicked()"),
                      self.nukeImportLayer)
@@ -167,11 +180,22 @@ class AnimationTab(QtGui.QWidget):
                      QtCore.SIGNAL("clicked()"),
                      self.nukeImportPass)
 
+    def fileBrowser(self):
+        f = QtGui.QFileDialog.getOpenFileName(self, "Open file",
+                                              self.layerListFile,
+                                              "Text files (*.txt)")
+        if not f == None:
+            self.layerList = f
+            self.layerListPicker.setText(f)
+
     def reload(self):
         self.layers = ueAssetUtils.getClass(proj, grp, asst, self.elclass)
 
         if self.layers == None:
             self.layers = {}
+
+        self.layerListFile = os.getenv("ASST_ROOT")
+        self.layerListPicker.setText(os.getenv("ASST_ROOT"))
 
         self.loadLayers()
 
@@ -186,6 +210,17 @@ class AnimationTab(QtGui.QWidget):
         if str(self.layerList.currentItem().text()) in self.layers:
             for c in self.layers[str(self.layerList.currentItem().text())]:
                 self.passList.addItem(QtGui.QListWidgetItem(c))
+                elpass = c
+
+            f = os.path.join(os.path.dirname(self.layers[str(self.layerList.currentItem().text())][elpass]["path"]),
+                         str(self.layerList.currentItem().text())+"_layerList.txt")
+
+            if os.path.isfile(f):
+                self.layerListFile = f
+                self.layerListPicker.setText(f)
+            else:
+                self.layerListFile = os.getenv("ASST_ROOT")
+                self.layerListPicker.setText(os.getenv("ASST_ROOT"))
 
     def loadVersions(self):
         self.versList.clear()

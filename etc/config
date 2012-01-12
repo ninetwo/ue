@@ -1,6 +1,6 @@
 {
 "PROJECT_DIRS": {
-                 "bin": ["template/proj/bin/*"],
+                 "bin": null,
                  "etc": {
                          "nuke": ["template/proj/etc/nuke/*"],
                          "maya": ["template/proj/etc/maya/*"]
@@ -53,6 +53,10 @@
                   "c":   {
                           "name": "Comp script",
                           "desc": "Comp script"
+                         },
+                  "s":   {
+                          "name": "3D scene",
+                          "desc": "3D scene"
                          },
                   "cp":  {
                           "name": "Comp render",

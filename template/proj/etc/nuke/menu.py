@@ -8,6 +8,9 @@ import ueNuke.Load as ueNukeLoad
 import ueNuke.Checker as ueNukeChecker
 import ueNuke.NodeTools as ueNukeNodeTools
 
+import ueCommon.Save as ueCommonSave
+import ueCommon.Open as ueCommonOpen
+
 checker = ueNuke.checker
 
 # Utilities
@@ -15,9 +18,10 @@ def getReadPath():
     return ueNuke.getReadPath()
 
 def ueRead():
-    ueReadPanel.show()
+    p = nuke.getPaneFor("Properties.1")
+    ueReadPanel.addToPane(p)
 
-def ueChecker():
+def ueChecker(show=False):
     # The following two lines are a bit of a hack to make sure the
     # script checker gets updated every time its opened.
     # Else, when you open a new script, the panel doesn't get redrawn
@@ -25,7 +29,11 @@ def ueChecker():
     # Un-registering and regstering the widget seems to do the trick.
     nukescripts.unregisterPanel("ue.panel.ueChecker", None)
     ueCheckerPanel = nukescripts.registerWidgetAsPanel("ueNukeChecker.CheckerPanel", "ueChecker", "ue.panel.ueChecker", create=True)
-    ueCheckerPanel.show()
+    if show:
+        ueCheckerPanel.show()
+    else:
+        p = nuke.getPaneFor("Properties.1")
+        ueCheckerPanel.addToPane(p)
 
 def getReadPath():
     return ueNuke.getReadPath()
@@ -36,7 +44,7 @@ def nukeChecker():
     for check in checks:
         c = checks[check]
         if (lambda: eval(c["eval"]))():
-            ueChecker()
+            ueChecker(show=True)
             break
 
 # Menus
@@ -54,7 +62,6 @@ ueNukeLoad.addGizmos()
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead, "r")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueChecker", ueChecker)
-
 nuke.menu("Node Graph").addCommand("ueRead", ueRead)
 nuke.menu("Node Graph").addCommand("ueChecker", ueChecker)
 
@@ -82,4 +89,5 @@ nuke.addBeforeRender(ueNuke.render, nodeClass="Write")
 # Register panels
 ueReadPanel = nukescripts.registerWidgetAsPanel("ueNukeRead.ReadPanel", "ueRead", "ue.panel.ueRead", create=True)
 ueCheckerPanel = nukescripts.registerWidgetAsPanel("ueNukeChecker.CheckerPanel", "ueChecker", "ue.panel.ueChecker", create=True)
+#ueSavePanel = nukescripts.registerWidgetAsPanel("ueCommonSave.Save", "ueSave", "ue.panel.ueSave", create=True)
 

@@ -14,9 +14,9 @@ def listElements():
 
     elements = ueAssetUtils.getElements(proj, grp, asst)
 
-    for e in elements:
-        for t in elements[e]:
-            for n in elements[e][t]:
+    for e in sorted(elements):
+        for t in sorted(elements[e]):
+            for n in sorted(elements[e][t]):
                 a = ":".join([proj, grp, asst, n, t, e])
                 if "paths" in settings:
                     print "%s -> %s" % (a, elements[e][t][n]["path"])

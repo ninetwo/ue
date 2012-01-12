@@ -1,6 +1,5 @@
-tv_WriteProjectString "ue" "proj" "testproj"
-tv_WriteProjectString "ue" "grp" "testgrp"
-tv_WriteProjectString "ue" "asst" "testasst"
-
-//print "Set up project!"
+// A test stub for getting asset info into TVP
+//tv_WriteProjectString "ue" "proj" "testproj"
+//tv_WriteProjectString "ue" "grp" "testgrp"
+//tv_WriteProjectString "ue" "asst" "testasst"
 

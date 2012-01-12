@@ -9,7 +9,7 @@ prj=$red
 grp=$green
 ast=$yellow
 
-sp=`python $UE_PATH/core/ueSetProject.py $*`
+sp=`python $UE_PATH/src/tools/ueSetProject.py $*`
 
 if [[ $? == 1 ]]; then
   eval $sp

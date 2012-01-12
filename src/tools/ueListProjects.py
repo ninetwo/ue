@@ -14,7 +14,7 @@ def listProjects():
         projects = json.loads(f.read())
         f.close()
 
-    for p in projects:
+    for p in sorted(projects):
         if "paths" in settings:
             print "%s -> %s" % (p, projects[p]["path"])
         else:

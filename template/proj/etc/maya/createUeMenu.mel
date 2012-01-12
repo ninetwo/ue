@@ -1,0 +1,33 @@
+global proc createUeMenu()
+{
+  global string $gMainWindow;
+  setParent $gMainWindow;
+
+  if (`menu -exists ueMenu`)
+    deleteUI -menu ueMenu;
+
+  menu -label "ue Tools" -tearOff true ueMenu;
+
+  setParent -menu ueMenu;
+
+  menuItem -label "Open Scene..."
+           -ctrlModifier true
+           -keyEquivalent "o"
+           -command "python(\"import ueMaya.Open\"); python(\"ueMaya.Open.Open().show()\")";
+  menuItem -divider true;
+  menuItem -label "Save Scene"
+           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.Save().show()\")"
+           -ctrlModifier true
+           -keyEquivalent "s";
+  menuItem -label "Save Scene As..."
+           -ctrlModifier true
+           -shiftModifier true
+           -keyEquivalent "s"
+           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.Save().show()\")";
+  menuItem -label "Save New Version"
+           -ctrlModifier true
+           -altModifier true
+           -keyEquivalent "s"
+           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.Save().show()\")";
+}
+

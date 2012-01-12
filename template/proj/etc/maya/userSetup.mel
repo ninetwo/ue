@@ -1,0 +1,8 @@
+$asset = `getenv ASST_ROOT`;
+
+setProject $asset;
+
+createUeMenu;
+// Nothing to go in the shelf yet...
+//createUeToolsShelf;
+

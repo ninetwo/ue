@@ -1,0 +1,26 @@
+global proc createUeToolsShelf()
+{
+  string $shelfName = "ueTools";
+
+  int $shelfExists = `layout -q -ex $shelfName`;
+  if ($shelfExists == 1)
+  {
+    deleteUI -layout $shelfName;
+  }
+
+  string $shelfName = "ueTools";
+  addNewShelfTab $shelfName;
+
+  shelfButton
+    -enable 1
+    -width 34
+    -height 34
+    -manage 1
+    -visible 1
+    -annotation "Collapse: Collapse the selected edges or faces"
+    -label "Collapse"
+    -command "performPolyCollapse 0"
+    -parent $shelfName
+  ;
+}
+

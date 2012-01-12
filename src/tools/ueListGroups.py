@@ -16,7 +16,7 @@ def listGroups():
         groups = json.loads(f.read())
         f.close()
 
-    for g in groups:
+    for g in sorted(groups):
         if "paths" in settings:
             print "%s -> %s" % (g, groups[g]["path"])
         else:

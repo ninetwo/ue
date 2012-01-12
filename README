@@ -1,0 +1,55 @@
+1. About
+
+   Ue is a simple asset management and pipeline system for film and vfx.
+   It's intended for small, individual projects and ease of setup. It's
+   not database backed, instead using python dictionaries in text files
+   to store metadata.
+
+   Ue should be treated as Beta software right now!
+
+2. Design
+
+   Ue describes elements. Each element describes one set of files, e.g.
+   one comp script or one sequence of rendered images. Each element
+   contains incremental versions of the files.
+
+   An element is described like so:
+
+   > project:group:asset:name:type:class
+
+   * Projects i.e. a film
+   * Groups i.e. a sequence
+   * Assets are the working base of the pipeline, where applications
+     can be launched from and elements saved to i.e. a shot
+   * Classes describe what the element it i.e. a comp script, a
+     rendered image sequence
+   * Types describe what the element is in the context of the asset
+   * Name is the specific name of the element
+
+   An element string is a like an absolute file path - it needs to be
+   unique. However, an individual project/group/asset/name/type/class
+   string is like a file or directory name - it only needs to be
+   unique within its parent.
+
+3. Setup
+
+   1) Edit ue_env_setup
+
+      Change UE_PATH to the absolute path of the ue source root.
+
+   2) Source ue_env_setup
+
+      In your .bashrc, put a line like this:
+
+      source ~/Code/ue/ue_env_setup
+
+   3) Run ./ue_setup
+
+      This will set up a bin directory in the source root with a bunch of symlinks..
+
+   4) Edit the paths in src/wrapper to match your applications
+
+   That's it!
+
+More coming soon...
+
