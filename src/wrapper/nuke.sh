@@ -1,4 +1,4 @@
-nuke_path=/opt/Nuke6.3v2/Nuke6.3
+nuke_path=/usr/local/Nuke6.3v2/Nuke6.3
 
 if [[ $PROJ == "" || $GROUP == "" || $ASST == "" ]]; then
   echo "Error: uesp before running nuke"

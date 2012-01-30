@@ -1,12 +1,13 @@
 //Maya 2011 x64 Project Definition
 
+workspace -fr "offlineEdit" "tmp/edits";
 workspace -fr "scene" "tmp";
 workspace -fr "3dPaintTextures" "textures";
 workspace -fr "IGES" "data";
-workspace -fr "mentalray" "data/renderData/mentalray";
 workspace -fr "mentalRay" "data";
-workspace -fr "lights" "data/renderData/shaders";
+workspace -fr "mentalray" "data/renderData/mentalray";
 workspace -fr "OBJexport" "objects";
+workspace -fr "lights" "data/renderData/shaders";
 workspace -fr "mel" "mel";
 workspace -fr "particles" "data/particles";
 workspace -fr "RIBexport" "data";
@@ -22,13 +23,13 @@ workspace -fr "FBX" "camera";
 workspace -fr "DAE_FBX export" "camera";
 workspace -fr "movie" "data";
 workspace -fr "DAE_FBX" "camera";
+workspace -fr "mayaAscii" "tmp";
 workspace -fr "iprImages" "data/renderData/iprImages";
-workspace -fr "mayaAscii" "scenes";
 workspace -fr "textures" "textures";
 workspace -fr "DXF_FBX" "camera";
 workspace -fr "aliasWire" "data";
 workspace -fr "move" "data";
-workspace -fr "mayaBinary" "scenes";
+workspace -fr "mayaBinary" "tmp";
 workspace -fr "renderScenes" "renderable";
 workspace -fr "images" "render";
 workspace -fr "DXF" "data";

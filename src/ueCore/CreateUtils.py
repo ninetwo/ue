@@ -47,9 +47,9 @@ def getVersionPath(proj, grp, asst, elclass, eltype, name, vers=1):
 
 def getElementName(proj, grp, asst, elclass, eltype, name, vers):
     try:
-        s = "%s_%s_%s-%s_%s-%s_%03d" % (proj, grp, asst, name, eltype, elclass, vers)
+        s = "%s_%s_%s_%s_%s_%s_%03d" % (proj, grp, asst, name, eltype, elclass, vers)
     except TypeError:
-        s = "%s_%s_%s-%s_%s-%s_%s" % (proj, grp, asst, name, eltype, elclass, vers)
+        s = "%s_%s_%s_%s_%s_%s_%s" % (proj, grp, asst, name, eltype, elclass, vers)
     return s
 
 def createElement(proj, grp, asst, elclass, eltype, name):

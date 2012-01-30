@@ -16,18 +16,18 @@ global proc createUeMenu()
            -command "python(\"import ueMaya.Open\"); python(\"ueMaya.Open.Open().show()\")";
   menuItem -divider true;
   menuItem -label "Save Scene"
-           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.Save().show()\")"
+           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.ueSave()\")"
            -ctrlModifier true
            -keyEquivalent "s";
   menuItem -label "Save Scene As..."
            -ctrlModifier true
            -shiftModifier true
            -keyEquivalent "s"
-           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.Save().show()\")";
+           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.ueSaveAs()\")";
   menuItem -label "Save New Version"
            -ctrlModifier true
            -altModifier true
            -keyEquivalent "s"
-           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.Save().show()\")";
+           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.ueSaveVers()\")";
 }
 
