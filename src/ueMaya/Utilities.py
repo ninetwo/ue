@@ -32,8 +32,6 @@ def saveUtility(spec):
     if not "asst_root" in fi:
         maya.cmds.fileInfo("asst_root", os.getenv("ASST_ROOT"))
 
-    print spec
-
     d = ueAssetUtils.getElement(spec)
     if d == {}:
         d = ueCreate.createElement(spec)

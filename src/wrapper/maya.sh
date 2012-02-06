@@ -5,9 +5,9 @@ if [[ $PROJ == "" || $GRP == "" || $ASST == "" ]]; then
   exit 0
 fi
 
-export MAYA_SCRIPT_PATH=$PROJ_ROOT/etc/maya
+export MAYA_SCRIPT_PATH=$MAYA_SCRIPT_PATH:$PROJ_ROOT/etc/maya
 #export MAYA_SHELF_PATH=$PROJ_ROOT/etc/maya
-export PYTHONPATH=$PYTHONPATH
+export PYTHONPATH=$PYTHONPATH:$PROJ_ROOT/etc/maya
 
 $maya_path $*
 

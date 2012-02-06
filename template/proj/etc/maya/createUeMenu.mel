@@ -13,21 +13,45 @@ global proc createUeMenu()
   menuItem -label "Open Scene..."
            -ctrlModifier true
            -keyEquivalent "o"
-           -command "python(\"import ueMaya.Open\"); python(\"ueMaya.Open.Open().show()\")";
+           -command "python(\"import ueMaya.Open\"); \
+                     python(\"ueMaya.Open.Open().show()\")";
   menuItem -divider true;
   menuItem -label "Save Scene"
-           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.ueSave()\")"
+           -command "python(\"import ueMaya.Save\"); \
+                     python(\"ueMaya.Save.ueSave()\")"
            -ctrlModifier true
            -keyEquivalent "s";
   menuItem -label "Save Scene As..."
            -ctrlModifier true
            -shiftModifier true
            -keyEquivalent "s"
-           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.ueSaveAs()\")";
+           -command "python(\"import ueMaya.Save\"); \
+                     python(\"ueMaya.Save.ueSaveAs()\")";
   menuItem -label "Save New Version"
            -ctrlModifier true
            -altModifier true
            -keyEquivalent "s"
-           -command "python(\"import ueMaya.Save\"); python(\"ueMaya.Save.ueSaveVers()\")";
+           -command "python(\"import ueMaya.Save\"); \
+                     python(\"ueMaya.Save.ueSaveVers()\")";
+  menuItem -divider true;
+  menuItem -label "Create Reference..."
+           -ctrlModifier true
+           -keyEquivalent "r"
+           -command "python(\"import ueMaya.ReferenceEditor\"); \
+                     python(\"ueMaya.ReferenceEditor.OpenRef().show()\")";
+  menuItem -label "Reference Editor"
+           -command "python(\"import ueMaya.ReferenceEditor\"); \
+                     python(\"ueMaya.ReferenceEditor.ReferenceEditor().show()\")";
+  menuItem -divider true;
+  menuItem -label "Export"
+           -subMenu true
+           -tearOff true;
+  menuItem -label "Selection"
+           -command "python(\"print 'test'\")";
+  menuItem -divider true;
+  menuItem -label "Camera"
+           -command "python(\"print 'test'\")";
+  menuItem -label "Geometry"
+           -command "python(\"print 'test'\")";
 }
 

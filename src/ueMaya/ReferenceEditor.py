@@ -4,15 +4,19 @@ from PyQt4 import QtCore, QtGui
 
 import maya.cmds
 
-import ueCore.CreateUtils as ueCreateUtils
+import ueSpec
 
+import ueCore.AssetUtils as ueAssetUtils
 import ueCommon.Open as ueCommonOpen
-
 import ueMaya
 
+global refEditor
+
 class OpenRef(QtGui.QMainWindow):
-    def __init__(self, parent=ueMaya.getMayaWindow()):
+    def __init__(self, redrawRefList=False, parent=ueMaya.getMayaWindow()):
         QtGui.QMainWindow.__init__(self, parent)
+
+        self.redrawRefList = redrawRefList
 
         ueCommonOpen.setClasses(["s"])
 
@@ -26,16 +30,18 @@ class OpenRef(QtGui.QMainWindow):
         centralWidget.layout().addWidget(self.buttonBox)
 
         self.setCentralWidget(centralWidget)
-        self.setWindowTitle("ueOpen [*]")
+        self.setWindowTitle("ueOpenReference [*]")
 
         self.buttonBox.accepted.connect(self.createRef)
         self.buttonBox.rejected.connect(self.close)
 
     def createRef(self):
-        e = ueCommonOpen.getValues()
-        maPath = ueCreateUtils.getVersionPath(e[0], e[1], e[2], e[3], e[4], e[5], e[6])
-        maFile = ueCreateUtils.getElementName(e[0], e[1], e[2], e[3], e[4], e[5], e[6])
-        maya.cmds.file(os.path.join(maPath, maFile+".ma"), r=True)#i=True)#o=True)
+        spec = ueCommonOpen.getValues()
+        maPath = ueAssetUtils.getVersionPath(spec)
+        maFile = ueAssetUtils.getElementName(spec)
+        maya.cmds.file(os.path.join(maPath, maFile+".ma"), namespace=maFile, r=True)
+        if self.redrawRefList:
+            refEditor.drawRefList()
         self.close()
 
 
@@ -43,17 +49,28 @@ class ReferenceEditor(QtGui.QMainWindow):
     def __init__(self, parent=ueMaya.getMayaWindow()):
         QtGui.QMainWindow.__init__(self, parent)
 
+        global refEditor
+        refEditor = self
+
         self.refList = QtGui.QListWidget()
 
-        toolBar = QtGui.QToolBar()
+        self.drawRefList()
+
         createRef = QtGui.QAction("Create reference", self)
         removeRef = QtGui.QAction("Remove reference", self)
+
+        # Menubar
+        menuBar = QtGui.QMenuBar()
+        fileMenu = menuBar.addMenu("File")
+        fileMenu.addAction(createRef)
+        fileMenu.addAction(removeRef)
+
+        # Toolbar
+        toolBar = QtGui.QToolBar()
         toolBar.addAction(createRef)
         toolBar.addAction(removeRef)
 
-        menuBar = QtGui.QMenuBar()
-        menuBar.addMenu("File")
-
+        # Reference list
         centralWidget = QtGui.QWidget()
         centralWidget.setLayout(QtGui.QVBoxLayout())
         centralWidget.layout().addWidget(toolBar)
@@ -61,10 +78,22 @@ class ReferenceEditor(QtGui.QMainWindow):
 
         self.setMenuBar(menuBar)
         self.setCentralWidget(centralWidget)
-        self.setWindowTitle("ueReference Editor [*]")
+        self.setWindowTitle("ueReferenceEditor [*]")
 
-        self.connect(createRef, QtCore.SIGNAL("triggered()"), self.refDialog)
+        self.connect(createRef, QtCore.SIGNAL("triggered()"), self.createRef)
+        self.connect(removeRef, QtCore.SIGNAL("triggered()"), self.removeRef)
 
-    def refDialog(self):
-        OpenRef().show()
+    def drawRefList(self):
+        refs = maya.cmds.ls(references=True)
+        self.refList.clear()
+        for ref in refs:
+            self.refList.addItem(QtGui.QListWidgetItem(ref))
+
+    def createRef(self):
+        OpenRef(redrawRefList=True).show()
+
+    def removeRef(self):
+        ref = str(self.refList.currentItem().text())
+        maya.cmds.file(removeReference=True, referenceNode=ref)
+        self.drawRefList()
 
