@@ -1,237 +1,143 @@
-import os, sys
-import json
+import os
 
-import ueCore.Settings as ueSettings
-import ueCore.ConfigUtils as ueConfigUtils
+import ueClient, ueSpec
 
-def getProjects():
-    projects = {}
+import ueCore.Config as ueConfig
 
-    if os.path.exists(ueSettings.__UE_PROJ_FILE_PATH__):
-        f = open(ueSettings.__UE_PROJ_FILE_PATH__, 'r')
-        projects = json.loads(f.read())
-        f.close()
-
-    return projects
-
-def getProject(proj):
-    projects = getProjects()
-
-    p = None
-    if proj in projects:
-        p = projects[proj]
-
-    return p
+def getProject(spec):
+    return ueClient.client.getProject(spec)
 
 def getProjectsList():
-    projects = getProjects()
-
-    projectsList = []
-    for p in projects:
-        projectsList.append(p)
-
-    return projectsList
+    projects = []
+    for p in ueClient.client.getProjects():
+        projects.append(p["name"])
+    return projects
 
 
-def getGroups(proj):
-    project = getProject(proj)
+def getGroup(spec):
+    return ueClient.client.getGroup(spec)
 
-    if project == None:
-        return {}
-
-    projGroups = os.path.join(project["path"], "etc", "groups")
-
-    groups = {}
-    if os.path.exists(projGroups):
-        f = open(projGroups, 'r')
-        groups = json.loads(f.read())
-        f.close()
-
+def getGroupsList(spec):
+    groups = []
+    for g in ueClient.client.getGroups(spec):
+        groups.append(g["name"])
     return groups
 
-def getGroup(proj, grp):
-    groups = getGroups(proj)
 
-    g = None
-    if grp in groups:
-        g = groups[grp]
+def getAsset(spec):
+    return ueClient.client.getAsset(spec)
 
-    return g
-
-def getGroupsList(proj):
-    groups = getGroups(proj)
-
-    groupsList = []
-    for g in groups:
-        groupsList.append(g)
-
-    return groupsList
-
-
-def getAssets(proj, grp):
-    group = getGroup(proj, grp)
-
-    if group == None:
-        return {}
-
-    groupAssets = os.path.join(group["path"], "etc", "assets")
-
-    assets = {}
-    if os.path.exists(groupAssets):
-        f = open(groupAssets, 'r')
-        assets = json.loads(f.read())
-        f.close()
-
+def getAssetsList(spec):
+    assets = []
+    for a in ueClient.client.getAssets(spec):
+        assets.append(a["name"])
     return assets
 
-def getAsset(proj, grp, asst):
-    assets = getAssets(proj,   grp)
 
-    a = None
-    if asst in assets:
-        a = assets[asst]
-
-    return a
-
-def getAssetsList(proj, grp):
-    assets = getAssets(proj, grp)
-
-    assetsList = []
-    for a in assets:
-        assetsList.append(a)
-
-    return assetsList
-
-
-def getClasses(proj, grp, asst):
-    asset = getAsset(proj, grp, asst)
-
-    if asset == None:
-        return {} 
-
-    #classes = ueConfigUtils.getConfig(proj, grp, asst)["ASSET_CLASSES"]
-    assetClasses = os.path.join(asset["path"], "etc", "elements")
-
-    classes = {}
-    if os.path.exists(assetClasses):
-        f = open(assetClasses, "r")
-        classes = json.loads(f.read())
-        f.close()
-
-    return classes
-
-def getClass(proj, grp, asst, elclass):
-    classes = getClasses(proj, grp, asst)
-
-    c = None
-    if elclass in classes:
-        c = classes[elclass]
-
-    return c
-
-def getClassesList(proj, grp, asst):
-    classes = getClasses(proj, grp, asst)
-
-    classesList = []
-    for c in classes:
-        classesList.append(c)
-
-    return classesList
-
-
-def getTypesList(proj, grp, asst, elclass):
-    asstClass = getClass(proj, grp, asst, elclass)
-
-    if asstClass == None:
-        return []
-
-    typesList = []
-    for c in asstClass:
-        typesList.append(c)
-
-    return typesList
-
-
-def getNames(proj, grp, asst, elclass, eltype):
-    asset = getAsset(proj, grp, asst)
-
-    if asset == None:
-        return {}
-
-    assetElements = os.path.join(asset["path"], "etc", "elements")
-
-    elements = {}
-    if os.path.exists(assetElements):
-        f = open(assetElements, "r")
-        elements = json.loads(f.read())
-        f.close()
-
-    names = {}
-    if elclass in elements:
-        if eltype in elements[elclass]:
-            names = elements[elclass][eltype]
-
-    return names
-
-def getNamesList(proj, grp, asst, elclass, eltype):
-    names = getNames(proj, grp, asst, elclass, eltype)
-
-    namesList = []
-    for n in names:
-        namesList.append(n)
-
-    return namesList
-
-
-def getElements(proj, grp, asst):
-    asset = getAsset(proj, grp, asst)
-
-    if asset == None:
-        return {}
-
-    assetElements = os.path.join(asset["path"], "etc", "elements")
-
-    elements = {}
-    if os.path.exists(assetElements):
-        f = open(assetElements, "r")
-        elements = json.loads(f.read())
-        f.close()
-
-    return elements
-
-def getElement(proj, grp, asst, elclass, eltype, name):
-    elements = getElements(proj, grp, asst)
-
-    e = None
-    if elclass in elements:
-        if eltype in elements[elclass]:
-            if name in elements[elclass][eltype]:
-                e = elements[elclass][eltype][name]
-
-    return e
-
-def getElementsList(proj, grp, asst, elclass):
-    elements = getElements(proj, grp, asst, elclass)
-
-    elementsList = []
+def getElements(spec):
+    elements = ueClient.client.getElements(spec)
+    elementsDict = {}
     for e in elements:
-        elementsList.append(e)
+        if not e["elclass"] in elementsDict:
+            elementsDict[e["elclass"]] = {}
+        if not e["eltype"] in elementsDict[e["elclass"]]:
+            elementsDict[e["elclass"]][e["eltype"]] = {}
+        if not e["elname"] in elementsDict[e["elclass"]][e["eltype"]]:
+            elementsDict[e["elclass"]][e["eltype"]][e["elname"]] = {}
+        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["path"] = e["path"]
+        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_at"] = e["created_at"]
+        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_by"] = e["created_by"]
+    return elementsDict
 
-    return elementsList
+def getElement(spec):
+    e = ueClient.client.getElement(spec)
+    elementsDict = {}
+    if "elclass" in e and "eltype" in e and "elname" in e:
+        if not e["elclass"] in elementsDict:
+            elementsDict[e["elclass"]] = {}
+        if not e["eltype"] in elementsDict[e["elclass"]]:
+            elementsDict[e["elclass"]][e["eltype"]] = {}
+        if not e["elname"] in elementsDict[e["elclass"]][e["eltype"]]:
+            elementsDict[e["elclass"]][e["eltype"]][e["elname"]] = {}
+        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["path"] = e["path"]
+        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_at"] = e["created_at"]
+        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_by"] = e["created_by"]
+    return elementsDict
 
-def getVersions(proj, grp, asst, elclass, eltype, name):
-    element = getElement(proj, grp, asst, elclass, eltype, name)
 
-    if element == None:
-        return []
+def getVersions(spec):
+    element = ueClient.client.getElement(spec)
+    if not "versions" in element:
+        element["versions"] = []
+    return element["versions"]
 
-    elementVersions = os.path.join(element["path"], "versions")
 
-    versions = []
-    if os.path.exists(elementVersions):
-        f = open(elementVersions, "r")
-        versions = json.loads(f.read())
-        f.close()
+def getClasses(spec):
+    return {}
 
-    return versions
+def getClass(spec):
+    return {}
+
+def getClassesList(spec):
+    return []
+
+
+def getTypesList(spec):
+    return []
+
+
+def getNames(spec):
+    return {}
+
+def getNamesList(spec):
+    return []
+
+
+def parsePath(path, **kwargs):
+    p = path
+    if "vers" in kwargs:
+        p = path.replace("%%version%%", "%03d" % kwargs["vers"])
+    return p
+
+def getElementPath(spec):
+    assetClasses = ueConfig.Config(spec).config.assetClasses
+
+    # Check class
+    if spec.elclass not in assetClasses:
+        return "Error: Class '%s' not found in asset '%s:%s:%s'" % \
+               (spec.elclass, spec.proj, spec.grp, spec.asst)
+
+    # Check type
+    # Check name
+
+    element = getAsset(spec)
+
+    prepend = ""
+    if "pathprepend" in assetClasses[spec.elclass]:
+        prepend = parsePath(assetClasses[spec.elclass]["pathprepend"])
+
+    d = os.path.join(element["path"], prepend, spec.eltype, spec.elname)
+
+    return d
+
+def getVersionPath(spec):
+    assetClasses = ueConfig.Config(spec).config.assetClasses
+
+    append = ""
+    if "pathappend" in assetClasses[spec.elclass]:
+        append = parsePath(assetClasses[spec.elclass]["pathappend"], vers=spec.vers)
+
+    return os.path.join(getElementPath(spec), append)
+
+
+def getElementName(spec):
+    try:
+        s = "%s_%s_%s_%s_%s_%s_%04d" % (spec.proj, spec.grp, spec.asst,
+                                        spec.elname, spec.eltype,
+                                        spec.elclass, spec.vers)
+    except TypeError:
+        s = "%s_%s_%s_%s_%s_%s_%s" % (spec.proj, spec.grp, spec.asst,
+                                      spec.elname, spec.eltype,
+                                      spec.elclass, spec.vers)
+    return s
 

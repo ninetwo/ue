@@ -4,11 +4,11 @@ from PyQt4 import QtCore, QtGui
 
 import maya.cmds
 
+import ueSpec
+
 import ueMaya
-
 import ueCommon.Open as ueCommonOpen
-
-import ueCore.CreateUtils as ueCreateUtils
+import ueCore.AssetUtils as ueAssetUtils
 
 class Open(QtGui.QMainWindow):
     def __init__(self, parent=ueMaya.getMayaWindow()):
@@ -32,9 +32,10 @@ class Open(QtGui.QMainWindow):
         self.buttonBox.rejected.connect(self.close)
 
     def open(self):
-        e = ueCommonOpen.getValues()
-        maPath = ueCreateUtils.getVersionPath(e[0], e[1], e[2], e[3], e[4], e[5], e[6])
-        maFile = ueCreateUtils.getElementName(e[0], e[1], e[2], e[3], e[4], e[5], e[6])
+        spec = ueCommonOpen.getValues()
+        maPath = ueAssetUtils.getVersionPath(spec)
+        maFile = ueAssetUtils.getElementName(spec)
         maya.cmds.file(os.path.join(maPath, maFile+".ma"), o=True)#i=True)#o=True)
+        print "Opened %s" % spec
         self.close()
 

@@ -2,6 +2,8 @@ import os, sys
 
 from PyQt4 import QtCore, QtGui
 
+import ueSpec
+
 import ueCore.AssetUtils as ueAssetUtils
 
 global proj, grp, asst, elclass, eltype, elname
@@ -10,7 +12,7 @@ global elclasses
 elclasses = []
 
 def getValues():
-    return (proj, grp, asst, elclass, eltype, elname)
+    return ueSpec.Spec(proj, grp, asst, elclass, eltype, elname)
 
 def setClasses(classes):
     global elclasses
@@ -25,7 +27,7 @@ class Save(QtGui.QWidget):
         self.elclasses = elclasses
 
         proj = os.getenv("PROJ")
-        grp = os.getenv("GROUP")
+        grp = os.getenv("GRP")
         asst = os.getenv("ASST")
         elclass = None
         eltype = None
@@ -43,18 +45,19 @@ class Save(QtGui.QWidget):
         self.eltypeBox = QtGui.QLineEdit()
         self.elnameMenu = QtGui.QComboBox()
         self.elnameBox = QtGui.QLineEdit()
+        self.commentBox = QtGui.QTextEdit()
 
         pl = ueAssetUtils.getProjectsList()
         for p in pl:
             self.projMenu.addItem(p)
         self.projMenu.setCurrentIndex(pl.index(proj))
 
-        gl = ueAssetUtils.getGroupsList(proj)
+        gl = ueAssetUtils.getGroupsList(ueSpec.Spec(proj))
         for g in gl:
             self.grpMenu.addItem(g)
         self.grpMenu.setCurrentIndex(gl.index(grp))
 
-        al = ueAssetUtils.getAssetsList(proj, grp)
+        al = ueAssetUtils.getAssetsList(ueSpec.Spec(proj, grp))
         for a in al:
             self.asstMenu.addItem(a)
         self.asstMenu.setCurrentIndex(al.index(asst))
@@ -63,7 +66,7 @@ class Save(QtGui.QWidget):
             self.elclassMenu.addItem(c)
         elclass = str(self.elclassMenu.currentText())
 
-        self.elements = ueAssetUtils.getElements(proj, grp, asst)
+        self.elements = ueAssetUtils.getElements(ueSpec.Spec(proj, grp, asst))
 
         if elclass in self.elements:
             for t in self.elements[elclass]:
@@ -75,31 +78,38 @@ class Save(QtGui.QWidget):
                     self.elnameMenu.addItem(n)
                 elname = str(self.elnameMenu.currentText())
 
-        one = QtGui.QWidget()
-        one.setLayout(QtGui.QHBoxLayout())
+        asstBox = QtGui.QGroupBox("Asset")
+        asstBox.setLayout(QtGui.QHBoxLayout())
 
-        one.layout().addWidget(QtGui.QLabel("Project"))
-        one.layout().addWidget(self.projMenu)
-        one.layout().addWidget(QtGui.QLabel("Group"))
-        one.layout().addWidget(self.grpMenu)
-        one.layout().addWidget(QtGui.QLabel("Asset"))
-        one.layout().addWidget(self.asstMenu)
-        one.layout().addStretch(0)
+        asstBox.layout().addWidget(QtGui.QLabel("Project"))
+        asstBox.layout().addWidget(self.projMenu)
+        asstBox.layout().addWidget(QtGui.QLabel("Group"))
+        asstBox.layout().addWidget(self.grpMenu)
+        asstBox.layout().addWidget(QtGui.QLabel("Asset"))
+        asstBox.layout().addWidget(self.asstMenu)
+        asstBox.layout().addStretch(0)
 
-        two = QtGui.QWidget()
-        two.setLayout(QtGui.QGridLayout())
+        elBox = QtGui.QGroupBox("Element")
+        elBox.setLayout(QtGui.QGridLayout())
 
-        two.layout().addWidget(QtGui.QLabel("Class"), 0, 0)
-        two.layout().addWidget(self.elclassMenu, 0, 1)
-        two.layout().addWidget(QtGui.QLabel("Type"), 1, 0)
-        two.layout().addWidget(self.eltypeMenu, 1, 1)
-        two.layout().addWidget(self.eltypeBox, 1, 2)
-        two.layout().addWidget(QtGui.QLabel("Name"), 2, 0)
-        two.layout().addWidget(self.elnameMenu, 2, 1)
-        two.layout().addWidget(self.elnameBox, 2, 2)
+        elBox.layout().addWidget(QtGui.QLabel("Class"), 0, 0)
+        elBox.layout().addWidget(self.elclassMenu, 0, 1)
+        elBox.layout().addWidget(QtGui.QLabel("Type"), 1, 0)
+        elBox.layout().addWidget(self.eltypeMenu, 1, 1)
+        elBox.layout().addWidget(self.eltypeBox, 1, 2)
+        elBox.layout().addWidget(QtGui.QLabel("Name"), 2, 0)
+        elBox.layout().addWidget(self.elnameMenu, 2, 1)
+        elBox.layout().addWidget(self.elnameBox, 2, 2)
 
-        self.layout().addWidget(one)
-        self.layout().addWidget(two)
+        miscBox = QtGui.QGroupBox("Optional")
+        miscBox.setLayout(QtGui.QVBoxLayout())
+
+        miscBox.layout().addWidget(QtGui.QLabel("Comment"))
+        miscBox.layout().addWidget(self.commentBox)
+
+        self.layout().addWidget(asstBox)
+        self.layout().addWidget(elBox)
+        self.layout().addWidget(miscBox)
 
         self.projMenu.activated.connect(self.loadGroups)
         self.grpMenu.activated.connect(self.loadAssets)
@@ -133,7 +143,8 @@ class Save(QtGui.QWidget):
     def loadGroups(self):
         global proj
         proj = str(self.projMenu.currentText())
-        gl = ueAssetUtils.getGroupsList(proj)
+        spec = ueSpec.Spec(proj)
+        gl = ueAssetUtils.getGroupsList(spec)
         self.grpMenu.clear()
         for g in gl:
             self.grpMenu.addItem(g)
@@ -142,7 +153,8 @@ class Save(QtGui.QWidget):
     def loadAssets(self):
         global grp
         grp = str(self.grpMenu.currentText())
-        al = ueAssetUtils.getAssetsList(proj, grp)
+        spec = ueSpec.Spec(proj, grp)
+        al = ueAssetUtils.getAssetsList(spec)
         self.asstMenu.clear()
         for a in al:
             self.asstMenu.addItem(a)
@@ -151,7 +163,8 @@ class Save(QtGui.QWidget):
     def loadElements(self):
         global asst
         asst = str(self.asstMenu.currentText())
-        self.elements = ueAssetUtils.getElements(proj, grp, asst)
+        spec = ueSpec.Spec(proj, grp, asst)
+        self.elements = ueAssetUtils.getElements(spec)
         if elclass in self.elements:
             self.loadTypes()
         else:

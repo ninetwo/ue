@@ -1,6 +1,6 @@
 maya_path=/usr/autodesk/maya2012-x64/bin/maya2012
 
-if [[ $PROJ == "" || $GROUP == "" || $ASST == "" ]]; then
+if [[ $PROJ == "" || $GRP == "" || $ASST == "" ]]; then
   echo "Error: uesp before running maya"
   exit 0
 fi

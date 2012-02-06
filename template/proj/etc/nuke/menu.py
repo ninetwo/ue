@@ -6,7 +6,6 @@ import ueNuke.Open as ueNukeOpen
 import ueNuke.Read as ueNukeRead
 import ueNuke.Load as ueNukeLoad
 import ueNuke.Checker as ueNukeChecker
-import ueNuke.NodeTools as ueNukeNodeTools
 
 import ueCommon.Save as ueCommonSave
 import ueCommon.Open as ueCommonOpen
@@ -14,9 +13,6 @@ import ueCommon.Open as ueCommonOpen
 checker = ueNuke.checker
 
 # Utilities
-def getReadPath():
-    return ueNuke.getReadPath()
-
 def ueRead():
     p = nuke.getPaneFor("Properties.1")
     ueReadPanel.addToPane(p)
@@ -34,9 +30,6 @@ def ueChecker(show=False):
     else:
         p = nuke.getPaneFor("Properties.1")
         ueCheckerPanel.addToPane(p)
-
-def getReadPath():
-    return ueNuke.getReadPath()
 
 def nukeChecker():
     checks = checker["nuke"]
@@ -83,11 +76,7 @@ nuke.addOnUserCreate(ueNuke.ueNewScriptSetup, nodeClass="Root")
 nuke.addOnScriptLoad(nukeChecker)
 nuke.addBeforeRender(ueNuke.render, nodeClass="Write")
 
-#nuke.addOnUserCreate(ueNukeNodeTools.initElementsKnob)
-#nuke.addKnobChanged(ueNukeNodeTools.updateElementsKnob)
-
 # Register panels
 ueReadPanel = nukescripts.registerWidgetAsPanel("ueNukeRead.ReadPanel", "ueRead", "ue.panel.ueRead", create=True)
 ueCheckerPanel = nukescripts.registerWidgetAsPanel("ueNukeChecker.CheckerPanel", "ueChecker", "ue.panel.ueChecker", create=True)
-#ueSavePanel = nukescripts.registerWidgetAsPanel("ueCommonSave.Save", "ueSave", "ue.panel.ueSave", create=True)
 

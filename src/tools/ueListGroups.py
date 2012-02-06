@@ -1,22 +1,15 @@
 #!/usr/bin/python
 
-import sys, os
-import getopt, json
+import sys, os, getopt
 
-import ueCore.Settings
+import ueClient, ueSpec
 
-global settings
+import ueCore.AssetUtils as ueAssetUtils
+
+settings = {}
 
 def listGroups():
-    projGroups = os.path.join(os.getenv("PROJ_ROOT"), "etc", "groups")
-
-    groups = {}
-    if os.path.exists(projGroups):
-        f = open(projGroups, 'r')
-        groups = json.loads(f.read())
-        f.close()
-
-    for g in sorted(groups):
+    for g in sorted(ueAssetUtils.getGroupsList(settings["spec"])):
         if "paths" in settings:
             print "%s -> %s" % (g, groups[g]["path"])
         else:
@@ -24,8 +17,8 @@ def listGroups():
 
 
 def parse():
-    sArgs = "hp"
-    lArgs = ["help", "paths"]
+    sArgs = "hs:p"
+    lArgs = ["help", "spec=", "paths"]
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], sArgs, lArgs)
@@ -33,10 +26,14 @@ def parse():
         print "ERROR: Parsing argument (%s)" % e
         sys.exit(2)
 
+    settings["spec"] = ueSpec.Spec(os.getenv("PROJ"))
+
     for o, a in opts:
         if o in ("-h", "--help"):
             usage()
             sys.exit(0)
+        elif o in ("-s", "--spec"):
+            settings["spec"] = ueSpec.Spec(a)
         elif o in ("-p", "--paths"):
             settings["paths"] = True
         else:
@@ -48,16 +45,14 @@ def usage():
     print "Usage: %s" % os.path.basename(sys.argv[0])
     print "Lists groups in a ue project."
     print ""
+    print "\t-s, --spec          "
     print "\t-p, --paths         Show the groups root paths"
     print "\t-h, --help          Print this help"
 
 
 if __name__ == "__main__":
-    if not "PROJ" in os.environ:
-        print "ERROR: No project set"
-        sys.exit(2)
+    ueClient.Client()
 
-    settings = {}
     parse()
     listGroups()
 

@@ -18,14 +18,14 @@ if [[ $? == 1 ]]; then
     export PATH=$PATH:$PROJ_ROOT/bin
   fi
 
-  export PS1="[\[$prj\]$PROJ\[$nc\]:\[$grp\]$GROUP\[$nc\]:\[$ast\]$ASST\[$nc\]]\n[\u@\h \W]\$ "
+  export PS1="[\[$prj\]$PROJ\[$nc\]:\[$grp\]$GRP\[$nc\]:\[$ast\]$ASST\[$nc\]]\n[\u@\h \W]\$ "
 
   cd $ASST_ROOT
 
   echo ""
   echo "${bold}Setting current asset to:$nc"
   echo "  Project: [ $prj$PROJ$nc ]"
-  echo "  Group:   [ $grp$GROUP$nc ]"
+  echo "  Group:   [ $grp$GRP$nc ]"
   echo "  Asset:   [ $ast$ASST$nc ]"
   echo ""
 else

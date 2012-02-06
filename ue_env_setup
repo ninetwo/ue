@@ -1,4 +1,4 @@
-export UE_PATH=/home/thoms/Development/ue
+export UE_PATH=/work/bin/ue
 
 export PATH=$PATH:$UE_PATH/bin:$UE_PATH/src
 export PYTHONPATH=$UE_PATH/src:/usr/local/lib/python2.6

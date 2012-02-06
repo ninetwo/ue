@@ -2,11 +2,12 @@ import os, glob
 
 import nuke
 
+import ueSpec
+
 import ueCore.AssetUtils as ueAssetUtils
-import ueCore.CreateUtils as ueCreateUtils
 
 proj = os.getenv("PROJ")
-grp = os.getenv("GROUP")
+grp = os.getenv("GRP")
 asst = os.getenv("ASST")
 
 # List of assets to scan for gizmos and scriptlets
@@ -23,10 +24,11 @@ def loadGizmos():
 def addGizmos():
     for l in libs:
         addGizmosFromAsset(l)
+    print "add"
 
 def loadGizmosFromAsset(asst):
     path = []
-    a = ueAssetUtils.getElements(asst[0], asst[1], asst[2])
+    a = ueAssetUtils.getElements(ueSpec.Spec(asst[0], asst[1], asst[2]))
     if "giz" in a:
         for n in a["giz"]:
             for p in a["giz"][n]:
@@ -34,15 +36,14 @@ def loadGizmosFromAsset(asst):
     return path
 
 def addGizmosFromAsset(asst):
-    a = ueAssetUtils.getElements(asst[0], asst[1], asst[2])
+    a = ueAssetUtils.getElements(ueSpec.Spec(asst[0], asst[1], asst[2]))
     if "giz" in a:
         for n in a["giz"]:
             for p in a["giz"][n]:
-                vers = ueAssetUtils.getVersions(asst[0], asst[1], asst[2],
-                                                "giz", n, p)
-                gizName = ueCreateUtils.getElementName(asst[0], asst[1], asst[2],
-                                                       "giz", n, p, len(vers))
-                menu = "%s:%s:%s/%s/%s" % (asst[0], asst[1], asst[2], n, p)
+                spec = ueSpec.Spec(asst[0], asst[1], asst[2], "giz", n, p)
+                vers = ueAssetUtils.getVersions(spec)
+                gizName = ueAssetUtils.getElementName(spec)
+                menu = "%s:%s:%s/%s/%s" % (spec.proj, spec.grp, spec.asst, n, p)
                 # Add a 'ueGizVers' knob to hold the version of the gizmo
                 # we're bringing in. This can be used for version control later.
                 # When you add a custom knob, Nuke makes the User tab active,

@@ -1,20 +1,15 @@
 #!/usr/bin/python
 
-import sys, os
-import getopt, json
+import sys, os, getopt
 
-import ueCore.Settings
+import ueClient
 
-global settings
+import ueCore.AssetUtils as ueAssetUtils
+
+settings = {}
 
 def listProjects():
-    projects = {}
-    if os.path.exists(ueCore.Settings.__UE_PROJ_FILE_PATH__):
-        f = open(ueCore.Settings.__UE_PROJ_FILE_PATH__, 'r')
-        projects = json.loads(f.read())
-        f.close()
-
-    for p in sorted(projects):
+    for p in ueAssetUtils.getProjectsList():
         if "paths" in settings:
             print "%s -> %s" % (p, projects[p]["path"])
         else:
@@ -51,7 +46,8 @@ def usage():
 
 
 if __name__ == "__main__":
-    settings = {}
+    ueClient.Client()
+
     parse()
     listProjects()
 

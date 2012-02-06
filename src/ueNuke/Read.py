@@ -4,8 +4,9 @@ from PyQt4 import QtCore, QtGui
 
 import nuke, nukescripts
 
+import ueSpec
+
 import ueCore.AssetUtils as ueAssetUtils
-import ueCore.CreateUtils as ueCreateUtils
 
 global proj, grp, asst
 
@@ -19,7 +20,7 @@ class ReadPanel(QtGui.QWidget):
         global proj, grp, asst
 
         proj = os.getenv("PROJ")
-        grp = os.getenv("GROUP")
+        grp = os.getenv("GRP")
         asst = os.getenv("ASST")
 
         self.projMenu = QtGui.QComboBox()
@@ -31,12 +32,12 @@ class ReadPanel(QtGui.QWidget):
             self.projMenu.addItem(p)
         self.projMenu.setCurrentIndex(pl.index(proj))
 
-        gl = ueAssetUtils.getGroupsList(proj)
+        gl = ueAssetUtils.getGroupsList(ueSpec.Spec(proj))
         for g in gl:
             self.grpMenu.addItem(g)
         self.grpMenu.setCurrentIndex(gl.index(grp))
 
-        al = ueAssetUtils.getAssetsList(proj, grp)
+        al = ueAssetUtils.getAssetsList(ueSpec.Spec(proj, grp))
         for a in al:
             self.asstMenu.addItem(a)
         self.asstMenu.setCurrentIndex(al.index(asst))
@@ -88,7 +89,8 @@ class ReadPanel(QtGui.QWidget):
     def loadGroups(self):
         global proj
         proj = str(self.projMenu.currentText())
-        gl = ueAssetUtils.getGroupsList(proj)
+        spec = ueSpec.Spec(proj)
+        gl = ueAssetUtils.getGroupsList(spec)
         self.grpMenu.clear()
         for g in gl:
             self.grpMenu.addItem(g)
@@ -97,7 +99,8 @@ class ReadPanel(QtGui.QWidget):
     def loadAssets(self):
         global grp
         grp = str(self.grpMenu.currentText())
-        al = ueAssetUtils.getAssetsList(proj, grp)
+        spec = ueSpec.Spec(proj, grp)
+        al = ueAssetUtils.getAssetsList(spec)
         self.asstMenu.clear()
         for a in al:
             self.asstMenu.addItem(a)
@@ -189,7 +192,8 @@ class AnimationTab(QtGui.QWidget):
             self.layerListPicker.setText(f)
 
     def reload(self):
-        self.layers = ueAssetUtils.getClass(proj, grp, asst, self.elclass)
+        spec = ueSpec.Spec(proj, grp, asst, self.elclass)
+        self.layers = ueAssetUtils.getClass(spec)
 
         if self.layers == None:
             self.layers = {}
@@ -224,9 +228,10 @@ class AnimationTab(QtGui.QWidget):
 
     def loadVersions(self):
         self.versList.clear()
-        vers = ueAssetUtils.getVersions(proj, grp, asst, self.elclass,
+        spec = ueSpec.Spec(proj, grp, asst, self.elclass,
                                         str(self.layerList.currentItem().text()),
                                         str(self.passList.currentItem().text()))
+        vers = ueAssetUtils.getVersions(spec)
         for v in sorted(range(len(vers)), reverse=True):
             item = QtGui.QListWidgetItem("%3d" % int(v+1))
             self.versList.addItem(item)
@@ -267,24 +272,27 @@ class AnimationTab(QtGui.QWidget):
             n[n.index(nn)+1] = m
 
 def getUeRead(a):
-    v = ueAssetUtils.getVersions(proj, "lib", "global",
-                                "giz", "fileUtils", "ueRead")
-    n = ueCreateUtils.getElementName(proj, "lib", "global",
-                                    "giz", "fileUtils", "ueRead", len(v))
+    spec = ueSpec.Spec(proj, "lib", "global",
+                       "giz", "fileUtils", "ueRead")
+    v = ueAssetUtils.getVersions(spec)
+    spec.vers = len(v)
+    n = ueAssetUtils.getElementName(spec)
     return nuke.createNode(n, " ".join(a), inpanel=False)
 
 def getTvpReformat(a):
-    v = ueAssetUtils.getVersions(proj, "lib", "global",
-                                "giz", "fileUtils", "tvpReformat")
-    n = ueCreateUtils.getElementName(proj, "lib", "global",
-                                     "giz", "fileUtils", "tvpReformat", len(v))
+    spec = ueSpec.Spec(proj, "lib", "global",
+                       "giz", "fileUtils", "tvpReformat")
+    v = ueAssetUtils.getVersions(spec)
+    spec.vers = len(v)
+    n = ueAssetUtils.getElementName(spec)
     return nuke.createNode(n, " ".join(a), inpanel=False)
 
 def getReColour(a):
-    v = ueAssetUtils.getVersions(proj, "lib", "global",
-                                "giz", "celUtils", "reColour")
-    n = ueCreateUtils.getElementName(proj, "lib", "global",
-                                     "giz", "celUtils", "reColour", len(v))
+    spec = ueSpec.Spec(proj, "lib", "global",
+                       "giz", "celUtils", "reColour")
+    v = ueAssetUtils.getVersions(spec)
+    spec.vers = len(v)
+    n = ueAssetUtils.getElementName(spec)
     return nuke.createNode(n, " ".join(a), inpanel=False)
 
 
@@ -335,7 +343,8 @@ class BackgroundTab(QtGui.QWidget):
                      self.nukeImportBackground)
 
     def reload(self):
-        self.backgrounds = ueAssetUtils.getNamesList(proj, grp, asst, self.elclass, self.eltype)
+        spec = ueSpec.Spec(proj, grp, asst, self.elclass, self.eltype)
+        self.backgrounds = ueAssetUtils.getNamesList(spec)
 
         self.loadBackgrounds()
 
@@ -346,8 +355,9 @@ class BackgroundTab(QtGui.QWidget):
 
     def loadVersions(self):
         self.versList.clear()
-        vers = ueAssetUtils.getVersions(proj, grp, asst, self.elclass, self.eltype,
-                                        str(self.backgroundList.currentItem().text()))
+        spec = ueSpec.Spec(proj, grp, asst, self.elclass, self.eltype,
+                           str(self.backgroundList.currentItem().text()))
+        vers = ueAssetUtils.getVersions(spec)
         for v in sorted(range(len(vers)), reverse=True):
             item = QtGui.QListWidgetItem("%3d" % int(v+1))
             self.versList.addItem(item)
@@ -430,8 +440,8 @@ class RenderTab(QtGui.QWidget):
         self.loadTypes()
 
     def loadTypes(self):
-        self.renders = ueAssetUtils.getClass(proj, grp, asst,
-                                             str(self.classList.currentText()))
+        spec = ueSpec.Spec(proj, grp, asst, str(self.classList.currentText()))
+        self.renders = ueAssetUtils.getClass(spec)
 
         if self.renders == None:
             self.renders = {}
@@ -448,11 +458,12 @@ class RenderTab(QtGui.QWidget):
                 self.nameList.addItem(QtGui.QListWidgetItem(n))
 
     def loadVersions(self):
-        self.versList.clear()
-        vers = ueAssetUtils.getVersions(proj, grp, asst,
+        spec = ueSpec.Spec(proj, grp, asst,
                                         str(self.classList.currentText()),
                                         str(self.typeList.currentItem().text()),
                                         str(self.nameList.currentItem().text()))
+        self.versList.clear()
+        vers = ueAssetUtils.getVersions(spec)
         for v in sorted(range(len(vers)), reverse=True):
             item = QtGui.QListWidgetItem("%3d" % int(v+1))
             self.versList.addItem(item)

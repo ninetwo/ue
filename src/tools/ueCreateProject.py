@@ -1,14 +1,12 @@
 #!/usr/bin/python
 
-import sys, os
-import getopt, json
+import sys, os, getopt
 
-import ueCore.Settings as ueSettings
-import ueCore.AssetUtils as ueAssetUtils
-import ueCore.FileUtils as ueFileUtils
-import ueCore.ConfigUtils as ueConfigUtils
+import ueClient, ueSpec
 
-global project
+import ueCore.Create as ueCreate
+
+project = {}
 
 def createProject():
     if "name" not in project:
@@ -19,32 +17,9 @@ def createProject():
         print "ERROR: Project directory not set"
         sys.exit(2)
 
-    config = ueConfigUtils.getConfig()
-    projects = ueAssetUtils.getProjects()
+    spec = ueSpec.Spec(project["name"])
 
-    if project["name"] in projects:
-        print "ERROR: Project '%s' already exists" % project["name"]
-        sys.exit(2)
-
-    if not os.path.exists(project["directory"]):
-        print "ERROR: Path '%s' not found" % project["directory"]
-        sys.exit(2)
-
-    d = os.path.join(project["directory"], project["name"])
-
-    ueFileUtils.createDirTree(d, config["PROJECT_DIRS"])
-    ueConfigUtils.saveConfig(config, d)
-
-    projects[project["name"]] = {"path": d}
-    try:
-        print "Adding project to projects list '%s'" % ueSettings.__UE_PROJ_FILE_PATH__
-        f = open(ueSettings.__UE_PROJ_FILE_PATH__, "w")
-        f.write(json.dumps(projects, sort_keys=True, indent=4))
-        f.close()
-    except IOError, e:
-        print "Error: Adding project to projects list '%s' (%s)" % (ueSettings.__UE_PROJ_FILE_PATH__, e)
-        sys.exit(2)
-
+    ueCreate.createProject(spec)
 
 def parse():
     sArgs = "hn:d:"
@@ -56,7 +31,7 @@ def parse():
         print "ERROR: Parsing argument (%s)" % e
         sys.exit(2)
 
-    project["directory"] = ueSettings.__UE_ROOT__
+    project["directory"] = "/work"
 
     for o, a in opts:
         if o in ("-h", "--help"):
@@ -85,7 +60,8 @@ if __name__ == "__main__":
         usage()
         sys.exit(0)
 
-    project = {}
+    ueClient.Client()
+
     parse()
     createProject()
 

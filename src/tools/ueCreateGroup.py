@@ -1,14 +1,12 @@
 #!/usr/bin/python
 
-import sys, os
-import getopt, json
+import sys, os, getopt
 
-import ueCore.Settings as ueSettings
-import ueCore.AssetUtils as ueAssetUtils
-import ueCore.ConfigUtils as ueConfigUtils
-import ueCore.FileUtils as ueFileUtils
+import ueClient, ueSpec
 
-global group
+import ueCore.Create as ueCreate
+
+group = {}
 
 def createGroup():
     if "name" not in group:
@@ -19,37 +17,14 @@ def createGroup():
         print "ERROR: Directory not set"
         sysexit(2)
 
-    config = ueConfigUtils.getConfig(os.getenv("PROJ"))
-    groups = ueAssetUtils.getGroups(os.getenv("PROJ"))
+    spec = ueSpec.Spec(group["spec"], group["name"])
 
-    if group["name"] in groups:
-        print "ERROR: Group '%s' already exists" % group["name"]
-        sys.exit(2)
-
-    if not group["type"] in config["GROUP_DIRS"]:
-        print "ERROR: Group type '%s' does not exist" % group["type"]
-        sys.exit(2)
-
-    rootDir = os.path.join(group["directory"], config["GROUP_DIRS"][group["type"]][1])
-
-    d = os.path.join(rootDir, group["name"])
-
-    ueFileUtils.createDirTree(d, config["GROUP_DIRS"][group["type"]][0])
-
-    groups[group["name"]] = {"path": d, "type": group["type"]}
-    p = os.path.join(os.getenv("PROJ_ROOT"), "etc", "groups")
-    try:
-        print "Adding group to project group list '%s'" % p
-        f = open(p, 'w')
-        f.write(json.dumps(groups, sort_keys=True, indent=4))
-        f.close()
-    except IOError, e:
-        print "Error: Adding group to project group list '%s' (%s)" % (p, e)
+    ueCreate.createGroup(spec, group["type"])
 
 
 def parse():
-    sArgs = "hn:t:d:"
-    lArgs = ["help", "name=", "type=", "directory="]
+    sArgs = "hn:s:t:d:"
+    lArgs = ["help", "name=", "spec=", "type=", "directory="]
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], sArgs, lArgs)
@@ -57,6 +32,7 @@ def parse():
         print "ERROR: Parsing argument (%s)" % e
         sys.exit(2)
 
+    group["spec"] = os.getenv("PROJ")
     group["type"] = "default"
     group["directory"] = os.getenv("PROJ_ROOT")
 
@@ -66,6 +42,8 @@ def parse():
             sys.exit(0)
         elif o in ("-n", "--name"):
             group["name"] = a
+        elif o in ("-s", "--spec"):
+            group["spec"] = a
         elif o in ("-t", "--type"):
             group["type"] = a
         elif o in ("-d", "--directory"):
@@ -80,6 +58,7 @@ def usage():
     print "Creates a new ue group."
     print ""
     print "\t-n, --name          Group name"
+    print "\t-s, --spec          Spec to create group in"
     print "\t-t, --type          Group type"
     print "\t-d, --directory     Group directory"
     print "\t                    Will use project default if not set"
@@ -91,11 +70,8 @@ if __name__ == "__main__":
         usage()
         sys.exit(0)
 
-    if not "PROJ" in os.environ:
-        print "ERROR: No project set"
-        sys.exit(2)
+    ueClient.Client()
 
-    group = {}
     parse()
     createGroup()
 

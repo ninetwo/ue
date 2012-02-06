@@ -1,5 +1,5 @@
-import os, sys, shutil
-import glob 
+import os, sys
+import shutil, glob 
 
 def copyFile(f, d):
     try:
