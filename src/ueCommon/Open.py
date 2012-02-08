@@ -46,10 +46,21 @@ class Open(QtGui.QWidget):
         self.eltypeList = QtGui.QListWidget()
         self.elnameList = QtGui.QListWidget()
         self.versList = QtGui.QListWidget()
-        self.createUser = QtGui.QLabel("N/A")
-        self.createTime = QtGui.QLabel("N/A")
-        self.metadata = QtGui.QLabel("N/A")
-        self.filesList = QtGui.QListWidget()
+
+        self.elCreatedBy = QtGui.QLabel("N/A")
+        self.elCreatedAt = QtGui.QLabel("N/A")
+        self.elComment = QtGui.QLabel("N/A")
+        self.elThumb = QtGui.QLabel()
+        self.verCreatedBy = QtGui.QLabel("N/A")
+        self.verCreatedAt = QtGui.QLabel("N/A")
+        self.verComment = QtGui.QLabel("N/A")
+        self.verThumb = QtGui.QLabel()
+        self.verFilesList = QtGui.QListWidget()
+
+        img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "placeholder.png"))
+        imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
+        self.elThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
+        self.verThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
 
         pl = ueAssetUtils.getProjectsList()
         for p in sorted(pl):
@@ -84,12 +95,16 @@ class Open(QtGui.QWidget):
                 self.elnameList.setCurrentItem(self.elnameList.item(0))
                 elname = str(self.elnameList.currentItem().text())
 
-                versions = ueAssetUtils.getVersions(ueSpec.Spec(proj, grp, asst,
-                                                    elclass, eltype, elname))
-                for v in sorted(range(len(versions)), reverse=True):
+                self.updateElInfo()
+
+                self.versions = ueAssetUtils.getVersions(ueSpec.Spec(proj, grp, asst,
+                                                         elclass, eltype, elname))
+                for v in sorted(range(len(self.versions)), reverse=True):
                     self.versList.addItem(QtGui.QListWidgetItem("%04d" % int(v+1)))
                 self.versList.setCurrentItem(self.versList.item(0))
                 vers = int(self.versList.currentItem().text())
+
+                self.updateVersInfo()
 
         asstBox = QtGui.QGroupBox("Asset")
         asstBox.setLayout(QtGui.QHBoxLayout())
@@ -124,26 +139,39 @@ class Open(QtGui.QWidget):
         elBox.layout().addWidget(elDesc)
         elBox.layout().addWidget(elVers)
 
-        infoBox = QtGui.QGroupBox("Element Info")
-        infoBox.setLayout(QtGui.QGridLayout())
+        elInfoBox = QtGui.QGroupBox("Element Info")
+        elInfoBox.setLayout(QtGui.QGridLayout())
 
-        infoBox.layout().addWidget(QtGui.QLabel("Created by:"), 0, 0)
-        infoBox.layout().addWidget(self.createUser, 0, 1)
-        infoBox.layout().addWidget(QtGui.QLabel("Created at:"), 1, 0)
-        infoBox.layout().addWidget(self.createTime, 1, 1)
-        infoBox.layout().addWidget(QtGui.QLabel("Metadata:"), 2, 0)
-        infoBox.layout().addWidget(self.metadata, 2, 1)
-        infoBox.layout().addWidget(QtGui.QLabel("Files"), 0, 2)
-        infoBox.layout().addWidget(self.filesList, 1, 2, 2, 1)
+        elInfoBox.layout().addWidget(QtGui.QLabel("Created by"), 0, 0)
+        elInfoBox.layout().addWidget(self.elCreatedBy, 0, 1)
+        elInfoBox.layout().addWidget(QtGui.QLabel("Created at"), 1, 0)
+        elInfoBox.layout().addWidget(self.elCreatedAt, 1, 1)
+        elInfoBox.layout().addWidget(QtGui.QLabel("Comment"),2, 0)
+        elInfoBox.layout().addWidget(self.elComment, 2, 1)
+        elInfoBox.layout().addWidget(self.elThumb, 0, 2, 3, 2)
+
+        verInfoBox = QtGui.QGroupBox("Version Info")
+        verInfoBox.setLayout(QtGui.QGridLayout())
+
+        verInfoBox.layout().addWidget(QtGui.QLabel("Created by"), 0, 0)
+        verInfoBox.layout().addWidget(self.verCreatedBy, 0, 1)
+        verInfoBox.layout().addWidget(QtGui.QLabel("Created at"), 1, 0)
+        verInfoBox.layout().addWidget(self.verCreatedAt, 1, 1)
+        verInfoBox.layout().addWidget(QtGui.QLabel("Comment"),2, 0)
+        verInfoBox.layout().addWidget(self.verComment, 2, 1)
+        verInfoBox.layout().addWidget(QtGui.QLabel("Files"), 3, 0, 1, 4)
+        verInfoBox.layout().addWidget(self.verFilesList, 4, 0, 1, 4)
+        verInfoBox.layout().addWidget(self.verThumb, 0, 2, 3, 2)
 
         self.layout().addWidget(asstBox)
         self.layout().addWidget(elBox)
-        self.layout().addWidget(infoBox)
+        self.layout().addWidget(elInfoBox)
+        self.layout().addWidget(verInfoBox)
 
-        self.projMenu.activated.connect(self.loadGroups)
-        self.grpMenu.activated.connect(self.loadAssets)
-        self.asstMenu.activated.connect(self.loadElements)
-        self.elclassMenu.activated.connect(self.loadTypes)
+        self.projMenu.currentIndexChanged.connect(self.loadGroups)
+        self.grpMenu.currentIndexChanged.connect(self.loadAssets)
+        self.asstMenu.currentIndexChanged.connect(self.loadElements)
+        self.elclassMenu.currentIndexChanged.connect(self.loadTypes)
         self.eltypeList.itemSelectionChanged.connect(self.loadNames)
         self.elnameList.itemSelectionChanged.connect(self.loadVers)
         self.versList.itemSelectionChanged.connect(self.setVers)
@@ -153,7 +181,7 @@ class Open(QtGui.QWidget):
         self.projMenu.clear()
         for p in sorted(pl):
             self.projMenu.addItem(p)
-        self.loadGroups()
+#        self.loadGroups()
 
     def loadGroups(self):
         global proj
@@ -163,7 +191,7 @@ class Open(QtGui.QWidget):
         self.grpMenu.clear()
         for g in sorted(gl):
             self.grpMenu.addItem(g)
-        self.loadAssets()
+#        self.loadAssets()
 
     def loadAssets(self):
         global grp
@@ -173,7 +201,7 @@ class Open(QtGui.QWidget):
         self.asstMenu.clear()
         for a in sorted(al):
             self.asstMenu.addItem(a)
-        self.loadElements()
+#        self.loadElements()
 
     def loadElements(self):
         global asst
@@ -190,7 +218,7 @@ class Open(QtGui.QWidget):
             for t in sorted(self.elements[elclass]):
                 self.eltypeList.addItem(QtGui.QListWidgetItem(t))
             self.eltypeList.setCurrentItem(self.eltypeList.item(0))
-            self.loadNames()
+#            self.loadNames()
         else:
             self.elnameList.clear()
             self.versList.clear()
@@ -204,7 +232,7 @@ class Open(QtGui.QWidget):
                 for n in sorted(self.elements[elclass][eltype]):
                     self.elnameList.addItem(QtGui.QListWidgetItem(n))
                 self.elnameList.setCurrentItem(self.elnameList.item(0))
-                self.loadVers()
+#                self.loadVers()
             else:
                 self.versList.clear()
 
@@ -212,23 +240,69 @@ class Open(QtGui.QWidget):
         global elname, vers
         elname = str(self.elnameList.currentItem().text())
         spec = ueSpec.Spec(proj, grp, asst, elclass, eltype, elname)
-        versions = ueAssetUtils.getVersions(spec)
+        self.versions = ueAssetUtils.getVersions(spec)
         self.versList.clear()
-        if len(versions) > 0:
-            for v in sorted(range(len(versions)), reverse=True):
+        if len(self.versions) > 0:
+            for v in sorted(range(len(self.versions)), reverse=True):
                 self.versList.addItem(QtGui.QListWidgetItem("%04d" % int(v+1)))
             self.versList.setCurrentItem(self.versList.item(0))
-            vers = int(self.versList.item(0).text())
+            vers = str(self.versList.currentItem().text())
         else:
             vers = None
+        self.updateElInfo()
 
     def setVers(self):
         global vers
-        vers = str(self.versList.currentItem().text())
+        vers = int(self.versList.currentItem().text())
+        self.updateVersInfo()
 
-if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    win = Open()
-    win.show()
-    sys.exit(app.exec_())
+    def updateElInfo(self):
+        try:
+            el = self.elements[elclass][eltype][elname]
+            self.elCreatedBy.setText(el["created_by"])
+            self.elCreatedAt.setText(el["created_at"])
+            if "comment" in el:
+                self.elComment.setText(el["comment"])
+            else:
+                self.elComment.setText("N/A")
+            if "thumbnail" in el:
+                spec = ueSpec.Spec(proj, grp, asst, elclass, eltype, elname)
+                f = ueAssetUtils.getThumbnailPath(spec)
+                img = QtGui.QImage(f)
+                imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
+                self.elThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
+            else:
+                img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "placeholder.png"))
+                imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
+                self.elThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
+        except KeyError:
+            pass
+
+    def updateVersInfo(self):
+        try:
+            ver = self.versions[int(vers)-1]
+            self.verCreatedBy.setText(ver["created_by"])
+            self.verCreatedAt.setText(ver["created_at"])
+            if "comment" in ver:
+                self.verComment.setText(ver["comment"])
+            else:
+                self.verComment.setText("N/A")
+            if "thumbnail" in ver:
+                spec = ueSpec.Spec(proj, grp, asst, elclass, eltype, elname, vers)
+                f = ueAssetUtils.getThumbnailPath(spec)
+                img = QtGui.QImage(f)
+                imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
+                self.verThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
+            else:
+                img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "placeholder.png"))
+                imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
+                self.verThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
+        except IndexError:
+            pass
+
+#if __name__ == "__main__":
+#    app = QtGui.QApplication(sys.argv)
+#    win = Open()
+#    win.show()
+#    sys.exit(app.exec_())
 

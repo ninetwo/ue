@@ -33,8 +33,9 @@ class ElementsController < ApplicationController
                            :eltype => params[:eltype],
                            :elclass => params[:elclass],
                            :path => params[:path],
+                           :comment => params[:comment],
+                           :thumbnail => params[:thumbnail],
                            :created_by => params[:created_by],
-#                           :created_at => params[:created_at],
                            :asset_id => Asset.first(:name => params[:asset],
                                                     :group_id => Group.first(
                                                     :name => params[:group],
@@ -67,8 +68,9 @@ class ElementsController < ApplicationController
                              :name => params[:project])._id)._id)._id)
 
     @element.versions.build(:version => params[:version],
-                            :created_by => params[:created_by],
-                            :created_at => params[:created_at])
+                            :comment => params[:comment],
+                            :thumbnail => params[:thumbnail],
+                            :created_by => params[:created_by])
 
     FileUtils.mkdir_p(params[:path])
 

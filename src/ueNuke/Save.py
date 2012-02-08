@@ -26,7 +26,7 @@ def ueSave():
 
     nuke.scriptSave(root.knob("name").value())
 
-def ueSaveVers(**kargs):
+def ueSaveVers():
     root = nuke.root()
 
     if root.name() == "Root":
@@ -63,8 +63,8 @@ def ueSaveAs():
     ueCommonSave.setClasses(["c"])
 
     if p.showModalDialog():
-        spec = ueCommonSave.getValues()
-        ueNukeUtils.saveUtility(spec)
+        spec, dbMeta = ueCommonSave.getValues()
+        ueNukeUtils.saveUtility(spec, dbMeta=dbMeta)
 
     ueFileUtils.deleteFiles(os.path.join(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")))
     nukescripts.unregisterPanel("ue.panel.ueSave", lambda: "return")

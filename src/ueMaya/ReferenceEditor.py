@@ -36,7 +36,7 @@ class OpenRef(QtGui.QMainWindow):
         self.buttonBox.rejected.connect(self.close)
 
     def createRef(self):
-        spec = ueCommonOpen.getValues()
+        spec, dbMeta = ueCommonOpen.getValues()
         maPath = ueAssetUtils.getVersionPath(spec)
         maFile = ueAssetUtils.getElementName(spec)
         maya.cmds.file(os.path.join(maPath, maFile+".ma"), namespace=maFile, r=True)

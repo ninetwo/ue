@@ -56,7 +56,8 @@ class Save(QtGui.QMainWindow):
         self.buttonBox.rejected.connect(self.close)
 
     def save(self):
-        spec = ueCommonSave.getValues()
-        ueMayaUtils.saveUtility(spec)#, fileType="ma", export=False)
+        spec, dbMeta = ueCommonSave.getValues()
+        ueMayaUtils.saveUtility(spec, dbMeta=dbMeta)
+#        ueFileUtils.deleteFiles(os.path.join(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")))
         self.close()
 

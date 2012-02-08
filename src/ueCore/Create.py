@@ -59,23 +59,29 @@ def createAsset(spec, asstType="default", confOverrides=None):
 
     return asset
 
-def createElement(spec):
+def createElement(spec, dbMeta={}):
     element = {}
 
     element["path"] = ueAssetUtils.getElementPath(spec)
     element["created_by"] = getpass.getuser()
+
+    for m in dbMeta:
+        element[m] = dbMeta[m]
 
     ueClient.client.saveElement(spec, element)
     ueFileUtils.createDir(element["path"])
 
     return element
 
-def createVersion(spec, **kwargs):
+def createVersion(spec, dbMeta={}):
     version = {}
 
     version["version"] = len(ueAssetUtils.getVersions(spec))+1
     version["path"] = ueAssetUtils.getVersionPath(spec)
     version["created_by"] = getpass.getuser()
+
+    for m in dbMeta:
+        version[m] = dbMeta[m]
 
     ueClient.client.saveVersion(spec, version)
     ueFileUtils.createDir(version["path"])

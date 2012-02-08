@@ -64,6 +64,6 @@ class Spec():
         if not self.elclass == None:
             s += ":"+self.elclass
         if not self.vers == None:
-            s += ":%04d" % self.vers
+            s += ":%04d" % int(self.vers)
         return s
 

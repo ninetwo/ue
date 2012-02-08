@@ -10,7 +10,7 @@ import ueCommon.Open as ueCommonOpen
 def ueOpen():
     p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
                                           "ue.panel.ueOpen", create=True)
-    p.setMinimumSize(400, 650)
+    p.setMinimumSize(600, 920)
     ueCommonOpen.setClasses(["c"])
 
     if p.showModalDialog():

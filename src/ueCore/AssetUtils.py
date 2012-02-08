@@ -141,3 +141,10 @@ def getElementName(spec):
                                       spec.elclass, spec.vers)
     return s
 
+
+def getThumbnailPath(spec):
+    p =  os.path.join(os.getenv("PROJ_ROOT"), "var", "thumbs", spec.grp, spec.asst, getElementPath(spec)+".png")
+    if not os.path.exists(p):
+        p = os.path.join(os.getenv("UE_PATH"), "placeholder.png")
+    return p
+

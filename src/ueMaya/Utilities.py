@@ -9,7 +9,7 @@ import ueCore.AssetUtils as ueAssetUtils
 import ueCore.Create as ueCreate
 import ueMaya
 
-def saveUtility(spec, fileType="ma", export=False):
+def saveUtility(spec, dbMeta={}, fileType="ma", export=False):
     fileTypes = {"ma": ("mayaAscii", ""),
                  "obj": ("OBJexport", "groups=0; ptgroups=0; materials=0; smoothing=0; normals=0"),
                  "fbx": ()}
@@ -39,9 +39,9 @@ def saveUtility(spec, fileType="ma", export=False):
 
     d = ueAssetUtils.getElement(spec)
     if d == {}:
-        d = ueCreate.createElement(spec)
+        d = ueCreate.createElement(spec, dbMeta=dbMeta)
 
-    p = ueCreate.createVersion(spec)
+    p = ueCreate.createVersion(spec, dbMeta=dbMeta)
 
     spec.vers = p["version"]
 
@@ -64,6 +64,13 @@ def saveUtility(spec, fileType="ma", export=False):
         maya.cmds.file(rename=maPath)
         maya.cmds.file(save=True,
                        type=fileTypes[fileType][0])
+
+#    if "thumbnail" in p:
+#        source = os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_"+str(p["thumbnail"])+".png")
+#        dest = ueAssetUtils.getThumbnailPath(spec)
+#        if not os.path.exists(os.path.dirname(dest)):
+#            ueFileUtils.createDir(os.path.dirname(dest))
+#        ueFileUtils.moveFile(source, dest)
 
     print "Saved %s" % spec
 

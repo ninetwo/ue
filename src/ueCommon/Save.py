@@ -9,12 +9,18 @@ import ueSpec
 import ueCore.AssetUtils as ueAssetUtils
 
 global proj, grp, asst, elclass, eltype, elname
+global comment, thumbnail
 
 global elclasses
 elclasses = []
 
 def getValues():
-    return ueSpec.Spec(proj, grp, asst, elclass, eltype, elname)
+    dbMeta = {}
+    if not comment == None:
+        dbMeta["comment"] = comment
+    if not thumbnail == None:
+        dbMeta["thumbnail"] = thumbnail
+    return ueSpec.Spec(proj, grp, asst, elclass, eltype, elname), dbMeta
 
 def setClasses(classes):
     global elclasses
@@ -25,6 +31,7 @@ class Save(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
 
         global proj, grp, asst, elclass, eltype, elname
+        global comment, thumbnail
 
         self.elclasses = elclasses
 
@@ -34,6 +41,8 @@ class Save(QtGui.QWidget):
         elclass = None
         eltype = None
         elname = None
+        comment = None
+        thumbnail = None
 
         self.setLayout(QtGui.QGridLayout())
         self.layout().setContentsMargins(2, 2, 2, 2)
@@ -50,25 +59,7 @@ class Save(QtGui.QWidget):
         self.commentBox = QtGui.QTextEdit()
         self.thumbnailBox = QtGui.QScrollArea()
 
-        self.thumbnailBox.setFixedHeight(140)
-
-        labs = []
-        for f in glob.glob(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")):
-            lab = QtGui.QLabel()
-            img = QtGui.QImage(f)
-            imgs = img.scaled(250, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
-            lab.setPixmap(QtGui.QPixmap.fromImage(imgs))
-            labs.append(lab)
-
-        t = QtGui.QWidget()
-        t.setLayout(QtGui.QGridLayout())
-
-        for l in labs:
-            i = labs.index(l)
-            t.layout().addWidget(l, 0, i)
-            t.layout().addWidget(QtGui.QRadioButton(), 1, i)
-
-        self.thumbnailBox.setWidget(t)
+        self.thumbnailBox.setFixedHeight(160)
 
         pl = ueAssetUtils.getProjectsList()
         for p in pl:
@@ -100,6 +91,33 @@ class Save(QtGui.QWidget):
                 for n in self.elements[elclass][eltype]:
                     self.elnameMenu.addItem(n)
                 elname = str(self.elnameMenu.currentText())
+
+        t = QtGui.QWidget()
+        t.setLayout(QtGui.QHBoxLayout())
+
+        self.thumbnailButtons = []
+        for f in glob.glob(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")):
+            w = QtGui.QWidget()
+            w.setLayout(QtGui.QVBoxLayout())
+
+            name = os.path.basename(f).lstrip("ueSaveThumbs_").rstrip(".png")
+
+            label = QtGui.QLabel()
+            img = QtGui.QImage(f)
+            imgs = img.scaled(250, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
+            label.setPixmap(QtGui.QPixmap.fromImage(imgs))
+            radio = QtGui.QRadioButton(name)
+
+            self.thumbnailButtons.append(radio)
+
+            radio.toggled.connect(self.loadThumbnail)
+
+            w.layout().addWidget(label)
+            w.layout().addWidget(radio)
+
+            t.layout().addWidget(w)
+
+        self.thumbnailBox.setWidget(t)
 
         asstBox = QtGui.QGroupBox("Asset")
         asstBox.setLayout(QtGui.QHBoxLayout())
@@ -143,20 +161,7 @@ class Save(QtGui.QWidget):
         self.eltypeMenu.activated.connect(self.loadNames)
         self.eltypeBox.textEdited.connect(self.newType)
         self.elnameBox.textEdited.connect(self.newName)
-
-    def newType(self):
-        global eltype
-        if str(self.eltypeBox.text()) == "":
-            eltype = str(self.eltypeMenu.currentText())
-        else:
-            eltype = str(self.eltypeBox.text())
-
-    def newName(self):
-        global elname
-        if str(self.elnameBox.text()) == "":
-            elname = str(self.elnameMenu.currentText())
-        else:
-            elname = str(self.elnameBox.text())
+        self.commentBox.textChanged.connect(self.loadComment)
 
     def loadProjects(self):
         pl = ueAssetUtils.getProjectsList()
@@ -224,9 +229,33 @@ class Save(QtGui.QWidget):
                 self.elnameMenu.addItem(n)
             elname = str(self.elnameMenu.currentText())
 
-if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv) 
-    win = Save()
-    win.show()
-    sys.exit(app.exec_())
+    def newType(self):
+        global eltype
+        if str(self.eltypeBox.text()) == "":
+            eltype = str(self.eltypeMenu.currentText())
+        else:
+            eltype = str(self.eltypeBox.text())
+
+    def newName(self):
+        global elname
+        if str(self.elnameBox.text()) == "":
+            elname = str(self.elnameMenu.currentText())
+        else:
+            elname = str(self.elnameBox.text())
+
+    def loadComment(self):
+        global comment
+        comment = str(self.commentBox.toPlainText())
+
+    def loadThumbnail(self):
+        global thumbnail
+        for t in self.thumbnailButtons:
+            if t.isChecked:
+                thumbnail = t.text()
+
+#if __name__ == "__main__":
+#    app = QtGui.QApplication(sys.argv) 
+#    win = Save()
+#    win.show()
+#    sys.exit(app.exec_())
 

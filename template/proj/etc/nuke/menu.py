@@ -73,7 +73,7 @@ nuke.addFavoriteDir("render",
 
 # Auto-run
 nuke.addOnUserCreate(ueNuke.ueNewScriptSetup, nodeClass="Root")
-nuke.addOnScriptLoad(nukeChecker)
+#nuke.addOnScriptLoad(nukeChecker)
 nuke.addBeforeRender(ueNuke.render, nodeClass="Write")
 
 # Register panels

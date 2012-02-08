@@ -1,6 +1,13 @@
 import os, sys
 import shutil, glob 
 
+def moveFile(s, d):
+    try:
+       shutil.move(s, d)
+    except os.error, e:
+        print "ERROR: Moving file '%s' to '%s' (%s)" % (s, d, e)
+        return
+
 def copyFile(f, d):
     try:
         print "Copying file '%s' to '%s'" % (f, d)
@@ -36,7 +43,11 @@ def createDirTree(d, a):
 
 def deleteFile(f):
     if os.path.exists(f):
-        os.remove(f)
+        try:
+            os.remove(f)
+        except os.error, e:
+            print "ERROR: Deleting file '%s' (%s)" % (f, e)
+            return
 
 def deleteFiles(fs):
     for f in glob.glob(fs):

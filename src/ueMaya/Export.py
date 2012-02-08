@@ -66,23 +66,24 @@ class Export(QtGui.QMainWindow):
         self.exportMenu.itemSelectionChanged.connect(self.setExportTypes)
 
     def export(self):
-        spec = ueCommonSave.getValues()
+        spec, dbMeta = ueCommonSave.getValues()
         if spec.elclass == "s":
-            ueMayaUtils.saveUtility(spec, fileType="ma", export=True)
+            ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
         elif spec.elclass == "cam":
             spec.elclass = "s"
-            ueMayaUtils.saveUtility(spec, fileType="ma", export=True)
+            ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
             spec.elclass = "cam"
-            ueMayaUtils.saveUtility(spec, fileType="fbx", export=True)
+            ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="fbx", export=True)
         elif spec.elclass == "lgt":
             spec.elclass = "s"
-            ueMayaUtils.saveUtility(spec, fileType="ma", export=True)
+            ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
             spec.elclass = "lgt"
-            ueMayaUtils.saveUtility(spec, fileType="fbx", export=True)
+            ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="fbx", export=True)
         elif spec.elclass == "geo":
-            ueMayaUtils.saveUtility(spec, fileType="obj", export=True)
+            ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="obj", export=True)
             spec.elclass = "s"
-            ueMayaUtils.saveUtility(spec, fileType="ma", export=True)
+            ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
+#        ueFileUtils.deleteFiles(os.path.join(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")))
         self.close()
 
     def setExportTypes(self):
