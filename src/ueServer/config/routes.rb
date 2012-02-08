@@ -1,4 +1,9 @@
 UeServer::Application.routes.draw do
+  match "/config/:project(/:group(/:asset(/:elclass(/:eltype(/:elname)))))" => "configs#show", :as => :config, :via => :get
+  match "/config/:project(/:group(/:asset(/:elclass(/:eltype(/:elname)))))" => "configs#create", :as => :config, :via => :post
+  match "/config/:project(/:group(/:asset(/:elclass(/:eltype(/:elname)))))" => "configs#update", :as => :config, :via => :put
+  match "/config/:project(/:group(/:asset(/:elclass(/:eltype(/:elname)))))" => "configs#destroy", :as => :config, :via => :destroy
+
   match "/projects"                      => "projects#index",   :as => :projects, :via => :get
   match "/projects"                      => "projects#create",  :as => :projects, :via => :post
   match "/projects"                      => "projects#update",  :as => :projects, :via => :put

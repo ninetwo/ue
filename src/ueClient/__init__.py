@@ -54,6 +54,14 @@ class Client():
             print "FATAL ERROR: %s" % e
             sys.exit(2)
 
+    def getConfig(self, *args):
+        if len(args) == 1:
+            return self.get("config", args[0])
+        elif len(args) == 2:
+            return self.get("config", args[0], args[1])
+        elif len(args) == 3:
+            return self.get("config", args[0], args[1], args[2])
+
     def getProjects(self):
         return self.get("projects")
 
@@ -78,6 +86,15 @@ class Client():
     def getElement(self, spec):
         return self.get("elements", spec.proj, spec.grp, spec.asst,
                         spec.elclass, spec.eltype, spec.elname)
+
+    def saveConfig(self, spec, data):
+        if spec.grp == None:
+            self.post("config", spec.proj, data={"config": data})
+        elif spec.asst == None:
+            self.post("config", spec.proj, spec.grp, data={"config": data})
+        elif spec.elclass == None:
+            self.post("config", spec.proj, spec.grp, spec.asst,
+                      data={"config": data})
 
     def saveProject(self, spec, data):
         self.post("projects", data=data)

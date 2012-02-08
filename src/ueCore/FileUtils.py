@@ -34,3 +34,11 @@ def createDirTree(d, a):
             createDirTree(os.path.join(d, pd), a[pd])
 #    elif type(a).__name__ == "string":
 
+def deleteFile(f):
+    if os.path.exists(f):
+        os.remove(f)
+
+def deleteFiles(fs):
+    for f in glob.glob(fs):
+        deleteFile(f)
+

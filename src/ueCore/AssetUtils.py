@@ -100,7 +100,7 @@ def parsePath(path, **kwargs):
     return p
 
 def getElementPath(spec):
-    assetClasses = ueConfig.Config(spec).config.assetClasses
+    assetClasses = ueConfig.Config(spec).config["assetClasses"]
 
     # Check class
     if spec.elclass not in assetClasses:
@@ -121,7 +121,7 @@ def getElementPath(spec):
     return d
 
 def getVersionPath(spec):
-    assetClasses = ueConfig.Config(spec).config.assetClasses
+    assetClasses = ueConfig.Config(spec).config["assetClasses"]
 
     append = ""
     if "pathappend" in assetClasses[spec.elclass]:

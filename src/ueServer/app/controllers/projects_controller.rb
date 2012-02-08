@@ -20,8 +20,7 @@ class ProjectsController < ApplicationController
   def create
     @project = Project.new(:name       => params[:name],
                            :path       => params[:path],
-                           :created_by => params[:created_by],
-                           :created_at => params[:created_at])
+                           :created_by => params[:created_by])
 
     respond_to do |format|
       if @project.save

@@ -3,8 +3,7 @@ class Project
 
   key :name, String
   key :path, String
-  key :created_by, String
-  key :created_at, Float
+  timestamps!
 
   many :groups
 end

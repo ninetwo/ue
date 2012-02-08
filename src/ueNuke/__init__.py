@@ -3,8 +3,11 @@ import re, glob
 
 import nuke, nukescripts
 
+import ueSpec
+
 import ueCore.AssetUtils as ueAssetUtils
 import ueCore.Create as ueCreate
+import ueCore.Config as ueConfig
 
 checker = \
 {
@@ -66,17 +69,23 @@ checker = \
 def ueNewScriptSetup():
     root = nuke.root()
 
+    spec = ueSpec.Spec(os.getenv("PROJ"),
+                       os.getenv("GRP"),
+                       os.getenv("ASST"))
+
+    config = ueConfig.Config(spec).config["assetSettings"]
+
     formatName = "ueProjectRes"
 
-#    root.knob("fps").setValue(int(os.getenv("FRAMERATE")))
-#    root.knob("first_frame").setValue(int(os.getenv("STARTFRAME")))
-#    root.knob("last_frame").setValue(int(os.getenv("ENDFRAME")))
+    root.knob("fps").setValue(int(config["frameRate"]))
+    root.knob("first_frame").setValue(int(config["startFrame"]))
+    root.knob("last_frame").setValue(int(config["endFrame"]))
 
-#    x = int(os.getenv("XRES"))+int(os.getenv("XPAD"))
-#    y = int(os.getenv("YRES"))+int(os.getenv("YPAD"))
+    x = int(config["xRes"])+int(config["xPad"])
+    y = int(config["yRes"])+int(config["yPad"])
 
-#    nuke.addFormat("%i %i %s" % (x, y, formatName))
-#    root.knob("format").setValue(formatName)
+    nuke.addFormat("%i %i %s" % (x, y, formatName))
+    root.knob("format").setValue(formatName)
 
 def getReadPath():
     n = nuke.thisParent()

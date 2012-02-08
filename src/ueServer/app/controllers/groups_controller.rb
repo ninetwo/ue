@@ -21,7 +21,6 @@ class GroupsController < ApplicationController
     @group = Group.new(:name       => params[:name],
                        :path       => params[:path],
                        :created_by => params[:created_by],
-                       :created_at => params[:created_at],
                        :project_id => Project.first(:name => params[:project])._id)
 
     respond_to do |format|

@@ -19,11 +19,11 @@ def createAsset():
 
     spec = ueSpec.Spec(asset["spec"]+":"+asset["name"])
 
-    ueCreate.createAsset(spec, asset["type"])
+    ueCreate.createAsset(spec, asset["type"], asset["config"])
 
 def parse():
     sArgs = "hn:s:t:d:"
-    lArgs = ["help", "name=", "spec=", "type=", "directory=", "startframe=", "endframe="]
+    lArgs = ["help", "name=", "spec=", "type=", "directory=", "startFrame=", "endFrame="]
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], sArgs, lArgs)
@@ -34,7 +34,7 @@ def parse():
     asset["spec"] = ueSpec.Spec(os.getenv("PROJ"), os.getenv("GRP"))
     asset["type"] = "default"
     asset["directory"] = os.getenv("PROJ_ROOT")
-    asset["config"] = {}
+    asset["config"] = None
 
     for o, a in opts:
         if o in ("-h", "--help"):
@@ -48,14 +48,18 @@ def parse():
             asset["type"] = a
         elif o in ("-d", "--directory"):
             asset["directory"] = a
-        elif o in ("--startframe"):
-            if not "ENVS" in asset["config"]:
-                asset["config"]["ENVS"] = {}
-            asset["config"]["ENVS"]["STARTFRAME"] = a
-        elif o in ("--endframe"):
-            if not "ENVS" in asset["config"]:
-                asset["config"]["ENVS"] = {}
-            asset["config"]["ENVS"]["ENDFRAME"] = a
+        elif o in ("--startFrame"):
+            if asset["config"] == None:
+                asset["config"] = {}
+            if not "assetSettings" in asset["config"]:
+                asset["config"]["assetSettings"] = {}
+            asset["config"]["assetSettings"]["startFrame"] = a
+        elif o in ("--endFrame"):
+            if asset["config"] == None:
+                asset["config"] = {}
+            if not "assetSettings" in asset["config"]:
+                asset["config"]["assetSettings"] = {}
+            asset["config"]["assetSettings"]["endFrame"] = a
         else:
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)
@@ -69,8 +73,8 @@ def usage():
     print "\t-s, --spec          "
     print "\t-d, --directory     Asset directory"
     print "\t                    Will use group or project default if not set"
-    print "\t--startframe        Start frame"
-    print "\t--endframe          End frame"
+    print "\t--startFrame        Start frame"
+    print "\t--endFrame          End frame"
     print "\t-h, --help          Print this help"
 
 

@@ -1,5 +1,7 @@
 import os, sys
 
+import glob
+
 from PyQt4 import QtCore, QtGui
 
 import ueSpec
@@ -46,6 +48,27 @@ class Save(QtGui.QWidget):
         self.elnameMenu = QtGui.QComboBox()
         self.elnameBox = QtGui.QLineEdit()
         self.commentBox = QtGui.QTextEdit()
+        self.thumbnailBox = QtGui.QScrollArea()
+
+        self.thumbnailBox.setFixedHeight(140)
+
+        labs = []
+        for f in glob.glob(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")):
+            lab = QtGui.QLabel()
+            img = QtGui.QImage(f)
+            imgs = img.scaled(250, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
+            lab.setPixmap(QtGui.QPixmap.fromImage(imgs))
+            labs.append(lab)
+
+        t = QtGui.QWidget()
+        t.setLayout(QtGui.QGridLayout())
+
+        for l in labs:
+            i = labs.index(l)
+            t.layout().addWidget(l, 0, i)
+            t.layout().addWidget(QtGui.QRadioButton(), 1, i)
+
+        self.thumbnailBox.setWidget(t)
 
         pl = ueAssetUtils.getProjectsList()
         for p in pl:
@@ -104,6 +127,8 @@ class Save(QtGui.QWidget):
         miscBox = QtGui.QGroupBox("Optional")
         miscBox.setLayout(QtGui.QVBoxLayout())
 
+        miscBox.layout().addWidget(QtGui.QLabel("Thumbnail"))
+        miscBox.layout().addWidget(self.thumbnailBox)
         miscBox.layout().addWidget(QtGui.QLabel("Comment"))
         miscBox.layout().addWidget(self.commentBox)
 
