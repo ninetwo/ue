@@ -47,11 +47,17 @@ global proc createUeMenu()
            -subMenu true
            -tearOff true;
   menuItem -label "Selection"
-           -command "python(\"print 'test'\")";
+           -command "python(\"import ueMaya.Export\"); \
+                     python(\"ueMaya.Export.ueExport()\")";
   menuItem -divider true;
   menuItem -label "Camera"
-           -command "python(\"print 'test'\")";
+           -command "python(\"import ueMaya.Export\"); \
+                     python(\"ueMaya.Export.ueExport(export='Camera')\")";
+  menuItem -label "Light"
+           -command "python(\"import ueMaya.Export\"); \
+                     python(\"ueMaya.Export.ueExport(export='Light')\")";
   menuItem -label "Geometry"
-           -command "python(\"print 'test'\")";
+           -command "python(\"import ueMaya.Export\"); \
+                     python(\"ueMaya.Export.ueExport(export='Geometry')\")";
 }
 

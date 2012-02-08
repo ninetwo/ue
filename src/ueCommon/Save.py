@@ -171,6 +171,14 @@ class Save(QtGui.QWidget):
             self.eltypeMenu.clear()
             self.elnameMenu.clear()
 
+    def loadClasses(self):
+        global elclass
+        elclass = self.elclasses[0]
+        self.elclassMenu.clear()
+        for e in self.elclasses:
+            self.elclassMenu.addItem(e)
+        self.loadTypes()
+
     def loadTypes(self):
         global elclass
         elclass = str(self.elclassMenu.currentText())

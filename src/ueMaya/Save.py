@@ -57,6 +57,6 @@ class Save(QtGui.QMainWindow):
 
     def save(self):
         spec = ueCommonSave.getValues()
-        ueMayaUtils.saveUtility(spec)
+        ueMayaUtils.saveUtility(spec)#, fileType="ma", export=False)
         self.close()
 

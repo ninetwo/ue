@@ -1,6 +1,7 @@
 import os
 
 import maya.cmds
+import maya.mel
 
 import ueSpec
 
@@ -8,7 +9,11 @@ import ueCore.AssetUtils as ueAssetUtils
 import ueCore.Create as ueCreate
 import ueMaya
 
-def saveUtility(spec):
+def saveUtility(spec, fileType="ma", export=False):
+    fileTypes = {"ma": ("mayaAscii", ""),
+                 "obj": ("OBJexport", "groups=0; ptgroups=0; materials=0; smoothing=0; normals=0"),
+                 "fbx": ()}
+
     fi = ueMaya.parseFileInfo(maya.cmds.fileInfo(query=True))
 
     if not "ueproj" in fi:
@@ -41,10 +46,24 @@ def saveUtility(spec):
     spec.vers = p["version"]
 
     maName = ueAssetUtils.getElementName(spec)
-    maPath = os.path.join(p["path"], maName+".ma")
+    maPath = os.path.join(p["path"], maName+"."+fileType)
 
-    maya.cmds.file(rename=maPath)
-    maya.cmds.file(save=True, type="mayaAscii")
+    if fileType == "obj":
+        maya.cmds.loadPlugin("objExport.so")
+    elif fileType == "fbx":
+        maya.cmds.loadPlugin("fbxmaya.so")
+
+    if export:
+        if fileType == "fbx":
+            maya.mel.eval("FBXExport -f \""+maPath+"\";")
+        else:
+            maya.cmds.file(maPath, exportSelected=True,
+                           options=fileTypes[fileType][1],
+                           type=fileTypes[fileType][0])
+    else:
+        maya.cmds.file(rename=maPath)
+        maya.cmds.file(save=True,
+                       type=fileTypes[fileType][0])
 
     print "Saved %s" % spec
 

@@ -92,13 +92,17 @@ class Defaults():
                           "name": "Animatic footage",
                           "desc": "Animatic footage"
                          },
-                  "obj": {
+                  "geo": {
                           "name": "Geometry",
                           "desc": "Geometry"
                          },
                   "cam": {
                           "name": "Camera",
                           "desc": "Camera"
+                         },
+                  "lgt": {
+                          "name": "Light",
+                          "desc": "Light"
                          }
                  }
 

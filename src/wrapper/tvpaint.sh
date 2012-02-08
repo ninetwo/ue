@@ -1,9 +1,10 @@
 tvp_path=/usr/bin/tvp-animation-9-pro
 
-if [[ $PROJ == "" || $GROUP == "" || $ASST == "" ]]; then
+if [[ $PROJ == "" || $GRP == "" || $ASST == "" ]]; then
   echo "Error: uesp before running nuke"
   exit 0
 fi
 
-$tvp_path "script=$UE_PATH/python/ueTVP/Startup.grg" $*
+$tvp_path $*
+#"script=$UE_PATH/src/ueTVP/Startup.grg" $*
 

@@ -1,4 +1,4 @@
-import urllib, json
+import sys, urllib, json
 
 import ueSpec
 
@@ -23,7 +23,11 @@ class Client():
         url = "%s://%s:%i/%s%s.json" % (self.protocol, self.host,
                                         self.port, get, urlargs)
 
-        data = urllib.urlopen(url)
+        try:
+            data = urllib.urlopen(url)
+        except IOError, e:
+            print "FATAL ERROR: %s" % e
+            sys.exit(2)
 
         try:
             jsonDict = json.load(data)
@@ -44,7 +48,11 @@ class Client():
         url = "%s://%s:%i/%s%s.json" % (self.protocol, self.host,
                                         self.port, get, urlargs)
 
-        urllib.urlopen(url, urllib.urlencode(kwargs["data"]))
+        try:
+            urllib.urlopen(url, urllib.urlencode(kwargs["data"]))
+        except IOError, e:
+            print "FATAL ERROR: %s" % e
+            sys.exit(2)
 
     def getProjects(self):
         return self.get("projects")

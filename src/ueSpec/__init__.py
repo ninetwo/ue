@@ -57,12 +57,12 @@ class Spec():
             s += ":"+self.grp
         if not self.asst == None:
             s += ":"+self.asst
-        if not self.elclass == None:
-            s += ":"+self.elclass
-        if not self.eltype == None:
-            s += ":"+self.eltype
         if not self.elname == None:
             s += ":"+self.elname
+        if not self.eltype == None:
+            s += ":"+self.eltype
+        if not self.elclass == None:
+            s += ":"+self.elclass
         if not self.vers == None:
             s += ":%04d" % self.vers
         return s
