@@ -57,7 +57,7 @@ class Open(QtGui.QWidget):
         self.verThumb = QtGui.QLabel()
         self.verFilesList = QtGui.QListWidget()
 
-        img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "placeholder.png"))
+        img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "thumbnail.png"))
         imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
         self.elThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
         self.verThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
@@ -273,7 +273,7 @@ class Open(QtGui.QWidget):
                 imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
                 self.elThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
             else:
-                img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "placeholder.png"))
+                img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "thumbnail.png"))
                 imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
                 self.elThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
         except KeyError:
@@ -295,7 +295,7 @@ class Open(QtGui.QWidget):
                 imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
                 self.verThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
             else:
-                img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "placeholder.png"))
+                img = QtGui.QImage(os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "thumbnail.png"))
                 imgs = img.scaled(200, 80, aspectRatioMode=QtCore.Qt.KeepAspectRatio)
                 self.verThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
         except IndexError:

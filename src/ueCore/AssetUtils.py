@@ -193,5 +193,5 @@ def getThumbnailPath(spec):
     """
     p =  os.path.join(os.getenv("PROJ_ROOT"), "var", "thumbs", spec.grp, spec.asst, getElementName(spec)+".png")
     if not os.path.exists(p):
-        p = os.path.join(os.getenv("UE_PATH"), "placeholder.png")
+        p = os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "thumbnail.png")
     return p
