@@ -1,0 +1,102 @@
+#! /usr/local/Nuke6.3v2/Nuke6.3 -nx
+version 6.3 v2
+Gizmo {
+ label "\[value proj]:\[value grp]:\[value asst]\n\[value elclass]:\[value eltype]:\[value elname]"
+ note_font "Bitstream Vera Sans"
+ mapsize {0.15 0.15}
+ addUserKnob {20 assetTab l Asset}
+ addUserKnob {1 proj l project}
+ proj "\[python os.getenv(\"PROJ\")]"
+ addUserKnob {1 grp l group -STARTLINE}
+ grp "\[python os.getenv(\"GRP\")]"
+ addUserKnob {1 asst l asset -STARTLINE}
+ asst "\[python os.getenv(\"ASST\")]"
+ addUserKnob {26 ""}
+ addUserKnob {1 elclass l class}
+ elclass nr
+ addUserKnob {1 eltype l type}
+ addUserKnob {1 elname l name}
+ addUserKnob {6 newVersion l "create new version?" t "If checked, a new version of the element will be created. If un-checked, the last version of the element will be overwritten." +STARTLINE}
+ newVersion true
+ addUserKnob {26 ""}
+ addUserKnob {41 channels T WriteControl.channels}
+ addUserKnob {41 colorspace T WriteControl.colorspace}
+ addUserKnob {41 premultiplied -STARTLINE T WriteControl.premultiplied}
+ addUserKnob {41 raw l "raw data" -STARTLINE T WriteControl.raw}
+ addUserKnob {26 ""}
+ addUserKnob {4 format M {w1 w2 w3 w4 w5}}
+ addUserKnob {22 render l Render -STARTLINE T "nuke.execute(\"Write1\", int(nuke.root().knob(\"first_frame\").value()), int(nuke.root().knob(\"last_frame\").value()), 1)"}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos 178
+  ypos -199
+ }
+set N4938f20 [stack 0]
+ Write {
+  channels {{{WriteControl.channels}}}
+  file /tmp
+  checkHashOnRead false
+  name Write5
+  xpos 393
+  ypos -109
+ }
+push $N4938f20
+ Write {
+  channels {{{WriteControl.channels}}}
+  file /tmp
+  checkHashOnRead false
+  name Write4
+  xpos 286
+  ypos -111
+ }
+push $N4938f20
+ Write {
+  channels {{{WriteControl.channels}}}
+  file /tmp
+  checkHashOnRead false
+  name Write3
+  xpos 178
+  ypos -111
+ }
+push $N4938f20
+ Write {
+  channels {{{WriteControl.channels}}}
+  file /tmp
+  checkHashOnRead false
+  name Write2
+  xpos 77
+  ypos -111
+ }
+push $N4938f20
+ Write {
+  channels {{{WriteControl.channels}}}
+  file /tmp
+  file_type exr
+  checkHashOnRead false
+  name Write1
+  xpos -26
+  ypos -110
+ }
+ Switch {
+  inputs 5
+  which {{parent.format}}
+  name Switch1
+  xpos 178
+  ypos -29
+ }
+ Output {
+  name Output1
+  xpos 178
+  ypos 18
+ }
+ Write {
+  inputs 0
+  beforeRender ueNuke.preRender()
+  afterRender ueNuke.postRender()
+  name WriteControl
+  xpos -130
+  ypos -212
+ }
+end_group
