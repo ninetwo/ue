@@ -11,6 +11,8 @@ import ueMaya.Utilities as ueMayaUtils
 
 import ueCommon.Save as ueCommonSave
 
+__ueclasses__ = ["ms"]
+
 def ueSave():
     if maya.cmds.file(q=True, sn=True) == "":
         ueSaveAs()
@@ -38,7 +40,7 @@ class Save(QtGui.QMainWindow):
     def __init__(self, parent=ueMaya.getMayaWindow()):
         QtGui.QMainWindow.__init__(self, parent)
 
-        ueCommonSave.setClasses(["s"])
+        ueCommonSave.setClasses(__ueclasses__)
 
         self.saveWidget = ueCommonSave.Save()
         self.buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|

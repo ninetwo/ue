@@ -10,6 +10,8 @@ import ueCore.AssetUtils as ueAssetUtils
 import ueCommon.Open as ueCommonOpen
 import ueMaya
 
+__ueclasses__ = ["ms", "geo", "obj", "cam"]
+
 global refEditor
 
 class OpenRef(QtGui.QMainWindow):
@@ -18,7 +20,7 @@ class OpenRef(QtGui.QMainWindow):
 
         self.redrawRefList = redrawRefList
 
-        ueCommonOpen.setClasses(["s"])
+        ueCommonOpen.setClasses(__ueclasses__)
 
         self.openWidget = ueCommonOpen.Open()
         self.buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|

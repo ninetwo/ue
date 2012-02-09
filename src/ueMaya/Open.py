@@ -10,11 +10,13 @@ import ueMaya
 import ueCommon.Open as ueCommonOpen
 import ueCore.AssetUtils as ueAssetUtils
 
+__ueclasses__ = ["ms"]
+
 class Open(QtGui.QMainWindow):
     def __init__(self, parent=ueMaya.getMayaWindow()):
         QtGui.QMainWindow.__init__(self, parent)
 
-        ueCommonOpen.setClasses(["s"])
+        ueCommonOpen.setClasses(__ueclasses__)
 
         self.openWidget = ueCommonOpen.Open()
         self.buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|

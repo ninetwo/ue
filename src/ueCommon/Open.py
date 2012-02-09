@@ -62,18 +62,18 @@ class Open(QtGui.QWidget):
         self.elThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
         self.verThumb.setPixmap(QtGui.QPixmap.fromImage(imgs))
 
-        pl = ueAssetUtils.getProjectsList()
-        for p in sorted(pl):
+        pl = sorted(ueAssetUtils.getProjectsList())
+        for p in pl:
             self.projMenu.addItem(p)
         self.projMenu.setCurrentIndex(pl.index(proj))
 
-        gl = ueAssetUtils.getGroupsList(ueSpec.Spec(proj))
-        for g in sorted(gl):
+        gl = sorted(ueAssetUtils.getGroupsList(ueSpec.Spec(proj)))
+        for g in gl:
             self.grpMenu.addItem(g)
         self.grpMenu.setCurrentIndex(gl.index(grp))
 
-        al = ueAssetUtils.getAssetsList(ueSpec.Spec(proj, grp))
-        for a in sorted(al):
+        al = sorted(ueAssetUtils.getAssetsList(ueSpec.Spec(proj, grp)))
+        for a in al:
             self.asstMenu.addItem(a)
         self.asstMenu.setCurrentIndex(al.index(asst))
 
@@ -168,9 +168,9 @@ class Open(QtGui.QWidget):
         self.layout().addWidget(elInfoBox)
         self.layout().addWidget(verInfoBox)
 
-        self.projMenu.currentIndexChanged.connect(self.loadGroups)
-        self.grpMenu.currentIndexChanged.connect(self.loadAssets)
-        self.asstMenu.currentIndexChanged.connect(self.loadElements)
+        self.projMenu.activated.connect(self.loadGroups)
+        self.grpMenu.activated.connect(self.loadAssets)
+        self.asstMenu.activated.connect(self.loadElements)
         self.elclassMenu.currentIndexChanged.connect(self.loadTypes)
         self.eltypeList.itemSelectionChanged.connect(self.loadNames)
         self.elnameList.itemSelectionChanged.connect(self.loadVers)
@@ -181,7 +181,7 @@ class Open(QtGui.QWidget):
         self.projMenu.clear()
         for p in sorted(pl):
             self.projMenu.addItem(p)
-#        self.loadGroups()
+        self.loadGroups()
 
     def loadGroups(self):
         global proj
@@ -191,7 +191,7 @@ class Open(QtGui.QWidget):
         self.grpMenu.clear()
         for g in sorted(gl):
             self.grpMenu.addItem(g)
-#        self.loadAssets()
+        self.loadAssets()
 
     def loadAssets(self):
         global grp
@@ -201,7 +201,7 @@ class Open(QtGui.QWidget):
         self.asstMenu.clear()
         for a in sorted(al):
             self.asstMenu.addItem(a)
-#        self.loadElements()
+        self.loadElements()
 
     def loadElements(self):
         global asst
@@ -209,6 +209,7 @@ class Open(QtGui.QWidget):
         spec = ueSpec.Spec(proj, grp, asst)
         self.elements = ueAssetUtils.getElements(spec)
         self.eltypeList.clear()
+        self.loadTypes()
 
     def loadTypes(self):
         global elclass

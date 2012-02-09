@@ -41,7 +41,7 @@ def addGizmosFromAsset(asst):
         for n in a["giz"]:
             for p in a["giz"][n]:
                 spec = ueSpec.Spec(asst[0], asst[1], asst[2], "giz", n, p)
-                vers = ueAssetUtils.getVersions(spec)
+                spec.vers = len(ueAssetUtils.getVersions(spec))
                 gizName = ueAssetUtils.getElementName(spec)
                 menu = "%s:%s:%s/%s/%s" % (spec.proj, spec.grp, spec.asst, n, p)
                 # Add a 'ueGizVers' knob to hold the version of the gizmo
@@ -52,7 +52,7 @@ def addGizmosFromAsset(asst):
                 command =  str('n = nuke.createNode("'+gizName+'", "name '+p+'", \
                            inpanel=False); \
                            n.addKnob(nuke.Int_Knob("ueGizmoVers", "gizmo version")); \
-                           n.knob("ueGizmoVers").setValue('+str(len(vers))+'); \
+                           n.knob("ueGizmoVers").setValue('+str(spec.vers)+'); \
                            n.showControlPanel()')
                 nuke.toolbar("Nodes").addCommand("ueTools/"+menu, command)
                 nuke.menu("Nuke").addCommand("ueTools/gizmos/"+menu, command)

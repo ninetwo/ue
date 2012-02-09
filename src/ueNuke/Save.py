@@ -12,7 +12,7 @@ import ueNuke
 import ueNuke.Utilities as ueNukeUtils
 import ueCommon.Save as ueCommonSave
 
-elclass = "c"
+__elclasses__ = ["ns"]
 
 def ueSave():
     root = nuke.root()
@@ -39,7 +39,7 @@ def ueSaveVers():
     spec = ueSpec.Spec(root.knob("proj").value(),
                        root.knob("grp").value(),
                        root.knob("asst").value(),
-                       elclass,
+                       root.knob("ueclass").value(),
                        root.knob("uetype").value(),
                        root.knob("uename").value())
 
@@ -60,7 +60,7 @@ def ueSaveAs():
     p = nukescripts.registerWidgetAsPanel("ueCommonSave.Save", "ueSave",
                                           "ue.panel.ueSave", create=True)
     p.setMinimumSize(400, 600)
-    ueCommonSave.setClasses(["c"])
+    ueCommonSave.setClasses(__elclasses__)
 
     if p.showModalDialog():
         spec, dbMeta = ueCommonSave.getValues()

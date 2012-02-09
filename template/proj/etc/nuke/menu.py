@@ -74,7 +74,7 @@ nuke.addFavoriteDir("render",
 # Auto-run
 nuke.addOnUserCreate(ueNuke.ueNewScriptSetup, nodeClass="Root")
 #nuke.addOnScriptLoad(nukeChecker)
-nuke.addBeforeRender(ueNuke.render, nodeClass="Write")
+#nuke.addBeforeRender(ueNuke.render, nodeClass="Write")
 
 # Register panels
 ueReadPanel = nukescripts.registerWidgetAsPanel("ueNukeRead.ReadPanel", "ueRead", "ue.panel.ueRead", create=True)

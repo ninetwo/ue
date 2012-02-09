@@ -10,6 +10,11 @@ import ueMaya
 import ueMaya.Utilities as ueMayaUtils
 import ueCommon.Save as ueCommonSave
 
+__exportTypes__ = {"Selected": ("selected", ["cam", "lgt", "geo", "ms"]),
+                   "Camera": ("cameras", ["cam"]),
+                   "Light": ("lights", ["lgt"]),
+                   "Geometry": ("geometry", ["geo"])}
+
 global selected
 
 def ueExport(export="Selected"):
@@ -22,18 +27,13 @@ class Export(QtGui.QMainWindow):
     def __init__(self, parent=ueMaya.getMayaWindow()):
         QtGui.QMainWindow.__init__(self, parent)
 
-        self.exportTypes = {"Selected": ("selected", ["cam", "lgt", "geo", "s"]),
-                            "Camera": ("cameras", ["cam"]),
-                            "Light": ("lights", ["lgt"]),
-                            "Geometry": ("geometry", ["geo"])}
-
         ueCommonSave.setClasses([])
 
         self.exportMenu = QtGui.QListWidget()
         self.itemMenu = QtGui.QListWidget()
         self.itemMenu.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 
-        for et in self.exportTypes:
+        for et in __exportTypes__:
             self.exportMenu.addItem(QtGui.QListWidgetItem(et))
 
         exportWidget = QtGui.QGroupBox("Export")
@@ -67,27 +67,27 @@ class Export(QtGui.QMainWindow):
 
     def export(self):
         spec, dbMeta = ueCommonSave.getValues()
-        if spec.elclass == "s":
+        if spec.elclass == "ms":
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
         elif spec.elclass == "cam":
-            spec.elclass = "s"
+            spec.elclass = "ms"
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
             spec.elclass = "cam"
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="fbx", export=True)
         elif spec.elclass == "lgt":
-            spec.elclass = "s"
+            spec.elclass = "ms"
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
             spec.elclass = "lgt"
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="fbx", export=True)
         elif spec.elclass == "geo":
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="obj", export=True)
-            spec.elclass = "s"
+            spec.elclass = "ms"
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
 #        ueFileUtils.deleteFiles(os.path.join(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")))
         self.close()
 
     def setExportTypes(self):
-        t = self.exportTypes[str(self.exportMenu.currentItem().text())]
+        t = __exportTypes__[str(self.exportMenu.currentItem().text())]
         self.saveWidget.elclasses = t[1]
         self.saveWidget.loadClasses()
         if t[0] == "selected":

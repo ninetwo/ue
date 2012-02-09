@@ -21,7 +21,6 @@ defaultConfig = {
                            },
                             "seq"],
               "lib":     [{
-                            "etc": None
                            },
                            ""]
              },
@@ -52,65 +51,57 @@ defaultConfig = {
         },
 
         "assetClasses": {"o":   {
-                          "name": "Output",
-                          "desc": "Final asset output"
-                         },
-                  "tvp": {
-                          "name": "TVPaint",
-                          "desc": "TVPaint document"
-                         },
-                  "cel": {
-                          "name": "Cel",
-                          "desc": "Cel image sequence",
-                          "pathprepend": "cel",
-                          "pathappend":  "%%version%%"
-                         },
-                  "bg":  {
-                          "name": "Background",
-                          "desc": "Background image"
-                         },
-                  "c":   {
-                          "name": "Comp script",
-                          "desc": "Comp script"
-                         },
-                  "s":   {
-                          "name": "3D scene",
-                          "desc": "3D scene"
-                         },
-                  "cp":  {
-                          "name": "Comp render",
-                          "desc": "Render from comp script",
-                          "pathprepend": "render",
-                          "pathappend":  "%%version%%"
-                         },
-                  "rn":  {
-                          "name": "3D render",
-                          "desc": "Render from 3D",
-                          "pathprepend": "render",
-                          "pathappend":  "%%version%%"
-                         },
-                  "giz": {
-                          "name": "Nuke Gizmo",
-                          "desc": "Nuke Gizmo",
-                          "pathprepend": "gizmo"
-                         },
-                  "ani": {
-                          "name": "Animatic footage",
-                          "desc": "Animatic footage"
-                         },
-                  "geo": {
-                          "name": "Geometry",
-                          "desc": "Geometry"
-                         },
-                  "cam": {
-                          "name": "Camera",
-                          "desc": "Camera"
-                         },
-                  "lgt": {
-                          "name": "Light",
-                          "desc": "Light"
-                         }
-           }
+                                 "name": "Output"
+                                },
+                         "ns":  {
+                                 "name": "Nuke script"
+                                },
+                         "nr":  {
+                                 "name": "Nuke render"
+                                },
+                         "giz": {
+                                 "name": "Nuke gizmo"
+                                },
+                         "scp": {
+                                 "name": "Nuke scriptlet"
+                                },
+                         "ms":  {
+                                 "name": "Maya scene"
+                                },
+                         "mr":  {
+                                 "name": "Maya render"
+                                },
+                         "tvp": {
+                                 "name": "TVPaint document"
+                                },
+                         "cel": {
+                                 "name": "Cel sequence"
+                                },
+                         "ps":  {
+                                 "name": "Photoshop document"
+                                },
+                         "bg":  {
+                                 "name": "Background"
+                                },
+                         "ae":  {
+                                 "name": "After Effects document"
+                                },
+                         "ar":  {
+                                 "name": "After Effects render"
+                                },
+                         "geo": {
+                                 "name": "Geometry"
+                                },
+                         "cam": {
+                                 "name": "Camera"
+                                },
+                         "lgt": {
+                                 "name": "Light"
+                                },
+                         "tex": {
+                                 "name": "Texture"
+                                }
+                        }
 }
 
 

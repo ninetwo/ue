@@ -7,11 +7,13 @@ import ueSpec
 import ueCore.AssetUtils as ueAssetUtils
 import ueCommon.Open as ueCommonOpen
 
+__ueclasses__ = ["ns"]
+
 def ueOpen():
     p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
                                           "ue.panel.ueOpen", create=True)
     p.setMinimumSize(600, 920)
-    ueCommonOpen.setClasses(["c"])
+    ueCommonOpen.setClasses(__ueclasses__)
 
     if p.showModalDialog():
         spec = ueCommonOpen.getValues()

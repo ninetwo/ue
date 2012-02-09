@@ -120,7 +120,7 @@ def getReadPath():
 
     return p
 
-def render():
+def preRender():
     n = nuke.thisParent()
 
     spec = ueSpec.Spec(n.knob("proj").value(),
@@ -144,5 +144,17 @@ def render():
     nuke.thisNode().knob("file").setValue(cPath)
 
     ueNukeSave.ueSaveVers(comment="Auto-save of %s render." % (spec))
-    nuke.tprint("Rendering '%s'" % cPath)
+    nuke.tprint("Rendering %s ..." % cPath)
+
+def postRender():
+    n = nuke.thisParent()
+
+    spec = ueSpec.Spec(n.knob("proj").value(),
+                       n.knob("grp").value(),
+                       n.knob("asst").value(),
+                       n.knob("elclass").value(),
+                       n.knob("eltype").value(),
+                       n.knob("elname").value())
+
+    nuke.tprint("Rendering %s complete" % spec)
 

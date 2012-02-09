@@ -47,7 +47,7 @@ def saveUtility(spec, dbMeta={}):
 
     if "thumbnail" in p:
         source = os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_"+str(p["thumbnail"])+".png")
-        dest = ueAssetUtils.getThumbnailPath(spec)
+        dest = os.path.join(os.getenv("PROJ_ROOT"), "var", "thumbs", spec.grp, spec.asst, ueAssetUtils.getElementName(spec)+".png")
         if not os.path.exists(os.path.dirname(dest)):
             ueFileUtils.createDir(os.path.dirname(dest))
         ueFileUtils.moveFile(source, dest)

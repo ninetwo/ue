@@ -250,7 +250,7 @@ class Save(QtGui.QWidget):
     def loadThumbnail(self):
         global thumbnail
         for t in self.thumbnailButtons:
-            if t.isChecked:
+            if t.isChecked():
                 thumbnail = t.text()
 
 #if __name__ == "__main__":
