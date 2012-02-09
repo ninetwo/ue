@@ -57,25 +57,33 @@ defaultConfig = {
                                  "name": "Nuke script"
                                 },
                          "nr":  {
-                                 "name": "Nuke render"
+                                 "name": "Nuke render",
+                                 "pathprepend": "render",
+                                 "pathappend":  "%%version%%"
                                 },
                          "giz": {
-                                 "name": "Nuke gizmo"
+                                 "name": "Nuke gizmo",
+                                 "pathprepend": "gizmo"
                                 },
                          "scp": {
-                                 "name": "Nuke scriptlet"
+                                 "name": "Nuke scriptlet",
+                                 "pathprepend": "scriptlets"
                                 },
                          "ms":  {
                                  "name": "Maya scene"
                                 },
                          "mr":  {
-                                 "name": "Maya render"
+                                 "name": "Maya render",
+                                 "pathprepend": "render",
+                                 "pathappend":  "%%version%%"
                                 },
                          "tvp": {
                                  "name": "TVPaint document"
                                 },
                          "cel": {
-                                 "name": "Cel sequence"
+                                 "name": "Cel sequence",
+                                 "pathprepend": "cel",
+                                 "pathappend":  "%%version%%"
                                 },
                          "ps":  {
                                  "name": "Photoshop document"
@@ -87,7 +95,9 @@ defaultConfig = {
                                  "name": "After Effects document"
                                 },
                          "ar":  {
-                                 "name": "After Effects render"
+                                 "name": "After Effects render",
+                                 "pathprepend": "render",
+                                 "pathappend":  "%%version%%"
                                 },
                          "geo": {
                                  "name": "Geometry"
