@@ -1,9 +1,10 @@
-import os, sys
+import os, sys, glob
 
 from PyQt4 import QtCore, QtGui
 
 import ueSpec
 
+import ueCore
 import ueCore.AssetUtils as ueAssetUtils
 
 global proj, grp, asst, elclass, eltype, elname, vers
@@ -262,7 +263,7 @@ class Open(QtGui.QWidget):
         try:
             el = self.elements[elclass][eltype][elname]
             self.elCreatedBy.setText(el["created_by"])
-            self.elCreatedAt.setText(el["created_at"])
+            self.elCreatedAt.setText(ueCore.formatDatetime(el["created_at"]))
             if "comment" in el:
                 self.elComment.setText(el["comment"])
             else:
@@ -283,12 +284,21 @@ class Open(QtGui.QWidget):
     def updateVersInfo(self):
         try:
             ver = self.versions[int(vers)-1]
+            spec = ueSpec.Spec(proj, grp, asst, elclass, eltype, elname, vers)
+
             self.verCreatedBy.setText(ver["created_by"])
-            self.verCreatedAt.setText(ver["created_at"])
+            self.verCreatedAt.setText(ueCore.formatDatetime(ver["created_at"]))
+
+            files = glob.glob(os.path.join(ueAssetUtils.getVersionPath(spec), ueAssetUtils.getElementName(spec)+"*"))
+            self.verFilesList.clear()
+            for f in files:
+                self.verFilesList.addItem(QtGui.QListWidgetItem(os.path.basename(f)))
+
             if "comment" in ver:
                 self.verComment.setText(ver["comment"])
             else:
                 self.verComment.setText("N/A")
+
             if "thumbnail" in ver:
                 spec = ueSpec.Spec(proj, grp, asst, elclass, eltype, elname, vers)
                 f = ueAssetUtils.getThumbnailPath(spec)
