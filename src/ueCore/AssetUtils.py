@@ -134,10 +134,11 @@ def parsePath(path, **kwargs):
         p = path.replace("%%version%%", "%04d" % kwargs["vers"])
     return p
 
-def getElementPath(spec):
+def getElementPath(spec, assetClasses=None):
     """Returns the absolute path of a given element
     """
-    assetClasses = ueConfig.Config(spec).config["assetClasses"]
+    if assetClasses == None:
+        assetClasses = ueConfig.Config(spec).config["assetClasses"]
 
     # Check class
     if spec.elclass not in assetClasses:
@@ -157,17 +158,18 @@ def getElementPath(spec):
 
     return d
 
-def getVersionPath(spec):
+def getVersionPath(spec, assetClasses=None):
     """Returns the absolute path of a given version
        of a given element
     """
-    assetClasses = ueConfig.Config(spec).config["assetClasses"]
+    if assetClasses == None:
+        assetClasses = ueConfig.Config(spec).config["assetClasses"]
 
     append = ""
     if "pathappend" in assetClasses[spec.elclass]:
         append = parsePath(assetClasses[spec.elclass]["pathappend"], vers=spec.vers)
 
-    return os.path.join(getElementPath(spec), append)
+    return os.path.join(getElementPath(spec, assetClasses=assetClasses), append)
 
 
 def getElementName(spec):

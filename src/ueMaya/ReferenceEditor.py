@@ -10,7 +10,7 @@ import ueCore.AssetUtils as ueAssetUtils
 import ueCommon.Open as ueCommonOpen
 import ueMaya
 
-__ueclasses__ = ["ms", "geo", "obj", "cam"]
+__ueclasses__ = ["ms", "geo", "cam"]
 
 global refEditor
 
@@ -38,10 +38,16 @@ class OpenRef(QtGui.QMainWindow):
         self.buttonBox.rejected.connect(self.close)
 
     def createRef(self):
-        spec, dbMeta = ueCommonOpen.getValues()
+        spec = ueCommonOpen.getValues()
         maPath = ueAssetUtils.getVersionPath(spec)
         maFile = ueAssetUtils.getElementName(spec)
-        maya.cmds.file(os.path.join(maPath, maFile+".ma"), namespace=maFile, r=True)
+        if spec.elclass == "geo":
+            ext = "obj"
+        elif spec.elclass == "cam":
+            ext = "fbx"
+        else:
+            ext = "ma"
+        maya.cmds.file(os.path.join(maPath, maFile+"."+ext), namespace=maFile, r=True)
         if self.redrawRefList:
             refEditor.drawRefList()
         self.close()

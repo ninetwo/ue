@@ -167,7 +167,7 @@ class Client():
             self.post("config", spec.proj, spec.grp, data={"config": data})
         elif spec.elclass == None:
             self.post("config", spec.proj, spec.grp, spec.asst,
-                      data=str({"config": data}))
+                      data={"config": data})
 
     def updateConfig(self, spec, data):
         self.put("config", spec, data={"config": data})
