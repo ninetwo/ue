@@ -22,20 +22,20 @@ def saveUtility(spec, dbMeta={}):
     nkName = ueAssetUtils.getElementName(spec)
     nkPath = os.path.join(p["path"], nkName+".nk")
 
-    if root.knob("proj") == None:
-        root.addKnob(nuke.String_Knob("proj", "project", spec.proj))
+    if root.knob("ueproj") == None:
+        root.addKnob(nuke.String_Knob("ueproj", "project", spec.proj))
     else:
-        root.knob("proj").setValue(spec.proj)
+        root.knob("ueproj").setValue(spec.proj)
 
-    if root.knob("grp") == None:
-        root.addKnob(nuke.String_Knob("grp", "group", spec.grp))
+    if root.knob("uegrp") == None:
+        root.addKnob(nuke.String_Knob("uegrp", "group", spec.grp))
     else:
-        root.knob("grp").setValue(spec.grp)
+        root.knob("uegrp").setValue(spec.grp)
 
-    if root.knob("asst") == None:
-        root.addKnob(nuke.String_Knob("asst", "asset", spec.asst))
+    if root.knob("ueasst") == None:
+        root.addKnob(nuke.String_Knob("ueasst", "asset", spec.asst))
     else:
-        root.knob("asst").setValue(spec.asst)
+        root.knob("ueasst").setValue(spec.asst)
 
     if root.knob("ueclass") == None:
         root.addKnob(nuke.String_Knob("ueclass", "class", spec.elclass))
