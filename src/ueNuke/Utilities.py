@@ -11,27 +11,6 @@ import ueCore.FileUtils as ueFileUtils
 def saveUtility(spec, dbMeta={}):
     root = nuke.root()
 
-    if root.knob("proj") == None:
-        root.addKnob(nuke.String_Knob("proj", "project", spec.proj))
-
-    if root.knob("grp") == None:
-        root.addKnob(nuke.String_Knob("grp", "group", spec.grp))
-
-    if root.knob("asst") == None:
-        root.addKnob(nuke.String_Knob("asst", "asset", spec.asst))
-
-    if root.knob("ueclass") == None:
-        root.addKnob(nuke.String_Knob("ueclass", "class", spec.elclass))
-
-    if root.knob("uetype") == None:
-        root.addKnob(nuke.String_Knob("uetype", "type", spec.eltype))
-
-    if root.knob("uename") == None:
-        root.addKnob(nuke.String_Knob("uename", "name", spec.elname))
-
-    if root.knob("asst_root") == None:
-        root.addKnob(nuke.String_Knob("asst_root", "asst_root", os.getenv("ASST_ROOT")))
-
     d = ueAssetUtils.getElement(spec)
     if d == {}:
         d = ueCreate.createElement(spec, dbMeta=dbMeta)
@@ -42,6 +21,46 @@ def saveUtility(spec, dbMeta={}):
 
     nkName = ueAssetUtils.getElementName(spec)
     nkPath = os.path.join(p["path"], nkName+".nk")
+
+    if root.knob("proj") == None:
+        root.addKnob(nuke.String_Knob("proj", "project", spec.proj))
+    else:
+        root.knob("proj").setValue(spec.proj)
+
+    if root.knob("grp") == None:
+        root.addKnob(nuke.String_Knob("grp", "group", spec.grp))
+    else:
+        root.knob("grp").setValue(spec.grp)
+
+    if root.knob("asst") == None:
+        root.addKnob(nuke.String_Knob("asst", "asset", spec.asst))
+    else:
+        root.knob("asst").setValue(spec.asst)
+
+    if root.knob("ueclass") == None:
+        root.addKnob(nuke.String_Knob("ueclass", "class", spec.elclass))
+    else:
+        root.knob("ueclass").setValue(spec.elclass)
+
+    if root.knob("uetype") == None:
+        root.addKnob(nuke.String_Knob("uetype", "type", spec.eltype))
+    else:
+        root.knob("uetype").setValue(spec.eltype)
+
+    if root.knob("uename") == None:
+        root.addKnob(nuke.String_Knob("uename", "name", spec.elname))
+    else:
+        root.knob("uename").setValue(spec.elname)
+
+    if root.knob("uevers") == None:
+        root.addKnob(nuke.Int_Knob("uevers", "vers", spec.vers))
+    else:
+        root.knob("uevers").setValue(spec.vers)
+
+    if root.knob("element_path") == None:
+        root.addKnob(nuke.String_Knob("alement_path", "element_path", d[spec.elclass][spec.eltype][spec.elname]["path"]))
+    else:
+        root.knob("element_path").setValue(d[spec.elclass][spec.eltype][spec.elname]["path"])
 
     nuke.scriptSaveAs(nkPath)
 

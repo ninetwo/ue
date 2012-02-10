@@ -8,6 +8,7 @@ import ueSpec
 import ueCore.AssetUtils as ueAssetUtils
 import ueCore.Create as ueCreate
 import ueCore.Config as ueConfig
+import ueNuke.Utilities as ueNukeUtils
 
 checker = \
 {
@@ -98,7 +99,8 @@ def getReadPath():
                        n.knob("elname").value(),
                        n.knob("vers").value())
 
-    p = "/tmp"
+    p = os.path.join(os.getenv("UE_PATH"), "lib",
+                     "placeholders", "nuke.png")
 
     if not spec.proj == "" and not spec.grp == "" and \
        not spec.asst == "" and not spec.elclass == "" and \
@@ -121,40 +123,61 @@ def getReadPath():
     return p
 
 def preRender():
+    root = nuke.root()
+
+    if root.name() == "Root":
+        ueSaveAs()
+
     n = nuke.thisParent()
 
-    spec = ueSpec.Spec(n.knob("proj").value(),
-                       n.knob("grp").value(),
-                       n.knob("asst").value(),
-                       n.knob("elclass").value(),
-                       n.knob("eltype").value(),
-                       n.knob("elname").value())
+    sourceSpec = ueSpec.Spec(root.knob("proj").value(),
+                             root.knob("grp").value(),
+                             root.knob("asst").value(),
+                             root.knob("ueclass").value(),
+                             root.knob("uetype").value(),
+                             root.knob("uename").value(),
+                             root.knob("uevers").value())
 
-    d = ueAssetUtils.getElement(spec)
-    if d == None:
-        d = ueCreate.createElement(spec)
+    destSpec = ueSpec.Spec(n.knob("proj").value(),
+                           n.knob("grp").value(),
+                           n.knob("asst").value(),
+                           n.knob("elclass").value(),
+                           n.knob("eltype").value(),
+                           n.knob("elname").value())
 
-    p = ueCreate.createVersion(spec, source=nuke.root().knob("name").value())
+    dbMeta = {}
+    dbMeta["comment"] = "Render from %s" % str(sourceSpec)
 
-    spec.name = p["name"]
+    d = ueAssetUtils.getElement(destSpec)
+    if d == {}:
+        d = ueCreate.createElement(destSpec, dbMeta=dbMeta)
 
-    cName = ueAssetUtils.getElementName(spec)
-    cPath = os.path.join(p["path"], cName+".%04d.exr")
+    p = ueCreate.createVersion(destSpec, dbMeta=dbMeta)
 
-    nuke.thisNode().knob("file").setValue(cPath)
+    destSpec.vers = p["version"]
 
-    ueNukeSave.ueSaveVers(comment="Auto-save of %s render." % (spec))
-    nuke.tprint("Rendering %s ..." % cPath)
+    rName = ueAssetUtils.getElementName(destSpec)
+    rPath = os.path.join(p["path"], rName+".%04d.exr")
+
+    nuke.thisNode().knob("file").setValue(rPath)
+
+    dbMeta = {}
+    dbMeta["comment"] = "Auto-save of render %s" % str(destSpec)
+
+    ueNukeUtils.saveUtility(sourceSpec, dbMeta=dbMeta)
+    ueNukeUtils.saveUtility(sourceSpec)
+
+    nuke.tprint("Rendering %s to %s ..." % (str(destSpec), os.path.dirname(rPath)))
 
 def postRender():
     n = nuke.thisParent()
 
-    spec = ueSpec.Spec(n.knob("proj").value(),
-                       n.knob("grp").value(),
-                       n.knob("asst").value(),
-                       n.knob("elclass").value(),
-                       n.knob("eltype").value(),
-                       n.knob("elname").value())
+    destSpec = ueSpec.Spec(n.knob("proj").value(),
+                           n.knob("grp").value(),
+                           n.knob("asst").value(),
+                           n.knob("elclass").value(),
+                           n.knob("eltype").value(),
+                           n.knob("elname").value())
 
-    nuke.tprint("Rendering %s complete" % spec)
+    nuke.tprint("Rendering %s complete" % str(destSpec))
 

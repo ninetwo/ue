@@ -76,7 +76,9 @@ def createElement(spec, dbMeta={}):
 def createVersion(spec, dbMeta={}):
     version = {}
 
-    version["version"] = len(ueAssetUtils.getVersions(spec))+1
+    spec.vers = len(ueAssetUtils.getVersions(spec))+1
+
+    version["version"] = spec.vers
     version["path"] = ueAssetUtils.getVersionPath(spec)
     version["created_by"] = getpass.getuser()
 
