@@ -375,7 +375,7 @@ class RenderTab(QtGui.QWidget):
         self.layout().setContentsMargins(2, 2, 2, 2)
         self.layout().setSpacing(2)
 
-        self.elclass = ["cp", "rn"]
+        self.elclass = ["nr", "mr"]
 
         self.classList = QtGui.QComboBox()
         self.typeList = QtGui.QListWidget()

@@ -1,18 +1,22 @@
-#! /opt/Nuke6.3v2/Nuke6.3 -nx
+#! /usr/local/Nuke6.3v2/Nuke6.3 -nx
 version 6.3 v2
 Gizmo {
  inputs 0
+ label "\[value proj]:\[value grp]:\[value asst]\n\[value elname]:\[value eltype]:\[value elclass] v\[value vers]"
  postage_stamp true
- addUserKnob {20 User}
+ addUserKnob {20 asset l Asset}
  addUserKnob {1 proj l project}
+ proj "\[python os.getenv(\"PROJ\")]"
  addUserKnob {1 grp l group -STARTLINE}
+ grp "\[python os.getenv(\"GRP\")]"
  addUserKnob {1 asst l asset -STARTLINE}
- addUserKnob {26 "" +STARTLINE}
+ asst "\[python os.getenv(\"ASST\")]"
+ addUserKnob {26 ""}
  addUserKnob {1 elclass l class}
  addUserKnob {1 eltype l type}
  addUserKnob {1 elname l name}
  addUserKnob {3 vers l version}
- label "[value proj]:[value grp]:[value asst]\n[value elname]:[value eltype]:[value elclass] v[value vers]"
+ vers 1
 }
  Read {
   inputs 0
