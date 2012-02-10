@@ -162,3 +162,6 @@ class Client():
             self.post("config", spec.proj, spec.grp, spec.asst,
                       data={"config": data})
 
+    def updateConfig(self, spec, data):
+        self.put("config", spec, data={"config": data})
+

@@ -3,6 +3,7 @@ class Asset
 
   key :name, String
   key :path, String
+  key :created_by, String
   timestamps!
 
   belongs_to :group
