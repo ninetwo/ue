@@ -9,6 +9,12 @@ import ueSpec
 import ueCore.AssetUtils as ueAssetUtils
 
 global proj, grp, asst
+global elements
+
+__anClass__ = "cel"
+__bgClass__ = "bg"
+__bgType__ = "background"
+__rnClasses__ = ["nr", "mr"]
 
 class ReadPanel(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -18,6 +24,7 @@ class ReadPanel(QtGui.QWidget):
         self.layout().setSpacing(2)
 
         global proj, grp, asst
+        global elements
 
         proj = os.getenv("PROJ")
         grp = os.getenv("GRP")
@@ -27,17 +34,17 @@ class ReadPanel(QtGui.QWidget):
         self.grpMenu = QtGui.QComboBox()
         self.asstMenu = QtGui.QComboBox()
 
-        pl = ueAssetUtils.getProjectsList()
+        pl = sorted(ueAssetUtils.getProjectsList())
         for p in pl:
             self.projMenu.addItem(p)
         self.projMenu.setCurrentIndex(pl.index(proj))
 
-        gl = ueAssetUtils.getGroupsList(ueSpec.Spec(proj))
+        gl = sorted(ueAssetUtils.getGroupsList(ueSpec.Spec(proj)))
         for g in gl:
             self.grpMenu.addItem(g)
         self.grpMenu.setCurrentIndex(gl.index(grp))
 
-        al = ueAssetUtils.getAssetsList(ueSpec.Spec(proj, grp))
+        al = sorted(ueAssetUtils.getAssetsList(ueSpec.Spec(proj, grp)))
         for a in al:
             self.asstMenu.addItem(a)
         self.asstMenu.setCurrentIndex(al.index(asst))
@@ -61,6 +68,8 @@ class ReadPanel(QtGui.QWidget):
         zero.layout().addStretch(0)
 
         tabs = QtGui.QTabWidget()
+
+        elements = ueAssetUtils.getElements(ueSpec.Spec(proj, grp, asst))
 
         self.animationTab = AnimationTab()
         self.backgroundTab = BackgroundTab()
@@ -107,11 +116,13 @@ class ReadPanel(QtGui.QWidget):
         self.loadElements()
 
     def loadElements(self):
-        global asst
+        global asst, elements
         asst = str(self.asstMenu.currentText())
+        elements = ueAssetUtils.getElements(ueSpec.Spec(proj, grp, asst))
         self.animationTab.reload()
         self.backgroundTab.reload()
         self.renderTab.reload()
+
 
 class AnimationTab(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -120,7 +131,6 @@ class AnimationTab(QtGui.QWidget):
         self.layout().setContentsMargins(2, 2, 2, 2)
         self.layout().setSpacing(2)
 
-        self.elclass = "cel"
         self.layerListFile = os.getenv("ASST_ROOT")
 
         self.layerList = QtGui.QListWidget()
@@ -149,9 +159,9 @@ class AnimationTab(QtGui.QWidget):
         three.layout().setContentsMargins(2, 2, 2, 2)
         three.layout().setSpacing(2)
 
-        zero.layout().addWidget(QtGui.QLabel("layers"))
-        zero.layout().addWidget(QtGui.QLabel("passes"))
-        zero.layout().addWidget(QtGui.QLabel("versions"))
+        zero.layout().addWidget(QtGui.QLabel("layer"))
+        zero.layout().addWidget(QtGui.QLabel("pass"))
+        zero.layout().addWidget(QtGui.QLabel("version"))
         one.layout().addWidget(self.layerList)
         one.layout().addWidget(self.passList)
         one.layout().addWidget(self.versList)
@@ -167,21 +177,11 @@ class AnimationTab(QtGui.QWidget):
 
         self.reload()
 
-        self.connect(self.layerList,
-                     QtCore.SIGNAL("itemSelectionChanged()"),
-                     self.loadPasses)
-        self.connect(self.passList,
-                     QtCore.SIGNAL("itemSelectionChanged()"),
-                     self.loadVersions)
-        self.connect(self.layerListPickerButton,
-                     QtCore.SIGNAL("clicked()"),
-                     self.fileBrowser)
-        self.connect(self.layerButton,
-                     QtCore.SIGNAL("clicked()"),
-                     self.nukeImportLayer)
-        self.connect(self.passButton,
-                     QtCore.SIGNAL("clicked()"),
-                     self.nukeImportPass)
+        self.layerList.itemSelectionChanged.connect(self.loadPasses)
+        self.passList.itemSelectionChanged.connect(self.loadVersions)
+        self.layerListPickerButton.clicked.connect(self.fileBrowser)
+        self.layerButton.clicked.connect(self.nukeImportLayer)
+        self.passButton.clicked.connect(self.nukeImportPass)
 
     def fileBrowser(self):
         f = QtGui.QFileDialog.getOpenFileName(self, "Open file",
@@ -192,56 +192,54 @@ class AnimationTab(QtGui.QWidget):
             self.layerListPicker.setText(f)
 
     def reload(self):
-        spec = ueSpec.Spec(proj, grp, asst, self.elclass)
-        self.layers = ueAssetUtils.getClass(spec)
-
-        if self.layers == None:
-            self.layers = {}
-
         self.layerListFile = os.getenv("ASST_ROOT")
-        self.layerListPicker.setText(os.getenv("ASST_ROOT"))
-
+        self.layerListPicker.setText(self.layerListFile)
         self.loadLayers()
 
     def loadLayers(self):
         self.layerList.clear()
-        for l in self.layers:
-            self.layerList.addItem(QtGui.QListWidgetItem(l))
-        self.passList.clear()
+        if __anClass__ in elements:
+            for l in elements[__anClass__]:
+                self.layerList.addItem(QtGui.QListWidgetItem(l))
+            self.layerList.setCurrentItem(self.layerList.item(0))
+            self.eltype = str(self.layerList.currentItem().text())
+            self.loadPasses()
 
     def loadPasses(self):
+        self.eltype = str(self.layerList.currentItem().text())
         self.passList.clear()
-        if str(self.layerList.currentItem().text()) in self.layers:
-            for c in self.layers[str(self.layerList.currentItem().text())]:
-                self.passList.addItem(QtGui.QListWidgetItem(c))
-                elpass = c
+        if __anClass__ in elements:
+            if self.eltype in elements[__anClass__]:
+                for c in elements[__anClass__][self.eltype]:
+                    self.passList.addItem(QtGui.QListWidgetItem(c))
+                self.passList.setCurrentItem(self.passList.item(0))
+                self.elname = str(self.passList.currentItem().text())
 
-            f = os.path.join(os.path.dirname(self.layers[str(self.layerList.currentItem().text())][elpass]["path"]),
-                         str(self.layerList.currentItem().text())+"_layerList.txt")
+                f = os.path.join(elements[__anClass__][self.eltype][self.elname]["path"],
+                                 self.eltype+"_layerList.txt")
 
-            if os.path.isfile(f):
-                self.layerListFile = f
-                self.layerListPicker.setText(f)
-            else:
-                self.layerListFile = os.getenv("ASST_ROOT")
-                self.layerListPicker.setText(os.getenv("ASST_ROOT"))
+                if os.path.isfile(f):
+                    self.layerListFile = f
+                    self.layerListPicker.setText(f)
+                else:
+                    self.layerListFile = os.getenv("ASST_ROOT")
+                    self.layerListPicker.setText(os.getenv("ASST_ROOT"))
+
+                self.loadVersions()
 
     def loadVersions(self):
         self.versList.clear()
-        spec = ueSpec.Spec(proj, grp, asst, self.elclass,
-                                        str(self.layerList.currentItem().text()),
-                                        str(self.passList.currentItem().text()))
+        spec = ueSpec.Spec(proj, grp, asst, __anClass__,
+                           self.eltype, self.elname)
         vers = ueAssetUtils.getVersions(spec)
         for v in sorted(range(len(vers)), reverse=True):
             item = QtGui.QListWidgetItem("%3d" % int(v+1))
             self.versList.addItem(item)
-            if v+1 == len(vers):
-                self.versList.setCurrentItem(item)
+        self.versList.setCurrentItem(self.versList.item(0))
 
     def nukeImportPass(self):
-        args = ["proj", proj, "grp", grp, "asst", asst, "elclass", self.elclass,
-                "eltype", str(self.layerList.currentItem().text()),
-                "elname", str(self.passList.currentItem().text()),
+        args = ["proj", proj, "grp", grp, "asst", asst, "elclass", __anClass__,
+                "eltype", self.eltype, "elname", self.elname,
                 "vers", str(self.versList.currentItem().text()),
                 "postage_stamp", "0",
                 "name", "ueRead"]
@@ -303,9 +301,6 @@ class BackgroundTab(QtGui.QWidget):
         self.layout().setContentsMargins(2, 2, 2, 2)
         self.layout().setSpacing(2)
 
-        self.elclass = "bg"
-        self.eltype = "background"
-
         self.backgroundList = QtGui.QListWidget()
         self.versList = QtGui.QListWidget()
         self.backgroundButton = QtGui.QPushButton("insert background")
@@ -324,7 +319,8 @@ class BackgroundTab(QtGui.QWidget):
         two.layout().setContentsMargins(2, 2, 2, 2)
         two.layout().setSpacing(2)
 
-        zero.layout().addWidget(QtGui.QLabel("backgrounds"))
+        zero.layout().addWidget(QtGui.QLabel("background"))
+        zero.layout().addWidget(QtGui.QLabel("version"))
         one.layout().addWidget(self.backgroundList)
         one.layout().addWidget(self.versList)
         two.layout().addWidget(self.backgroundButton)
@@ -335,34 +331,31 @@ class BackgroundTab(QtGui.QWidget):
 
         self.reload()
 
-        self.connect(self.backgroundList,
-                     QtCore.SIGNAL("itemSelectionChanged()"),
-                     self.loadVersions)
-        self.connect(self.backgroundButton,
-                     QtCore.SIGNAL("clicked()"),
-                     self.nukeImportBackground)
+        self.backgroundList.itemSelectionChanged.connect(self.loadVersions)
+        self.backgroundButton.clicked.connect(self.nukeImportBackground)
 
     def reload(self):
-        spec = ueSpec.Spec(proj, grp, asst, self.elclass, self.eltype)
-        self.backgrounds = ueAssetUtils.getNamesList(spec)
-
         self.loadBackgrounds()
 
     def loadBackgrounds(self):
         self.backgroundList.clear()
-        for b in self.backgrounds:
-            self.backgroundList.addItem(QtGui.QListWidgetItem(b))
+        if __bgClass__ in elements:
+            if __bgType__ in elements[__bgClass__]:
+                for b in sorted(elements[__bgClass__][__bgType__]):
+                    self.backgroundList.addItem(QtGui.QListWidgetItem(b))
+                self.backgroundList.setCurrentItem(self.backgroundList.item(0))
+                self.elname = str(self.backgroundList.currentItem().text())
 
     def loadVersions(self):
+        self.elname = str(self.backgroundList.currentItem().text())
         self.versList.clear()
-        spec = ueSpec.Spec(proj, grp, asst, self.elclass, self.eltype,
-                           str(self.backgroundList.currentItem().text()))
+        spec = ueSpec.Spec(proj, grp, asst, __bgClass__, __bgType__,
+                           self.elname)
         vers = ueAssetUtils.getVersions(spec)
         for v in sorted(range(len(vers)), reverse=True):
             item = QtGui.QListWidgetItem("%3d" % int(v+1))
             self.versList.addItem(item)
-            if v+1 == len(vers):
-                self.versList.setCurrentItem(item)
+        self.versList.setCurrentItem(self.versList.item(0))
 
     def nukeImportBackground(self):
         print "test"
@@ -374,8 +367,6 @@ class RenderTab(QtGui.QWidget):
         self.setLayout(QtGui.QVBoxLayout())
         self.layout().setContentsMargins(2, 2, 2, 2)
         self.layout().setSpacing(2)
-
-        self.elclass = ["nr", "mr"]
 
         self.classList = QtGui.QComboBox()
         self.typeList = QtGui.QListWidget()
@@ -420,55 +411,49 @@ class RenderTab(QtGui.QWidget):
         self.reload()
 
         self.classList.activated.connect(self.loadTypes)
-        self.connect(self.typeList,
-                     QtCore.SIGNAL("itemSelectionChanged()"),
-                     self.loadNames)
-        self.connect(self.nameList,
-                     QtCore.SIGNAL("itemSelectionChanged()"),
-                     self.loadVersions)
-        self.connect(self.renderButton,
-                     QtCore.SIGNAL("clicked()"),
-                     self.nukeImportRender)
+        self.typeList.itemSelectionChanged.connect(self.loadNames)
+        self.nameList.itemSelectionChanged.connect(self.loadVersions)
+        self.renderButton.clicked.connect(self.nukeImportRender)
 
     def reload(self):
         self.loadClasses()
 
     def loadClasses(self):
         self.classList.clear()
-        for c in self.elclass:
+        for c in __rnClasses__:
             self.classList.addItem(c)
+        self.elclass = str(self.classList.currentText())
         self.loadTypes()
 
     def loadTypes(self):
-        spec = ueSpec.Spec(proj, grp, asst, str(self.classList.currentText()))
-        self.renders = ueAssetUtils.getClass(spec)
-
-        if self.renders == None:
-            self.renders = {}
-
+        self.elclass = str(self.classList.currentText())
         self.typeList.clear()
-        for t in self.renders:
-            self.typeList.addItem(QtGui.QListWidgetItem(t))
-        
+        if self.elclass in elements:
+            for t in sorted(elements[self.elclass]):
+                self.typeList.addItem(QtGui.QListWidgetItem(t))
+            self.typeList.setCurrentItem(self.typeList.item(0))
+            self.loadNames()
 
     def loadNames(self):
+        self.eltype = str(self.typeList.currentItem().text())
         self.nameList.clear()
-        if str(self.typeList.currentItem().text()) in self.renders:
-            for n in self.renders[str(self.typeList.currentItem().text())]:
-                self.nameList.addItem(QtGui.QListWidgetItem(n))
+        if self.elclass in elements:
+            if self.eltype in elements[self.elclass]:
+                for n in sorted(elements[self.elclass][self.eltype]):
+                    self.nameList.addItem(QtGui.QListWidgetItem(n))
+                self.nameList.setCurrentItem(self.nameList.item(0))
+                self.loadVersions()
 
     def loadVersions(self):
+        self.elname = str(self.nameList.currentItem().text())
         spec = ueSpec.Spec(proj, grp, asst,
-                                        str(self.classList.currentText()),
-                                        str(self.typeList.currentItem().text()),
-                                        str(self.nameList.currentItem().text()))
+                           self.elclass, self.eltype, self.elname)
         self.versList.clear()
         vers = ueAssetUtils.getVersions(spec)
         for v in sorted(range(len(vers)), reverse=True):
-            item = QtGui.QListWidgetItem("%3d" % int(v+1))
+            item = QtGui.QListWidgetItem("%04d" % int(v+1))
             self.versList.addItem(item)
-            if v+1 == len(vers):
-                self.versList.setCurrentItem(item)
+        self.versList.setCurrentItem(self.versList.item(0))
 
     def nukeImportRender(self):
         nuke.tprint("import render")
