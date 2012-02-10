@@ -117,7 +117,6 @@ defaultConfig = {
 
 class Config():
     def __init__(self, spec=ueSpec.Spec()):
-#        self.config = ueDefaults.Defaults()
         self.config = defaultConfig
 
         if not spec.proj == None:
@@ -130,6 +129,11 @@ class Config():
                 self.config = self.mergeConfig(self.config, self.toDict(c["config"]))
         if not spec.asst == None:
             c = ueClient.client.getConfig(spec.proj, spec.grp, spec.asst)
+            if "config" in c:
+                self.config = self.mergeConfig(self.config, self.toDict(c["config"]))
+        if not spec.elclass == None and spec.eltype == None and spec.elname == None:
+            c = ueClient.client.getConfig(spec.proj, spec.grp, spec.asst,
+                                          spec.elclass, spec.eltype, spec.elname)
             if "config" in c:
                 self.config = self.mergeConfig(self.config, self.toDict(c["config"]))
 

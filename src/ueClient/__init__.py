@@ -1,4 +1,4 @@
-import sys, urllib, json
+import sys, requests, json
 
 import ueSpec
 
@@ -15,22 +15,19 @@ class Client():
         client = self
 
     def get(self, get, *args):
-        if len(args) > 0:
-            urlargs = "/"+str("/".join(args))
-        else:
-            urlargs = ""
+        urlargs = self.parseUrlargs(args)
 
         url = "%s://%s:%i/%s%s.json" % (self.protocol, self.host,
                                         self.port, get, urlargs)
 
         try:
-            data = urllib.urlopen(url)
+            request = requests.get(url)
         except IOError, e:
             print "FATAL ERROR: %s" % e
             sys.exit(2)
 
         try:
-            jsonDict = json.load(data)
+            jsonDict = json.loads(request.text)
         except ValueError:
             jsonDict = {}
 
@@ -40,27 +37,50 @@ class Client():
         return jsonDict
 
     def post(self, get, *args, **kwargs):
-        if len(args) > 0:
-            urlargs = "/"+str("/".join(args))
-        else:
-            urlargs = ""
+        urlargs = self.parseUrlargs(args)
 
         url = "%s://%s:%i/%s%s.json" % (self.protocol, self.host,
                                         self.port, get, urlargs)
 
         try:
-            urllib.urlopen(url, urllib.urlencode(kwargs["data"]))
+            request = requests.post(url, data=kwargs["data"])
         except IOError, e:
             print "FATAL ERROR: %s" % e
             sys.exit(2)
 
-    def getConfig(self, *args):
-        if len(args) == 1:
-            return self.get("config", args[0])
-        elif len(args) == 2:
-            return self.get("config", args[0], args[1])
-        elif len(args) == 3:
-            return self.get("config", args[0], args[1], args[2])
+    def put(self, get, spec, **kwargs):
+        if not spec.proj == None:
+            kwargs["data"]["project"] = spec.proj
+        if not spec.grp == None:
+            kwargs["data"]["group"] = spec.grp
+        if not spec.asst == None:
+            kwargs["data"]["asset"] = spec.asst
+        if not spec.elclass == None:
+            kwargs["data"]["elclass"] = spec.elclass
+        if not spec.eltype == None:
+            kwargs["data"]["eltype"] = spec.eltype
+        if not spec.elname == None:
+            kwargs["data"]["elname"] = spec.elname
+        if not spec.vers == None:
+            kwargs["data"]["version"] = spec.vers
+
+        url = "%s://%s:%i/%s.json" % (self.protocol, self.host,
+                                      self.port, get)
+
+        try:
+            request = requests.put(url, data=kwargs["data"])
+        except IOError, e:
+            print "FATAL ERROR: %s" % e
+            sys.exit(2)
+
+
+    def parseUrlargs(self, args):
+        if len(args) > 0:
+            urlargs = "/"+str("/".join(args))
+        else:
+            urlargs = ""
+        return urlargs
+
 
     def getProjects(self):
         return self.get("projects")
@@ -87,14 +107,6 @@ class Client():
         return self.get("elements", spec.proj, spec.grp, spec.asst,
                         spec.elclass, spec.eltype, spec.elname)
 
-    def saveConfig(self, spec, data):
-        if spec.grp == None:
-            self.post("config", spec.proj, data={"config": data})
-        elif spec.asst == None:
-            self.post("config", spec.proj, spec.grp, data={"config": data})
-        elif spec.elclass == None:
-            self.post("config", spec.proj, spec.grp, spec.asst,
-                      data={"config": data})
 
     def saveProject(self, spec, data):
         self.post("projects", data=data)
@@ -112,4 +124,41 @@ class Client():
     def saveVersion(self, spec, data):
         self.post("versions", spec.proj, spec.grp, spec.asst,
                   spec.elclass, spec.eltype, spec.elname, data=data)
+
+
+    def updateProject(self, spec, data):
+        self.put("projects", spec, data=data)
+
+    def updateGroup(self, spec,  data):
+        self.put("groups", spec, data=data)
+
+    def updateAsset(self, spec, data):
+        self.put("assets", spec, data=data)
+
+    def updateElement(self, spec, data):
+        self.put("elements", spec, data=data)
+
+    def updateVersion(self, spec, data):
+        self.put("versions", spec, data=data)
+
+
+    def getConfig(self, *args):
+        if len(args) == 1:
+            return self.get("config", args[0])
+        elif len(args) == 2:
+            return self.get("config", args[0], args[1])
+        elif len(args) == 3:
+            return self.get("config", args[0], args[1], args[2])
+        elif len(args) >= 6:
+            return self.get("config", args[0], args[1], args[2],
+                                      args[3], args[4], args[5])
+
+    def saveConfig(self, spec, data):
+        if spec.grp == None:
+            self.post("config", spec.proj, data={"config": data})
+        elif spec.asst == None:
+            self.post("config", spec.proj, spec.grp, data={"config": data})
+        elif spec.elclass == None:
+            self.post("config", spec.proj, spec.grp, spec.asst,
+                      data={"config": data})
 
