@@ -1,4 +1,5 @@
-import sys, requests, json
+import sys, json
+import httplib, urllib
 
 import ueSpec
 
@@ -9,25 +10,29 @@ class Client():
         global client
 
         self.protocol = "http"
-        self.host = "localhost"
+        self.name = "localhost"
         self.port = 3000
+        self.host = "%s:%i" % (self.name, self.port)
+        self.headers = {"Content-type": "application/x-www-form-urlencoded",
+                        "Accept": "text/plain"}
 
         client = self
 
     def get(self, get, *args):
         urlargs = self.parseUrlargs(args)
 
-        url = "%s://%s:%i/%s%s.json" % (self.protocol, self.host,
-                                        self.port, get, urlargs)
+        url = "/%s%s.json" % (get, urlargs)
 
         try:
-            request = requests.get(url)
+            con = httplib.HTTPConnection(self.host)
+            con.request("GET", url)
+            request = con.getresponse()
         except IOError, e:
             print "FATAL ERROR: %s" % e
             sys.exit(2)
 
         try:
-            jsonDict = json.loads(request.text)
+            jsonDict = json.load(request)
         except ValueError:
             jsonDict = {}
 
@@ -39,11 +44,12 @@ class Client():
     def post(self, get, *args, **kwargs):
         urlargs = self.parseUrlargs(args)
 
-        url = "%s://%s:%i/%s%s.json" % (self.protocol, self.host,
-                                        self.port, get, urlargs)
+        url = "/%s%s.json" % (get, urlargs)
 
         try:
-            request = requests.post(url, data=kwargs["data"])
+            con = httplib.HTTPConnection(self.host)
+            con.request("POST", url, urllib.urlencode(kwargs["data"]), self.headers)
+            request = con.getresponse()
         except IOError, e:
             print "FATAL ERROR: %s" % e
             sys.exit(2)
@@ -64,11 +70,12 @@ class Client():
         if not spec.vers == None:
             kwargs["data"]["version"] = spec.vers
 
-        url = "%s://%s:%i/%s.json" % (self.protocol, self.host,
-                                      self.port, get)
+        url = "/%s.json" % (get)
 
         try:
-            request = requests.put(url, data=kwargs["data"])
+            con = httplib.HTTPConnection(self.host)
+            con.request("PUT", url, urllib.urlencode(kwargs["data"]), self.headers)
+            request = con.getresponse()
         except IOError, e:
             print "FATAL ERROR: %s" % e
             sys.exit(2)
@@ -160,7 +167,7 @@ class Client():
             self.post("config", spec.proj, spec.grp, data={"config": data})
         elif spec.elclass == None:
             self.post("config", spec.proj, spec.grp, spec.asst,
-                      data={"config": data})
+                      data=str({"config": data}))
 
     def updateConfig(self, spec, data):
         self.put("config", spec, data={"config": data})
