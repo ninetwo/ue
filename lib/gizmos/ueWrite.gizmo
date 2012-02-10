@@ -36,17 +36,21 @@ Gizmo {
 set N4938f20 [stack 0]
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp
+  file /tmp/test.%04d.exr
   checkHashOnRead false
   name Write5
+  beforeRender ueNuke.preRender()
+  afterRender ueNuke.postRender()
   xpos 393
   ypos -109
  }
 push $N4938f20
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp
+  file /tmp/test.%04d.exr
   checkHashOnRead false
+  beforeRender ueNuke.preRender()
+  afterRender ueNuke.postRender()
   name Write4
   xpos 286
   ypos -111
@@ -54,8 +58,10 @@ push $N4938f20
 push $N4938f20
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp
+  file /tmp/test.%04d.exr
   checkHashOnRead false
+  beforeRender ueNuke.preRender()
+  afterRender ueNuke.postRender()
   name Write3
   xpos 178
   ypos -111
@@ -63,8 +69,10 @@ push $N4938f20
 push $N4938f20
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp
+  file /tmp/test.%04d.exr
   checkHashOnRead false
+  beforeRender ueNuke.preRender()
+  afterRender ueNuke.postRender()
   name Write2
   xpos 77
   ypos -111
@@ -72,9 +80,11 @@ push $N4938f20
 push $N4938f20
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp
+  file /tmp/test.%04d.exr
   file_type exr
   checkHashOnRead false
+  beforeRender ueNuke.preRender()
+  afterRender ueNuke.postRender()
   name Write1
   xpos -26
   ypos -110
