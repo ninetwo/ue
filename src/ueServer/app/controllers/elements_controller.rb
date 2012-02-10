@@ -1,6 +1,7 @@
 class ElementsController < ApplicationController
   def index
     @elements = Element.all(:asset_id => Asset.first(
+                            :name => params[:asset],
                             :group_id => Group.first(
                             :name => params[:group],
                             :project_id => Project.first(
@@ -17,6 +18,7 @@ class ElementsController < ApplicationController
                              :eltype => params[:eltype],
                              :elclass => params[:elclass],
                              :asset_id => Asset.first(
+                             :name => params[:asset],
                              :group_id => Group.first(
                              :name => params[:group],
                              :project_id => Project.first(
@@ -62,6 +64,7 @@ class ElementsController < ApplicationController
                              :eltype => params[:eltype],
                              :elclass => params[:elclass],
                              :asset_id => Asset.first(
+                             :name => params[:asset],
                              :group_id => Group.first(
                              :name => params[:group],
                              :project_id => Project.first(

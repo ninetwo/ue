@@ -84,13 +84,13 @@ class Open(QtGui.QWidget):
         self.elements = ueAssetUtils.getElements(ueSpec.Spec(proj, grp, asst))
 
         if elclass in self.elements:
-            for t in self.elements[elclass]:
+            for t in sorted(self.elements[elclass]):
                 self.eltypeList.addItem(QtGui.QListWidgetItem(t))
             self.eltypeList.setCurrentItem(self.eltypeList.item(0))
             eltype = str(self.eltypeList.currentItem().text())
 
             if eltype in self.elements[elclass]:
-                for n in self.elements[elclass][eltype]:
+                for n in sorted(self.elements[elclass][eltype]):
                     self.elnameList.addItem(QtGui.QListWidgetItem(n))
                 self.elnameList.setCurrentItem(self.elnameList.item(0))
                 elname = str(self.elnameList.currentItem().text())
@@ -99,12 +99,13 @@ class Open(QtGui.QWidget):
 
                 self.versions = ueAssetUtils.getVersions(ueSpec.Spec(proj, grp, asst,
                                                          elclass, eltype, elname))
-                for v in sorted(range(len(self.versions)), reverse=True):
-                    self.versList.addItem(QtGui.QListWidgetItem("%04d" % int(v+1)))
-                self.versList.setCurrentItem(self.versList.item(0))
-                vers = int(self.versList.currentItem().text())
+                if len(self.versions) > 0:
+                    for v in sorted(range(len(self.versions)), reverse=True):
+                        self.versList.addItem(QtGui.QListWidgetItem("%04d" % int(v+1)))
+                    self.versList.setCurrentItem(self.versList.item(0))
+                    vers = int(self.versList.currentItem().text())
 
-                self.updateVersInfo()
+                    self.updateVersInfo()
 
         asstBox = QtGui.QGroupBox("Asset")
         asstBox.setLayout(QtGui.QHBoxLayout())
@@ -171,15 +172,15 @@ class Open(QtGui.QWidget):
         self.projMenu.activated.connect(self.loadGroups)
         self.grpMenu.activated.connect(self.loadAssets)
         self.asstMenu.activated.connect(self.loadElements)
-        self.elclassMenu.currentIndexChanged.connect(self.loadTypes)
+        self.elclassMenu.activated.connect(self.loadTypes)
         self.eltypeList.itemSelectionChanged.connect(self.loadNames)
         self.elnameList.itemSelectionChanged.connect(self.loadVers)
         self.versList.itemSelectionChanged.connect(self.setVers)
 
     def loadProjects(self):
-        pl = ueAssetUtils.getProjectsList()
+        pl = sorted(ueAssetUtils.getProjectsList())
         self.projMenu.clear()
-        for p in sorted(pl):
+        for p in pl:
             self.projMenu.addItem(p)
         self.loadGroups()
 
@@ -187,9 +188,9 @@ class Open(QtGui.QWidget):
         global proj
         proj = str(self.projMenu.currentText())
         spec = ueSpec.Spec(proj)
-        gl = ueAssetUtils.getGroupsList(spec)
+        gl = sorted(ueAssetUtils.getGroupsList(spec))
         self.grpMenu.clear()
-        for g in sorted(gl):
+        for g in gl:
             self.grpMenu.addItem(g)
         self.loadAssets()
 
@@ -197,9 +198,9 @@ class Open(QtGui.QWidget):
         global grp
         grp = str(self.grpMenu.currentText())
         spec = ueSpec.Spec(proj, grp)
-        al = ueAssetUtils.getAssetsList(spec)
+        al = sorted(ueAssetUtils.getAssetsList(spec))
         self.asstMenu.clear()
-        for a in sorted(al):
+        for a in al:
             self.asstMenu.addItem(a)
         self.loadElements()
 
@@ -208,7 +209,7 @@ class Open(QtGui.QWidget):
         asst = str(self.asstMenu.currentText())
         spec = ueSpec.Spec(proj, grp, asst)
         self.elements = ueAssetUtils.getElements(spec)
-        self.eltypeList.clear()
+#        self.eltypeList.clear()
         self.loadTypes()
 
     def loadTypes(self):

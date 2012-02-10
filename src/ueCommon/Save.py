@@ -61,34 +61,34 @@ class Save(QtGui.QWidget):
 
         self.thumbnailBox.setFixedHeight(160)
 
-        pl = ueAssetUtils.getProjectsList()
+        pl = sorted(ueAssetUtils.getProjectsList())
         for p in pl:
             self.projMenu.addItem(p)
         self.projMenu.setCurrentIndex(pl.index(proj))
 
-        gl = ueAssetUtils.getGroupsList(ueSpec.Spec(proj))
+        gl = sorted(ueAssetUtils.getGroupsList(ueSpec.Spec(proj)))
         for g in gl:
             self.grpMenu.addItem(g)
         self.grpMenu.setCurrentIndex(gl.index(grp))
 
-        al = ueAssetUtils.getAssetsList(ueSpec.Spec(proj, grp))
+        al = sorted(ueAssetUtils.getAssetsList(ueSpec.Spec(proj, grp)))
         for a in al:
             self.asstMenu.addItem(a)
         self.asstMenu.setCurrentIndex(al.index(asst))
 
-        for c in self.elclasses:
+        for c in sorted(self.elclasses):
             self.elclassMenu.addItem(c)
         elclass = str(self.elclassMenu.currentText())
 
         self.elements = ueAssetUtils.getElements(ueSpec.Spec(proj, grp, asst))
 
-        if elclass in self.elements:
+        if elclass in sorted(self.elements):
             for t in self.elements[elclass]:
                 self.eltypeMenu.addItem(t)
             eltype = str(self.eltypeMenu.currentText())
 
             if eltype in self.elements[elclass]:
-                for n in self.elements[elclass][eltype]:
+                for n in sorted(self.elements[elclass][eltype]):
                     self.elnameMenu.addItem(n)
                 elname = str(self.elnameMenu.currentText())
 
@@ -159,12 +159,13 @@ class Save(QtGui.QWidget):
         self.asstMenu.activated.connect(self.loadElements)
         self.elclassMenu.activated.connect(self.loadTypes)
         self.eltypeMenu.activated.connect(self.loadNames)
+        self.elnameMenu.activated.connect(self.setName)
         self.eltypeBox.textEdited.connect(self.newType)
         self.elnameBox.textEdited.connect(self.newName)
         self.commentBox.textChanged.connect(self.loadComment)
 
     def loadProjects(self):
-        pl = ueAssetUtils.getProjectsList()
+        pl = sorted(ueAssetUtils.getProjectsList())
         self.projMenu.clear()
         for p in pl:
             self.projMenu.addItem(p)
@@ -174,7 +175,7 @@ class Save(QtGui.QWidget):
         global proj
         proj = str(self.projMenu.currentText())
         spec = ueSpec.Spec(proj)
-        gl = ueAssetUtils.getGroupsList(spec)
+        gl = sorted(ueAssetUtils.getGroupsList(spec))
         self.grpMenu.clear()
         for g in gl:
             self.grpMenu.addItem(g)
@@ -184,7 +185,7 @@ class Save(QtGui.QWidget):
         global grp
         grp = str(self.grpMenu.currentText())
         spec = ueSpec.Spec(proj, grp)
-        al = ueAssetUtils.getAssetsList(spec)
+        al = sorted(ueAssetUtils.getAssetsList(spec))
         self.asstMenu.clear()
         for a in al:
             self.asstMenu.addItem(a)
@@ -205,7 +206,7 @@ class Save(QtGui.QWidget):
         global elclass
         elclass = self.elclasses[0]
         self.elclassMenu.clear()
-        for e in self.elclasses:
+        for e in sorted(self.elclasses):
             self.elclassMenu.addItem(e)
         self.loadTypes()
 
@@ -214,7 +215,7 @@ class Save(QtGui.QWidget):
         elclass = str(self.elclassMenu.currentText())
         self.eltypeMenu.clear()
         if elclass in self.elements:
-            for t in self.elements[elclass]:
+            for t in sorted(self.elements[elclass]):
                 self.eltypeMenu.addItem(t)
             self.loadNames()
         else:
@@ -225,9 +226,13 @@ class Save(QtGui.QWidget):
         eltype = str(self.eltypeMenu.currentText())
         self.elnameMenu.clear()
         if eltype in self.elements[elclass]:
-            for n in self.elements[elclass][eltype]:
+            for n in sorted(self.elements[elclass][eltype]):
                 self.elnameMenu.addItem(n)
             elname = str(self.elnameMenu.currentText())
+
+    def setName(self):
+        global elname
+        elname = str(self.elnameMenu.currentText())
 
     def newType(self):
         global eltype

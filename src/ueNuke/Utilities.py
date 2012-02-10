@@ -53,14 +53,14 @@ def saveUtility(spec, dbMeta={}):
         root.knob("uename").setValue(spec.elname)
 
     if root.knob("uevers") == None:
-        root.addKnob(nuke.Int_Knob("uevers", "vers", spec.vers))
+        root.addKnob(nuke.Int_Knob("uevers", "vers", int(p["version"])))
     else:
-        root.knob("uevers").setValue(spec.vers)
+        root.knob("uevers").setValue(int(p["version"]))
 
-    if root.knob("element_path") == None:
-        root.addKnob(nuke.String_Knob("alement_path", "element_path", d[spec.elclass][spec.eltype][spec.elname]["path"]))
+    if root.knob("version_path") == None:
+        root.addKnob(nuke.String_Knob("version_path", "version_path", p["path"]))
     else:
-        root.knob("element_path").setValue(d[spec.elclass][spec.eltype][spec.elname]["path"])
+        root.knob("version_path").setValue(p["path"])
 
     nuke.scriptSaveAs(nkPath)
 

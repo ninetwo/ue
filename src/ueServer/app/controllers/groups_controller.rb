@@ -1,6 +1,7 @@
 class GroupsController < ApplicationController
   def index
-    @groups = Group.all(:project_id => Project.first(:name => params[:project])._id)
+    @groups = Group.all(:project_id => Project.first(
+                        :name => params[:project])._id)
 
     respond_to do |format|
       format.html
@@ -9,7 +10,9 @@ class GroupsController < ApplicationController
   end
 
   def show
-    @group = Group.first(:name => params[:group], :project_id => Project.first(:name => params[:project])._id)
+    @group = Group.first(:name => params[:group],
+                         :project_id => Project.first(
+                         :name => params[:project])._id)
 
     respond_to do |format|
       format.html
