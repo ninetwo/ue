@@ -9,7 +9,7 @@ import ueCore.AssetUtils as ueAssetUtils
 settings = {}
 
 def listAssets():
-    for a in ueAssetUtils.getAssetsList(settings["spec"]):
+    for a in sorted(ueAssetUtils.getAssetsList(settings["spec"])):
         if "paths" in settings:
             print "%s -> %s" % (a, assets[a]["path"])
         else:
