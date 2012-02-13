@@ -36,9 +36,9 @@ def ueSaveVers():
 #    if not ueNuke.ueScriptSanityCheck():
 #        return
 
-    spec = ueSpec.Spec(root.knob("proj").value(),
-                       root.knob("grp").value(),
-                       root.knob("asst").value(),
+    spec = ueSpec.Spec(root.knob("ueproj").value(),
+                       root.knob("uegrp").value(),
+                       root.knob("ueasst").value(),
                        root.knob("ueclass").value(),
                        root.knob("uetype").value(),
                        root.knob("uename").value())
