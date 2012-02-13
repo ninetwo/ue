@@ -5,6 +5,8 @@ Gizmo {
  label "\[value proj]:\[value grp]:\[value asst]\n\[value elname]:\[value eltype]:\[value elclass] v\[value vers]"
  postage_stamp true
  addUserKnob {20 asset l Asset}
+ addUserKnob {22 ueOpenRead l "     Browse Elements     " T "import ueNuke.Open\nueNuke.Open.ueOpenRead()" +STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {1 proj l project}
  proj "\[python os.getenv(\"PROJ\")]"
  addUserKnob {1 grp l group -STARTLINE}

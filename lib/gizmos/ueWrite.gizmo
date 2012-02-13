@@ -5,6 +5,8 @@ Gizmo {
  note_font "Bitstream Vera Sans"
  mapsize {0.15 0.15}
  addUserKnob {20 assetTab l Asset}
+ addUserKnob {22 ueOpenWrite l "     Browse Elements     " T "import ueNuke.Open\nueNuke.Open.ueOpenWrite()" +STARTLINE}
+ addUserKnob {26 "" +STARTLINE}
  addUserKnob {1 proj l project}
  proj "\[python os.getenv(\"PROJ\")]"
  addUserKnob {1 grp l group -STARTLINE}
@@ -33,18 +35,18 @@ Gizmo {
   xpos 178
   ypos -199
  }
-set N4938f20 [stack 0]
+set N46b34e0 [stack 0]
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
   checkHashOnRead false
-  name Write5
   beforeRender ueNuke.preRender()
   afterRender ueNuke.postRender()
+  name Write5
   xpos 393
   ypos -109
  }
-push $N4938f20
+push $N46b34e0
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
@@ -55,7 +57,7 @@ push $N4938f20
   xpos 286
   ypos -111
  }
-push $N4938f20
+push $N46b34e0
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
@@ -66,7 +68,7 @@ push $N4938f20
   xpos 178
   ypos -111
  }
-push $N4938f20
+push $N46b34e0
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
@@ -77,7 +79,7 @@ push $N4938f20
   xpos 77
   ypos -111
  }
-push $N4938f20
+push $N46b34e0
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
