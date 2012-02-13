@@ -43,20 +43,23 @@ global proc createUeMenu()
            -command "python(\"import ueMaya.ReferenceEditor\"); \
                      python(\"ueMaya.ReferenceEditor.ReferenceEditor().show()\")";
   menuItem -divider true;
+  menuItem -label "Import"
+           -command "python(\"import ueMaya.Import\"); \
+                     python(\"ueMaya.Import.ueImport()\")";
   menuItem -label "Export"
            -subMenu true
            -tearOff true;
-  menuItem -label "Selection"
+  menuItem -label "Selection..."
            -command "python(\"import ueMaya.Export\"); \
                      python(\"ueMaya.Export.ueExport()\")";
   menuItem -divider true;
-  menuItem -label "Camera"
+  menuItem -label "Camera..."
            -command "python(\"import ueMaya.Export\"); \
                      python(\"ueMaya.Export.ueExport(export='Camera')\")";
-  menuItem -label "Light"
+  menuItem -label "Light..."
            -command "python(\"import ueMaya.Export\"); \
                      python(\"ueMaya.Export.ueExport(export='Light')\")";
-  menuItem -label "Geometry"
+  menuItem -label "Geometry..."
            -command "python(\"import ueMaya.Export\"); \
                      python(\"ueMaya.Export.ueExport(export='Geometry')\")";
 }
