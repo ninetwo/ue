@@ -82,7 +82,9 @@ def ueNewScriptSetup():
     x = int(config["xRes"])+int(config["xPad"])
     y = int(config["yRes"])+int(config["yPad"])
 
-    nuke.addFormat("%i %i %s" % (x, y, formatName))
+    nuke.addFormat("%i %i %i %i %i %i %d %s" % (x, y, int(config["xPad"]), int(config["yPad"]),
+                                                int(config["xRes"]), int(config["yRes"]),
+                                                float(config["aspectRatio"]), formatName))
     root.knob("format").setValue(formatName)
 
 def getReadPath():

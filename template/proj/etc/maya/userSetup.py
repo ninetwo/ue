@@ -1,8 +1,10 @@
+import maya.utils
+
 import ueClient
 
 import ueMaya
 
 ueClient.Client()
 
-ueMaya.ueNewScriptSetup()
+maya.utils.executeDeferred("ueMaya.ueNewScriptSetup()")
 
