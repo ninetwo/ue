@@ -12,7 +12,8 @@ import ueNuke
 import ueNuke.Utilities as ueNukeUtils
 import ueCommon.Save as ueCommonSave
 
-__elclasses__ = ["ns"]
+__ueclasses__ = ["ns"]
+__ueclasses_write__ = ["nr"]
 
 def ueSave():
     root = nuke.root()
@@ -60,12 +61,30 @@ def ueSaveAs():
     p = nukescripts.registerWidgetAsPanel("ueCommonSave.Save", "ueSave",
                                           "ue.panel.ueSave", create=True)
     p.setMinimumSize(400, 600)
-    ueCommonSave.setClasses(__elclasses__)
+    ueCommonSave.setClasses(__ueclasses__)
 
     if p.showModalDialog():
         spec, dbMeta = ueCommonSave.getValues()
         ueNukeUtils.saveUtility(spec, dbMeta=dbMeta)
 
     ueFileUtils.deleteFiles(os.path.join(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")))
+    nukescripts.unregisterPanel("ue.panel.ueSave", lambda: "return")
+
+def ueSaveWrite():
+    p = nukescripts.registerWidgetAsPanel("ueCommonSave.Save", "ueSave",
+                                          "ue.panel.ueSave", create=True)
+    p.setMinimumSize(400, 600)
+    ueCommonSave.setClasses(__ueclasses_write__)
+
+    if p.showModalDialog():
+        spec, dbMeta = ueCommonSave.getValues()
+        n = nuke.thisNode()
+        n.knob("proj").setValue(spec.proj)
+        n.knob("grp").setValue(spec.grp)
+        n.knob("asst").setValue(spec.asst)
+        n.knob("elclass").setValue(spec.elclass)
+        n.knob("eltype").setValue(spec.eltype)
+        n.knob("elname").setValue(spec.elname)
+
     nukescripts.unregisterPanel("ue.panel.ueSave", lambda: "return")
 

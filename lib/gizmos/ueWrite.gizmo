@@ -5,8 +5,9 @@ Gizmo {
  note_font "Bitstream Vera Sans"
  mapsize {0.15 0.15}
  addUserKnob {20 assetTab l Asset}
- addUserKnob {22 ueOpenWrite l "     Browse Elements     " T "import ueNuke.Open\nueNuke.Open.ueOpenWrite()" +STARTLINE}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {22 ueSaveWrite l "      New Element      " -STARTLINE T "import ueNuke.Save\nueNuke.Save.ueSaveWrite()"}
+ addUserKnob {22 ueOpenWrite l "   Browse Elements   " -STARTLINE T "import ueNuke.Open\nueNuke.Open.ueOpenWrite()"}
+ addUserKnob {26 ""}
  addUserKnob {1 proj l project}
  proj "\[python os.getenv(\"PROJ\")]"
  addUserKnob {1 grp l group -STARTLINE}
@@ -26,8 +27,12 @@ Gizmo {
  addUserKnob {41 premultiplied -STARTLINE T WriteControl.premultiplied}
  addUserKnob {41 raw l "raw data" -STARTLINE T WriteControl.raw}
  addUserKnob {26 ""}
- addUserKnob {4 format M {w1 w2 w3 w4 w5}}
- addUserKnob {22 render l Render -STARTLINE T "nuke.execute(\"Write1\", int(nuke.root().knob(\"first_frame\").value()), int(nuke.root().knob(\"last_frame\").value()), 1)"}
+ addUserKnob {41 first l "frame range" T WriteControl.first}
+ addUserKnob {41 last l "" -STARTLINE T WriteControl.last}
+ addUserKnob {41 use_limit l "limit to range" -STARTLINE T WriteControl.use_limit}
+ addUserKnob {26 "" +STARTLINE}
+ addUserKnob {4 format M {Write1 Write2 Write3 Write4 Write5 ""}}
+ addUserKnob {22 render l "   Render   " -STARTLINE T "import ueNuke.Render\nueNuke.Render.ueRender()"}
 }
  Input {
   inputs 0
@@ -35,58 +40,60 @@ Gizmo {
   xpos 178
   ypos -199
  }
-set N46b34e0 [stack 0]
+set N44a6540 [stack 0]
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
-  checkHashOnRead false
-  beforeRender ueNuke.preRender()
-  afterRender ueNuke.postRender()
+  first {{WriteControl.first i}}
+  last {{WriteControl.last i}}
+  use_limit {{WriteControl.use_limit i}}
   name Write5
+  selected true
   xpos 393
   ypos -109
  }
-push $N46b34e0
+push $N44a6540
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
-  checkHashOnRead false
-  beforeRender ueNuke.preRender()
-  afterRender ueNuke.postRender()
+  first {{WriteControl.first i}}
+  last {{WriteControl.last i}}
+  use_limit {{WriteControl.use_limit i}}
   name Write4
   xpos 286
   ypos -111
  }
-push $N46b34e0
+push $N44a6540
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
-  checkHashOnRead false
-  beforeRender ueNuke.preRender()
-  afterRender ueNuke.postRender()
+  first {{WriteControl.first i}}
+  last {{WriteControl.last i}}
+  use_limit {{WriteControl.use_limit i}}
   name Write3
   xpos 178
   ypos -111
  }
-push $N46b34e0
+push $N44a6540
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
-  checkHashOnRead false
-  beforeRender ueNuke.preRender()
-  afterRender ueNuke.postRender()
+  first {{WriteControl.first i}}
+  last {{WriteControl.last i}}
+  use_limit {{WriteControl.use_limit i}}
   name Write2
   xpos 77
   ypos -111
  }
-push $N46b34e0
+push $N44a6540
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
   file_type exr
+  first {{WriteControl.first i}}
+  last {{WriteControl.last i}}
+  use_limit {{WriteControl.use_limit i}}
   checkHashOnRead false
-  beforeRender ueNuke.preRender()
-  afterRender ueNuke.postRender()
   name Write1
   xpos -26
   ypos -110
@@ -105,8 +112,7 @@ push $N46b34e0
  }
  Write {
   inputs 0
-  beforeRender ueNuke.preRender()
-  afterRender ueNuke.postRender()
+  last 10
   name WriteControl
   xpos -130
   ypos -212
