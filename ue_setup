@@ -20,6 +20,7 @@ ln -s $UE_PATH/src/wrapper/maya.sh $UE_PATH/bin/maya
 ln -s $UE_PATH/src/wrapper/nuke.sh $UE_PATH/bin/nuke
 ln -s $UE_PATH/src/wrapper/tvpaint.sh $UE_PATH/bin/tvpaint
 ln -s $UE_PATH/src/wrapper/rv.sh $UE_PATH/bin/rv
+ln -s $UE_PATH/src/wrapper/rvio.sh $UE_PATH/bin/rvio
 ln -s $UE_PATH/src/wrapper/hiero.sh $UE_PATH/bin/hiero
 ln -s $UE_PATH/src/tools/ueAddFiles.py $UE_PATH/bin/ueAddFiles
 ln -s $UE_PATH/src/tools/ueCreateAsset.py $UE_PATH/bin/ueCreateAsset
