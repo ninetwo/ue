@@ -35,6 +35,8 @@ Gizmo {
  addUserKnob {26 ""}
  addUserKnob {4 format M {Write1 Write2 Write3 Write4 Write5 ""}}
  addUserKnob {22 render l "   Render   " -STARTLINE T "import nuke\nimport ueNuke.Render\nueNuke.Render.ueRender(nuke.thisNode())"}
+ addUserKnob {2 file l INVISIBLE +INVISIBLE}
+ file /tmp/test.%04d.exr
 }
  Input {
   inputs 0
@@ -42,60 +44,42 @@ Gizmo {
   xpos 178
   ypos -199
  }
-set N44dc5c0 [stack 0]
+set N3989ce0 [stack 0]
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp/test.%04d.exr
-  first {{WriteControl.first i}}
-  last {{WriteControl.last i}}
-  use_limit {{WriteControl.use_limit i}}
+  file "\[python nuke.thisParent().knob(\"file\").value()]"
   name Write5
-  selected true
   xpos 393
   ypos -109
  }
-push $N44dc5c0
+push $N3989ce0
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp/test.%04d.exr
-  first {{WriteControl.first i}}
-  last {{WriteControl.last i}}
-  use_limit {{WriteControl.use_limit i}}
+  file "\[python nuke.thisParent().knob(\"file\").value()]"
   name Write4
-  xpos 286
+  xpos 285
   ypos -111
  }
-push $N44dc5c0
+push $N3989ce0
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp/test.%04d.exr
-  first {{WriteControl.first i}}
-  last {{WriteControl.last i}}
-  use_limit {{WriteControl.use_limit i}}
+  file "\[python nuke.thisParent().knob(\"file\").value()]"
   name Write3
   xpos 178
   ypos -111
  }
-push $N44dc5c0
+push $N3989ce0
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp/test.%04d.exr
-  first {{WriteControl.first i}}
-  last {{WriteControl.last i}}
-  use_limit {{WriteControl.use_limit i}}
+  file "\[python nuke.thisParent().knob(\"file\").value()]"
   name Write2
-  xpos 77
+  xpos 76
   ypos -111
  }
-push $N44dc5c0
+push $N3989ce0
  Write {
   channels {{{WriteControl.channels}}}
-  file /tmp/test.%04d.exr
-  file_type exr
-  first {{WriteControl.first i}}
-  last {{WriteControl.last i}}
-  use_limit {{WriteControl.use_limit i}}
-  checkHashOnRead false
+  file "\[python nuke.thisParent().knob(\"file\").value()]"
   name Write1
   xpos -26
   ypos -110
@@ -114,8 +98,10 @@ push $N44dc5c0
  }
  Write {
   inputs 0
+  file "\[python nuke.thisParent().knob(\"file\").value()]"
   last 10
   name WriteControl
+  selected true
   xpos -130
   ypos -212
  }

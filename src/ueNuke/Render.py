@@ -1,4 +1,4 @@
-import os
+import os, json
 
 import nuke, nukescripts
 
@@ -16,21 +16,31 @@ def ueRender(n):
 
     if p.showModalDialog():
         renderOpts = ueCommonRender.getValues()
-        nuke.tprint(renderOpts)
 
     nukescripts.unregisterPanel("ue.panel.ueRender", lambda: "return")
 
+    sourceSpec, destSpec = preRender(n)
+
+    if n.knob("limit_range").value():
+        first = n.knob("first").value()
+        last = n.knob("last").value()
+    else:
+        first = nuke.root().knob("first_frame").value()
+        last = nuke.root().knob("last_frame").value()
+
     if renderOpts[0] == 0:
-        preRender(n)
-        if n.knob("limit_range").value():
-            first = n.knob("first").value()
-            last = n.knob("last").value()
-        else:
-            first = nuke.root().knob("first_frame").value()
-            last = nuke.root().knob("last_frame").value()
+        nuke.tprint("Rendering %s ..." % str(destSpec))
         nuke.execute(n.name()+"."+n.knob("format").value(),
                      int(first), int(last), 1)
-        postRender(n)
+    elif renderOpts[0] == 1:
+        nuke.tprint("Spooling %s ..." % str(destSpec))
+        sourceSpec.vers = sourceSpec.vers-1
+        options = {}
+        options["writeNode"] = n.name()+"."+n.knob("format").value()
+        p = os.path.join(os.getenv("UE_PATH"), "src", "ueRender", "Spool.py")
+        os.system("python %s %s %s nuke %i %i '%s'" % (p, str(sourceSpec), str(destSpec),
+                                                       int(first), int(last),
+                                                       json.dumps(options)))
 
 def preRender(n):
     root = nuke.root()
@@ -67,7 +77,7 @@ def preRender(n):
     rName = ueAssetUtils.getElementName(destSpec)
     rPath = os.path.join(p["path"], rName+".%04d.exr")
 
-    nuke.toNode(n.name()+"."+n.knob("format").value()).knob("file").setValue(rPath)
+    n.knob("file").setValue(rPath)
 
     dbMeta = {}
     dbMeta["comment"] = "Auto-save of render %s" % str(destSpec)
@@ -75,7 +85,7 @@ def preRender(n):
     ueNukeUtils.saveUtility(sourceSpec, dbMeta=dbMeta)
     ueNukeUtils.saveUtility(sourceSpec)
 
-    nuke.tprint("Rendering %s to %s ..." % (str(destSpec), os.path.dirname(rPath)))
+    return sourceSpec, destSpec
 
 def postRender(n):
     destSpec = ueSpec.Spec(n.knob("proj").value(),
