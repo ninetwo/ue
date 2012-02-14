@@ -1,4 +1,5 @@
-import os, sys, json
+import os, sys
+import json, time
 
 import drqueue.base.libdrqueue as drqueue
 
@@ -41,9 +42,12 @@ class Job():
             frame["asst_root"] = asst["path"]
             job[f] = frame
 
-        path = ueAssetUtils.getVersionPath(self.destSpec)
         name = ueAssetUtils.getElementName(self.destSpec)
-        p = os.path.join(path, name+".dq")
+        p = os.path.join(asst["path"], "tmp", "drQueue", name+"."+str(int(time.time()))+".dq")
+
+        if not os.path.exists(os.path.dirname(p)):
+            import ueCore.FileUtils as ueFileUtils
+            ueFileUtils.createDir(os.path.dirname(p))
 
         try:
             f = open(p, "w")

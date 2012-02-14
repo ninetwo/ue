@@ -13,45 +13,46 @@ import ueCommon.Render as ueCommonRender
 def ueRender(n):
     p = nukescripts.registerWidgetAsPanel("ueCommonRender.Render", "ueRender",
                                           "ue.panel.ueRender", create=True)
+    ueCommonRender.setRenderFrom(getWriteNodeList())
 
     if p.showModalDialog():
         renderOpts = ueCommonRender.getValues()
 
+        # Make sure the element we're rendering to exists and that the script
+        # has been saved
+        sourceSpec, destSpec = preRender(n)
+
+        # Get the frame range from the ueWrite gizmo, else default to
+        # the scripts asset settings
+        if n.knob("limit_range").value():
+            first = n.knob("first").value()
+            last = n.knob("last").value()
+        else:
+            first = nuke.root().knob("first_frame").value()
+            last = nuke.root().knob("last_frame").value()
+
+        # Render
+        # 0 = Standard nuke "interactive" render
+        # 1 = DrQueue render farm (os.system is a little weird, but it's
+        #     so you don't have to compile it's python module for nuke)
+        # 2 = Cloud render farm, maybe sometime in the future
+        if renderOpts[0] == 0:
+            nuke.tprint("Rendering %s ..." % str(destSpec))
+            nuke.execute(n.name()+"."+n.knob("format").value(),
+                         int(first), int(last), 1)
+        elif renderOpts[0] == 1:
+            nuke.tprint("Spooling %s ..." % str(destSpec))
+            sourceSpec.vers = sourceSpec.vers-1
+            options = {}
+            options["writeNode"] = n.name()+"."+n.knob("format").value()
+            p = os.path.join(os.getenv("UE_PATH"), "src", "ueRender", "Spool.py")
+            os.system("python %s %s %s nuke %i %i '%s'" % (p, str(sourceSpec), str(destSpec),
+                                                           int(first), int(last),
+                                                           json.dumps(options)))
+        elif renderOpts[0] == 2:
+            nuke.tprint("Spooling to cloud currently not avaliable")
+
     nukescripts.unregisterPanel("ue.panel.ueRender", lambda: "return")
-
-    # Make sure the element we're rendering to exists and that the script
-    # has been saved
-    sourceSpec, destSpec = preRender(n)
-
-    # Get the frame range from the ueWrite gizmo, else default to
-    # the scripts asset settings
-    if n.knob("limit_range").value():
-        first = n.knob("first").value()
-        last = n.knob("last").value()
-    else:
-        first = nuke.root().knob("first_frame").value()
-        last = nuke.root().knob("last_frame").value()
-
-    # Render
-    # 0 = Standard nuke "interactive" render
-    # 1 = DrQueue render farm (os.system is a little weird, but it's
-    #     so you don't have to compile it's python module for nuke)
-    # 2 = Cloud render farm, maybe sometime in the future
-    if renderOpts[0] == 0:
-        nuke.tprint("Rendering %s ..." % str(destSpec))
-        nuke.execute(n.name()+"."+n.knob("format").value(),
-                     int(first), int(last), 1)
-    elif renderOpts[0] == 1:
-        nuke.tprint("Spooling %s ..." % str(destSpec))
-        sourceSpec.vers = sourceSpec.vers-1
-        options = {}
-        options["writeNode"] = n.name()+"."+n.knob("format").value()
-        p = os.path.join(os.getenv("UE_PATH"), "src", "ueRender", "Spool.py")
-        os.system("python %s %s %s nuke %i %i '%s'" % (p, str(sourceSpec), str(destSpec),
-                                                       int(first), int(last),
-                                                       json.dumps(options)))
-    elif renderOpts[0] == 2:
-        nuke.tprint("Spooling to cloud currently not avaliable")
 
 def preRender(n):
     root = nuke.root()
@@ -107,4 +108,11 @@ def postRender(n):
                            n.knob("elname").value())
 
     nuke.tprint("Rendering %s complete" % str(destSpec))
+
+def getWriteNodeList():
+    nodes = nuke.allNodes(ueNukeUtils.ueWriteNode(), nuke.root())
+    nodeList = []
+    for n in nodes:
+        nodeList.append(n.name())
+    return nodeList
 

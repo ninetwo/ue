@@ -73,3 +73,15 @@ def saveUtility(spec, dbMeta={}):
 
     nuke.tprint("Saved %s" % spec)
 
+def ueReadNode():
+    spec = ueSpec.Spec(os.getenv("PROJ"), "lib", "global",
+                       "giz", "fileUtils", "ueRead")
+    spec.vers = len(ueAssetUtils.getVersions(spec))
+    return ueAssetUtils.getElementName(spec)
+
+def ueWriteNode():
+    spec = ueSpec.Spec(os.getenv("PROJ"), "lib", "global",
+                       "giz", "fileUtils", "ueWrite")
+    spec.vers = len(ueAssetUtils.getVersions(spec))
+    return ueAssetUtils.getElementName(spec)
+

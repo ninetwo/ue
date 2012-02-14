@@ -9,17 +9,22 @@ import ueSpec
 import ueMaya
 import ueCommon.Render as ueCommonRender
 
-class Open(QtGui.QMainWindow):
+def ueRender():
+    Render().show()
+
+class Render(QtGui.QMainWindow):
     def __init__(self, parent=ueMaya.getMayaWindow()):
         QtGui.QMainWindow.__init__(self, parent)
 
-        self.openWidget = ueCommonRender.Render()
+        ueCommonRender.setRenderFrom(getRenderLayerList())
+
+        self.renderWidget = ueCommonRender.Render()
         self.buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|
                                                 QtGui.QDialogButtonBox.Cancel)
 
         centralWidget = QtGui.QWidget()
         centralWidget.setLayout(QtGui.QVBoxLayout())
-        centralWidget.layout().addWidget(self.openWidget)
+        centralWidget.layout().addWidget(self.renderWidget)
         centralWidget.layout().addWidget(self.buttonBox)
 
         self.setCentralWidget(centralWidget)
@@ -32,4 +37,7 @@ class Open(QtGui.QMainWindow):
         v = ueCommonRender.getValues()
         print v
         self.close()
+
+def getRenderLayerList():
+    return maya.cmds.ls(type="renderLayer")
 

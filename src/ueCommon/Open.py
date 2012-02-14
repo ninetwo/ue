@@ -291,7 +291,7 @@ class Open(QtGui.QWidget):
 
             files = glob.glob(os.path.join(ueAssetUtils.getVersionPath(spec), ueAssetUtils.getElementName(spec)+"*"))
             self.verFilesList.clear()
-            for f in files:
+            for f in sorted(files):
                 self.verFilesList.addItem(QtGui.QListWidgetItem(os.path.basename(f)))
 
             if "comment" in ver:
