@@ -27,12 +27,14 @@ Gizmo {
  addUserKnob {41 premultiplied -STARTLINE T WriteControl.premultiplied}
  addUserKnob {41 raw l "raw data" -STARTLINE T WriteControl.raw}
  addUserKnob {26 ""}
- addUserKnob {41 first l "frame range" T WriteControl.first}
- addUserKnob {41 last l "" -STARTLINE T WriteControl.last}
- addUserKnob {41 use_limit l "limit to range" -STARTLINE T WriteControl.use_limit}
- addUserKnob {26 "" +STARTLINE}
+ addUserKnob {3 first l "frame range"}
+ first 1
+ addUserKnob {3 last l "" -STARTLINE}
+ last 1
+ addUserKnob {6 limit_range l "limit to range?" -STARTLINE}
+ addUserKnob {26 ""}
  addUserKnob {4 format M {Write1 Write2 Write3 Write4 Write5 ""}}
- addUserKnob {22 render l "   Render   " -STARTLINE T "import ueNuke.Render\nueNuke.Render.ueRender()"}
+ addUserKnob {22 render l "   Render   " -STARTLINE T "import nuke\nimport ueNuke.Render\nueNuke.Render.ueRender(nuke.thisNode())"}
 }
  Input {
   inputs 0
@@ -40,7 +42,7 @@ Gizmo {
   xpos 178
   ypos -199
  }
-set N44a6540 [stack 0]
+set N44dc5c0 [stack 0]
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
@@ -52,7 +54,7 @@ set N44a6540 [stack 0]
   xpos 393
   ypos -109
  }
-push $N44a6540
+push $N44dc5c0
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
@@ -63,7 +65,7 @@ push $N44a6540
   xpos 286
   ypos -111
  }
-push $N44a6540
+push $N44dc5c0
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
@@ -74,7 +76,7 @@ push $N44a6540
   xpos 178
   ypos -111
  }
-push $N44a6540
+push $N44dc5c0
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
@@ -85,7 +87,7 @@ push $N44a6540
   xpos 77
   ypos -111
  }
-push $N44a6540
+push $N44dc5c0
  Write {
   channels {{{WriteControl.channels}}}
   file /tmp/test.%04d.exr
