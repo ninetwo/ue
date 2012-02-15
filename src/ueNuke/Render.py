@@ -59,12 +59,22 @@ def ueRender(currentNode):
         if destSpec == None:
             return
 
+        # Create the element(s)/version(s) to render into
         dbMeta = {}
         if len(renderOpts[1]) > 1:
             dbMeta["passes"] = ",".join(renderOpts[1])
+        dbMeta["comment"] = "Render from %s" % str(sourceSpec)
 
-        # Create the element(s)/version(s) to render into
-        path, name = createElement(sourceSpec, destSpec, dbMeta)
+        e = ueAssetUtils.getElement(destSpec)
+        if e == {}:
+            e = ueCreate.createElement(destSpec, dbMeta=dbMeta)
+
+        v = ueCreate.createVersion(destSpec, dbMeta=dbMeta)
+
+        destSpec.vers = v["version"]
+
+        name = ueAssetUtils.getElementName(destSpec)
+        path = v["path"]
 
         # Set up the write nodes with the correct paths
         if len(renderOpts[1]) == 1:
@@ -88,6 +98,12 @@ def ueRender(currentNode):
             if n.knob("limit_range").value():
                 first = n.knob("first").value()
                 last = n.knob("last").value()
+
+        dbMeta = {}
+        dbMeta["comment"] = "Auto-save of render %s" % str(destSpec)
+
+        ueNukeUtils.saveUtility(sourceSpec, dbMeta=dbMeta)
+        ueNukeUtils.saveUtility(sourceSpec)
 
         # Render
         # 0 = Standard nuke "interactive" render
@@ -123,37 +139,6 @@ def ueRender(currentNode):
             nuke.tprint("Spooling to cloud currently not avaliable")
 
     nukescripts.unregisterPanel("ue.panel.ueRender", lambda: "return")
-
-def createElement(sourceSpec, destSpec, dbMeta):
-    dbMeta["comment"] = "Render from %s" % str(sourceSpec)
-
-    e = ueAssetUtils.getElement(destSpec)
-    if e == {}:
-        e = ueCreate.createElement(destSpec, dbMeta=dbMeta)
-
-    v = ueCreate.createVersion(destSpec, dbMeta=dbMeta)
-
-    destSpec.vers = v["version"]
-
-    name = ueAssetUtils.getElementName(destSpec)
-
-    dbMeta = {}
-    dbMeta["comment"] = "Auto-save of render %s" % str(destSpec)
-
-    ueNukeUtils.saveUtility(sourceSpec, dbMeta=dbMeta)
-    ueNukeUtils.saveUtility(sourceSpec)
-
-    return v["path"], name
-
-def postRender(n):
-    destSpec = ueSpec.Spec(n.knob("proj").value(),
-                           n.knob("grp").value(),
-                           n.knob("asst").value(),
-                           n.knob("elclass").value(),
-                           n.knob("eltype").value(),
-                           n.knob("elname").value())
-
-    nuke.tprint("Rendering %s complete" % str(destSpec))
 
 def getWriteNodeList():
     nodes = nuke.allNodes(ueNukeUtils.ueWriteNode(), nuke.root())
