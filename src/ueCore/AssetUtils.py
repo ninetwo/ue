@@ -198,3 +198,4 @@ def getThumbnailPath(spec):
     if not os.path.exists(p):
         p = os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "thumbnail.png")
     return p
+

@@ -33,7 +33,7 @@ class Job():
         for f in range(self.frame_start, self.frame_end+1):
             frame = {}
             if self.run == "nuke":
-                frame["cmd"] = "nuke -x -V -f -X %s -F %i-%i %s" % (self.options["writeNode"],
+                frame["cmd"] = "nuke -x -V -f -X %s -F %i-%i %s" % (",".join(self.options["writeNode"]),
                                                                     f, f, p)
             frame["proj"] = self.destSpec.proj
             frame["grp"] = self.destSpec.grp
