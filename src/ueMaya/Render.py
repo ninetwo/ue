@@ -17,6 +17,7 @@ class Render(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self, parent)
 
         ueCommonRender.setRenderFrom(getRenderLayerList())
+        ueCommonRender.setCurrentRender("defaultRenderLayer")
 
         self.renderWidget = ueCommonRender.Render()
         self.buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|

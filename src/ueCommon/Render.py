@@ -2,7 +2,8 @@ import sys
 
 from PyQt4 import QtCore, QtGui
 
-global render, renderFrom
+global render
+global renderFrom, currentRender
 
 __render_options__ = ["Render Local",
                       "Render Remote",
@@ -14,6 +15,10 @@ def getValues():
 def setRenderFrom(rf):
     global renderFrom
     renderFrom = rf
+
+def setCurrentRender(cr):
+    global currentRender
+    currentRender = cr
 
 class Render(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -34,10 +39,12 @@ class Render(QtGui.QWidget):
         for option in __render_options__:
             self.renderBox.addItem(option)
 
-        for rf in sorted(renderFrom):
+        renderFromSorted = sorted(renderFrom)
+        for rf in renderFromSorted:
             self.renderFromList.addItem(QtGui.QListWidgetItem(rf))
         if len(renderFrom) > 0:
-            self.renderFromList.setCurrentItem(self.renderFromList.item(0))
+            self.renderFromList.setCurrentItem(self.renderFromList.item(
+                                               renderFromSorted.index(currentRender)))
             render[1] = [str(self.renderFromList.currentItem().text())]
 
         self.layout().addWidget(self.renderBox)

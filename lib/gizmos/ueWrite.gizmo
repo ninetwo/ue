@@ -34,7 +34,7 @@ Gizmo {
  addUserKnob {6 limit_range l "limit to range?" -STARTLINE}
  addUserKnob {26 ""}
  addUserKnob {4 format M {Write1 Write2 Write3 Write4 Write5 ""}}
- addUserKnob {22 render l "   Render   " -STARTLINE T "import nuke\nimport ueNuke.Render\nueNuke.Render.ueRender()"}
+ addUserKnob {22 render l "   Render   " -STARTLINE T "import nuke\nimport ueNuke.Render\nueNuke.Render.ueRender(nuke.thisNode().name())"}
  addUserKnob {2 file l INVISIBLE +INVISIBLE}
  file /tmp/test.%04d.exr
 }
