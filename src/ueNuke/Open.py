@@ -9,7 +9,7 @@ import ueCommon.Open as ueCommonOpen
 
 __ueclasses__ = ["ns"]
 __ueclasses_read__ = ["nr", "mr", "cel", "bg"]
-__ueclasses_write__ = ["nr", "mr"]
+__ueclasses_write__ = ["nr"]
 
 def ueOpen():
     p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",

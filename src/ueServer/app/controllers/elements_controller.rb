@@ -10,7 +10,7 @@ class ElementsController < ApplicationController
 
   def show
     @element = Element.get_element(params[:project], params[:group], params[:asset],
-                                   params[:elname], params[:eltype], params[:elclass])
+                                   params[:elclass], params[:eltype], params[:elname])
 
     respond_to do |format|
       format.html
@@ -19,14 +19,16 @@ class ElementsController < ApplicationController
   end
 
   def create
-    @asset = Asset.get_asset(params[:project], params[:group], params[:asset])
-    @asset.elements.new(:elname     => params[:elname],
-                        :eltype     => params[:eltype],
-                        :elclass    => params[:elclass],
-                        :path       => params[:path],
-                        :comment    => params[:comment],
-                        :thumbnail  => params[:thumbnail],
-                        :created_by => params[:created_by])
+    @asset = Project.where(:name => params[:project]).first.groups.where( 
+                           :name => params[:group]).first.assets.where( 
+                           :name =>  params[:asset]).first
+    @asset.elements.create(:elname     => params[:elname],
+                           :eltype     => params[:eltype],
+                           :elclass    => params[:elclass],
+                           :path       => params[:path],
+                           :comment    => params[:comment],
+                           :thumbnail  => params[:thumbnail],
+                           :created_by => params[:created_by])
 
     FileUtils.mkdir_p(params[:path])
 
@@ -44,13 +46,17 @@ class ElementsController < ApplicationController
   end
 
   def create_version
-    @element = Element.get_element(params[:project], params[:group], params[:asset],
-                                   params[:elname], params[:eltype], params[:elclass])
-    @element.versions.new(:version    => params[:version],
-                          :comment    => params[:comment],
-                          :passes     => params[:passes],
-                          :thumbnail  => params[:thumbnail],
-                          :created_by => params[:created_by])
+    @element = Project.where(:name => params[:project]).first.groups.where(
+                             :name => params[:group]).first.assets.where(
+                             :name =>  params[:asset]).first.elements.where(
+                             :elclass => params[:elclass],
+                             :eltype => params[:eltype],
+                             :elname => params[:elname]).first
+    @element.versions.create(:version    => params[:version],
+                             :comment    => params[:comment],
+                             :passes     => params[:passes],
+                             :thumbnail  => params[:thumbnail],
+                             :created_by => params[:created_by])
 
     FileUtils.mkdir_p(params[:path])
 

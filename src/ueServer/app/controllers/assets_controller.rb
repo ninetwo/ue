@@ -18,10 +18,11 @@ class AssetsController < ApplicationController
   end
 
   def create
-    @group = Group.get_group(params[:project], params[:group])
-    @group.assets.new(:name       => params[:name],
-                      :path       => params[:path],
-                      :created_by => params[:created_by])
+    @group = Project.where(:name => params[:project]).first.groups.where(
+                           :name => params[:group]).first
+    @group.assets.create(:name       => params[:name],
+                         :path       => params[:path],
+                         :created_by => params[:created_by])
 
     respond_to do |format|
       if @group.save
