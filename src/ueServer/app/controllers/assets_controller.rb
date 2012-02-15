@@ -1,6 +1,6 @@
 class AssetsController < ApplicationController
   def index
-    @assets = Project.where(:name => params[:project]).first.groups.where(:name => params[:group]).first.assets
+    @assets = Asset.get_assets(params[:project], params[:group])
 
     respond_to do |format|
       format.html
@@ -9,7 +9,7 @@ class AssetsController < ApplicationController
   end
 
   def show
-    @asset = Project.where(:name => params[:project]).first.groups.where(:name => params[:group]).first.assets.where(:name => params[:asset]).first
+    @asset = Asset.get_asset(params[:project], params[:group], params[:asset])
 
     respond_to do |format|
       format.html
@@ -18,19 +18,19 @@ class AssetsController < ApplicationController
   end
 
   def create
-    @asset = Project.where(:name => params[:project]).first.groups.where(:name => params[:group]).first.assets.create(
-                          :name       => params[:name],
-                          :path       => params[:path],
-                          :created_by => params[:created_by])
+    @group = Group.get_group(params[:project], params[:group])
+    @group.assets.new(:name       => params[:name],
+                      :path       => params[:path],
+                      :created_by => params[:created_by])
 
     respond_to do |format|
-      if @asset.save
+      if @group.save
         format.html
-        format.json { render :json => @asset,
+        format.json { render :json => @group,
                       :status => :created }
       else
         format.html
-        format.json { render :json => @asset.errors,
+        format.json { render :json => @group.errors,
                       :status => :unprocessable_entity }
       end
     end

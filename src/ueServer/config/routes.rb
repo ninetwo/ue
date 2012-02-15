@@ -23,7 +23,7 @@ UeServer::Application.routes.draw do
   match "/elements/:project/:group/:asset/:elclass/:eltype/:elname" => "elements#update",  :via => :put
   match "/elements/:project/:group/:asset/:elclass/:eltype/:elname" => "elements#destroy", :via => :destroy
 
-  match "/versions/:project/:group/:asset/:elclass/:eltype/:elname" => "elements#createversion",  :via => :post
+  match "/versions/:project/:group/:asset/:elclass/:eltype/:elname" => "elements#create_version",  :via => :post
 
   match "/config/:project(/:group(/:asset(/:elclass(/:eltype(/:elname)))))" => "configs#show", :as => :config, :via => :get
   match "/config/:project(/:group(/:asset(/:elclass(/:eltype(/:elname)))))" => "configs#create", :as => :config, :via => :post

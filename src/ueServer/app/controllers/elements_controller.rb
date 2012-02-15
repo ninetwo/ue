@@ -1,8 +1,6 @@
 class ElementsController < ApplicationController
   def index
-    @elements = Project.where(:name => params[:project]).first.groups.where(
-                              :name => params[:group]).first.assets.where(
-                              :name => params[:asset]).first.elements
+    @elements = Element.get_elements(params[:project], params[:group], params[:asset])
 
     respond_to do |format|
       format.html
@@ -11,12 +9,8 @@ class ElementsController < ApplicationController
   end
 
   def show
-    @element = Project.where(:name => params[:project]).first.groups.where(
-                             :name => params[:group]).first.assets.where(
-                             :name => params[:asset]).first.elements.where(
-                             :elname => params[:elname],
-                             :eltype => params[:eltype],
-                             :elclass => params[:elclass]).first
+    @element = Element.get_element(params[:project], params[:group], params[:asset],
+                                   params[:elname], params[:eltype], params[:elclass])
 
     respond_to do |format|
       format.html
@@ -25,45 +19,38 @@ class ElementsController < ApplicationController
   end
 
   def create
-    @element = Project.where(:name => params[:project]).first.groups.where(
-                             :name => params[:group]).first.assets.where(
-                             :name => params[:asset]).first.elements.create(
-                             :elname => params[:elname],
-                             :eltype => params[:eltype],
-                             :elclass => params[:elclass],
-                             :path => params[:path],
-                             :comment => params[:comment],
-                             :thumbnail => params[:thumbnail],
-                             :created_by => params[:created_by])
+    @asset = Asset.get_asset(params[:project], params[:group], params[:asset])
+    @asset.elements.new(:elname     => params[:elname],
+                        :eltype     => params[:eltype],
+                        :elclass    => params[:elclass],
+                        :path       => params[:path],
+                        :comment    => params[:comment],
+                        :thumbnail  => params[:thumbnail],
+                        :created_by => params[:created_by])
 
     FileUtils.mkdir_p(params[:path])
 
     respond_to do |format|
-      if @element.save
+      if @asset.save
         format.html
-        format.json { render :json => @element,
+        format.json { render :json => @asset,
                       :status => :created }
       else
         format.html
-        format.json { render :json => @element.errors,
+        format.json { render :json => @asset.errors,
                       :status => :unprocessable_entity }
       end
     end
   end
 
-  def createversion
-    @element = Project.where(:name => params[:project]).first.groups.where(
-                             :name => params[:group]).first.assets.where(
-                             :name => params[:asset]).first.elements.where(
-                             :elname => params[:elname],
-                             :eltype => params[:eltype],
-                             :elclass => params[:elclass]).first
-
-    @element.versions.create(:version => params[:version],
-                             :comment => params[:comment],
-                             :passes => params[:passes],
-                             :thumbnail => params[:thumbnail],
-                             :created_by => params[:created_by])
+  def create_version
+    @element = Element.get_element(params[:project], params[:group], params[:asset],
+                                   params[:elname], params[:eltype], params[:elclass])
+    @element.versions.new(:version    => params[:version],
+                          :comment    => params[:comment],
+                          :passes     => params[:passes],
+                          :thumbnail  => params[:thumbnail],
+                          :created_by => params[:created_by])
 
     FileUtils.mkdir_p(params[:path])
 

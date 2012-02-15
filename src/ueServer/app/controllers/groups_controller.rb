@@ -1,6 +1,6 @@
 class GroupsController < ApplicationController
   def index
-    @groups = Project.where(:name => params[:project]).first.groups
+    @groups = Group.get_groups(params[:project])
 
     respond_to do |format|
       format.html
@@ -9,7 +9,7 @@ class GroupsController < ApplicationController
   end
 
   def show
-    @group = Project.where(:name => params[:project]).first.groups.where(:name => params[:group]).first
+    @group = Group.get_group(params[:project], params[:group])
 
     respond_to do |format|
       format.html
@@ -18,19 +18,19 @@ class GroupsController < ApplicationController
   end
 
   def create
-    @group = Project.where(:name => params[:project]).first.groups.create(
-                           :name       => params[:name],
-                           :path       => params[:path],
-                           :created_by => params[:created_by])
+    @project = Project.get_project(params[:project])
+    @project.groups.new(:name       => params[:name],
+                        :path       => params[:path],
+                        :created_by => params[:created_by])
 
     respond_to do |format|
-      if @group.save
+      if @project.save
         format.html
-        format.json { render :json => @group,
+        format.json { render :json => @project,
                       :status => :created }
       else
         format.html
-        format.json { render :json => @group.errors,
+        format.json { render :json => @project.errors,
                       :status => :unprocessable_entity }
       end
     end

@@ -9,7 +9,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = Project.where(:name => params[:project]).first
+    @project = Project.get_project(params[:project])
 
     respond_to do |format|
       format.html
@@ -36,7 +36,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @project = Project.where(:name => params[:project])
+    @project = Project.get_project(params[:project])
 
     if params[:name] != nil
       @project.name = params[:name]
