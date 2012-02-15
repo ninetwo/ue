@@ -131,7 +131,7 @@ def parsePath(path, **kwargs):
     """
     p = path
     if "vers" in kwargs:
-        p = path.replace("%%version%%", "%04d" % kwargs["vers"])
+        p = path.replace("%%version%%", "%04d" % int(kwargs["vers"]))
     return p
 
 def getElementPath(spec, assetClasses=None):
@@ -167,23 +167,24 @@ def getVersionPath(spec, assetClasses=None):
 
     append = ""
     if "pathappend" in assetClasses[spec.elclass]:
-        append = parsePath(assetClasses[spec.elclass]["pathappend"], vers=spec.vers)
+        append = parsePath(assetClasses[spec.elclass]["pathappend"], vers=int(spec.vers))
 
-    return os.path.join(getElementPath(spec, assetClasses=assetClasses), append)
+    elpass = ""
+    if not spec.elpass == None:
+        elpass = spec.elpass
+
+    return os.path.join(getElementPath(spec, assetClasses=assetClasses), append, elpass)
 
 
 def getElementName(spec):
     """Returns the file name of a version of a given
        element without a file extension
     """
-    try:
-        s = "%s_%s_%s_%s_%s_%s_%04d" % (spec.proj, spec.grp, spec.asst,
-                                        spec.elname, spec.eltype,
-                                        spec.elclass, spec.vers)
-    except TypeError:
-        s = "%s_%s_%s_%s_%s_%s_%s" % (spec.proj, spec.grp, spec.asst,
-                                      spec.elname, spec.eltype,
-                                      spec.elclass, spec.vers)
+    s = "%s_%s_%s_%s_%s_%s_%04d" % (spec.proj, spec.grp, spec.asst,
+                                    spec.elname, spec.eltype,
+                                    spec.elclass, int(spec.vers))
+    if not spec.elpass == None:
+        s = "%s_%s" % (s, spec.elpass)
     return s
 
 

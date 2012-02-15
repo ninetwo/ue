@@ -1,7 +1,7 @@
 class Spec():
     def __init__(self, proj=None, grp=None, asst=None,
                  elclass=None, eltype=None, elname=None,
-                 vers=None):
+                 vers=None, elpass=None):
 
         self.proj = proj
         self.grp = grp
@@ -10,6 +10,7 @@ class Spec():
         self.eltype = eltype
         self.elname = elname
         self.vers = vers
+        self.elpass = elpass
 
         if not proj == None and grp == None:
             self.parseString(proj)
@@ -30,6 +31,8 @@ class Spec():
             self.elclass = s[5]
         if len(s) > 6:
             self.vers = int(s[6])
+        if len(s) > 7:
+            self.elpass = s[7]
 
     def toArray(self):
         a = []
@@ -47,6 +50,8 @@ class Spec():
             a.append(self.elname)
         if not self.vers == None:
             a.append(str(self.vers))
+        if not self.elpass == None:
+            a.append(self.elpass)
         return a
 
     def __str__(self):
@@ -65,5 +70,7 @@ class Spec():
             s += ":"+self.elclass
         if not self.vers == None:
             s += ":%04d" % int(self.vers)
+        if not self.elpass == None:
+            s += ":"+self.elpass
         return s
 

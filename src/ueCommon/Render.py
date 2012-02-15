@@ -20,7 +20,7 @@ class Render(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
 
         global render
-        render = [0, "", {}]
+        render = [0, [], {}]
 
         self.setLayout(QtGui.QVBoxLayout())
         self.layout().setContentsMargins(2, 2, 2, 2)
@@ -29,6 +29,8 @@ class Render(QtGui.QWidget):
         self.renderFromList = QtGui.QListWidget()
         self.renderBox = QtGui.QComboBox()
 
+        self.renderFromList.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+
         for option in __render_options__:
             self.renderBox.addItem(option)
 
@@ -36,12 +38,13 @@ class Render(QtGui.QWidget):
             self.renderFromList.addItem(QtGui.QListWidgetItem(rf))
         if len(renderFrom) > 0:
             self.renderFromList.setCurrentItem(self.renderFromList.item(0))
-            render[1] = str(self.renderFromList.currentItem().text())
+            render[1] = [str(self.renderFromList.currentItem().text())]
 
         self.layout().addWidget(self.renderBox)
         self.layout().addWidget(self.renderFromList)
 
         self.renderBox.activated.connect(self.setRender)
+        self.renderFromList.itemSelectionChanged.connect(self.setRenderFrom)
 
     def setRender(self):
         global render
@@ -49,11 +52,14 @@ class Render(QtGui.QWidget):
 
     def setRenderFrom(self):
         global render
-        render[1] = str(self.renderFromList.currentItem().text())
+        render[1] = []
+        for i in self.renderFromList.selectedItems():
+            render[1].append(str(i.text()))
 
-if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    win = Render()
-    win.show()
-    sys.exit(app.exec_())
+
+#if __name__ == "__main__":
+#    app = QtGui.QApplication(sys.argv)
+#    win = Render()
+#    win.show()
+#    sys.exit(app.exec_())
 

@@ -73,7 +73,7 @@ def createElement(spec, dbMeta={}):
 
     return element
 
-def createVersion(spec, dbMeta={}):
+def createVersion(spec, dbMeta={}, layer=None):
     version = {}
 
     spec.vers = len(ueAssetUtils.getVersions(spec))+1
@@ -84,6 +84,9 @@ def createVersion(spec, dbMeta={}):
 
     for m in dbMeta:
         version[m] = dbMeta[m]
+
+    if not layer == None:
+        p = os.path.join(version["path"])
 
     ueClient.client.saveVersion(spec, version)
     ueFileUtils.createDir(version["path"])

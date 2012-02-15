@@ -7,14 +7,15 @@ import ueSpec
 import ueCore
 import ueCore.AssetUtils as ueAssetUtils
 
-global proj, grp, asst, elclass, eltype, elname, vers
+global proj, grp, asst, elclass, eltype, elname, vers, elpass
 
 global elclasses
 elclasses = []
 
 def getValues():
     return ueSpec.Spec(proj, grp, asst,
-                       elclass, eltype, elname, vers)
+                       elclass, eltype, elname,
+                       vers, elpass)
 
 def setClasses(classes):
     global elclasses
@@ -24,7 +25,7 @@ class Open(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
 
-        global proj, grp, asst, elclass, eltype, elname, vers
+        global proj, grp, asst, elclass, eltype, elname, vers, elpass
 
         self.elclasses = elclasses
 
@@ -35,6 +36,7 @@ class Open(QtGui.QWidget):
         eltype = None
         elname = None
         vers = None
+        elpass = None
 
         self.setLayout(QtGui.QGridLayout())
         self.layout().setContentsMargins(2, 2, 2, 2)
@@ -48,10 +50,13 @@ class Open(QtGui.QWidget):
         self.elnameList = QtGui.QListWidget()
         self.versList = QtGui.QListWidget()
 
+        self.passList = QtGui.QListWidget()
+
         self.elCreatedBy = QtGui.QLabel("N/A")
         self.elCreatedAt = QtGui.QLabel("N/A")
         self.elComment = QtGui.QLabel("N/A")
         self.elThumb = QtGui.QLabel()
+
         self.verCreatedBy = QtGui.QLabel("N/A")
         self.verCreatedAt = QtGui.QLabel("N/A")
         self.verComment = QtGui.QLabel("N/A")
@@ -106,6 +111,8 @@ class Open(QtGui.QWidget):
                     self.versList.setCurrentItem(self.versList.item(0))
                     vers = int(self.versList.currentItem().text())
 
+                    self.loadPasses()
+
                     self.updateVersInfo()
 
         asstBox = QtGui.QGroupBox("Asset")
@@ -118,6 +125,11 @@ class Open(QtGui.QWidget):
         asstBox.layout().addWidget(QtGui.QLabel("Asset"))
         asstBox.layout().addWidget(self.asstMenu)
         asstBox.layout().addStretch(0)
+
+        passBox = QtGui.QGroupBox("Pass")
+        passBox.setLayout(QtGui.QHBoxLayout())
+
+        passBox.layout().addWidget(self.passList)
 
         elBox = QtGui.QGroupBox("Element")
         elBox.setLayout(QtGui.QHBoxLayout())
@@ -167,6 +179,7 @@ class Open(QtGui.QWidget):
 
         self.layout().addWidget(asstBox)
         self.layout().addWidget(elBox)
+        self.layout().addWidget(passBox)
         self.layout().addWidget(elInfoBox)
         self.layout().addWidget(verInfoBox)
 
@@ -177,6 +190,7 @@ class Open(QtGui.QWidget):
         self.eltypeList.itemSelectionChanged.connect(self.loadNames)
         self.elnameList.itemSelectionChanged.connect(self.loadVers)
         self.versList.itemSelectionChanged.connect(self.setVers)
+        self.passList.itemSelectionChanged.connect(self.setPass)
 
     def loadProjects(self):
         pl = sorted(ueAssetUtils.getProjectsList())
@@ -252,11 +266,32 @@ class Open(QtGui.QWidget):
             vers = str(self.versList.currentItem().text())
         else:
             vers = None
+        self.loadPasses()
         self.updateElInfo()
 
     def setVers(self):
         global vers
         vers = int(self.versList.currentItem().text())
+        self.loadPasses()
+        self.updateVersInfo()
+
+    def loadPasses(self):
+        global elpass
+        self.passList.clear()
+        if int(vers)-1 <= len(self.versions):
+            if "passes" in self.versions[int(vers)-1]:
+                for p in self.versions[int(vers)-1]["passes"].split(","):
+                    self.passList.addItem(QtGui.QListWidgetItem(p))
+                self.passList.setCurrentItem(self.passList.item(0))
+                elpass = str(self.passList.currentItem().text())
+            else:
+                elpass = None
+        else:
+            elpass = None
+
+    def setPass(self):
+        global elpass
+        elpass = str(self.passList.currentItem().text())
         self.updateVersInfo()
 
     def updateElInfo(self):
@@ -284,7 +319,7 @@ class Open(QtGui.QWidget):
     def updateVersInfo(self):
         try:
             ver = self.versions[int(vers)-1]
-            spec = ueSpec.Spec(proj, grp, asst, elclass, eltype, elname, vers)
+            spec = ueSpec.Spec(proj, grp, asst, elclass, eltype, elname, vers, elpass)
 
             self.verCreatedBy.setText(ver["created_by"])
             self.verCreatedAt.setText(ueCore.formatDatetime(ver["created_at"]))

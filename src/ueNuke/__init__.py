@@ -91,13 +91,18 @@ def ueNewScriptSetup():
 def getReadPath():
     n = nuke.thisParent()
 
+    elpass = n.knob("elpass").value()
+    if elpass == "":
+        elpass = None
+
     spec = ueSpec.Spec(n.knob("proj").value(),
                        n.knob("grp").value(),
                        n.knob("asst").value(),
                        n.knob("elclass").value(),
                        n.knob("eltype").value(),
                        n.knob("elname").value(),
-                       n.knob("vers").value())
+                       n.knob("vers").value(),
+                       elpass)
 
     p = os.path.join(os.getenv("UE_PATH"), "lib",
                      "placeholders", "nuke.png")

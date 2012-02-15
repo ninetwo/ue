@@ -72,6 +72,7 @@ class ElementsController < ApplicationController
 
     @element.versions.build(:version => params[:version],
                             :comment => params[:comment],
+                            :passes => params[:passes],
                             :thumbnail => params[:thumbnail],
                             :created_by => params[:created_by])
 

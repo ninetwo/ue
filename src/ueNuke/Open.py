@@ -42,6 +42,7 @@ def ueOpenRead():
         n.knob("eltype").setValue(spec.eltype)
         n.knob("elname").setValue(spec.elname)
         n.knob("vers").setValue(int(spec.vers))
+        n.knob("elpass").setValue(spec.elpass)
 
     nukescripts.unregisterPanel("ue.panel.ueOpen", lambda: "return")
 

@@ -19,6 +19,7 @@ Gizmo {
  addUserKnob {1 elname l name}
  addUserKnob {3 vers l version}
  vers 1
+ addUserKnob {1 elpass l pass}
 }
  Read {
   inputs 0
