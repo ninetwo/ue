@@ -60,7 +60,8 @@ def ueRender(currentNode):
             return
 
         dbMeta = {}
-        dbMeta["passes"] = ",".join(renderOpts[1])
+        if len(renderOpts[1]) > 1:
+            dbMeta["passes"] = ",".join(renderOpts[1])
 
         # Create the element(s)/version(s) to render into
         path, name = createElement(sourceSpec, destSpec, dbMeta)
