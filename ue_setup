@@ -30,6 +30,7 @@ ln -s $UE_PATH/src/tools/ueListElements.py $UE_PATH/bin/ueListElements
 ln -s $UE_PATH/src/tools/ueListAssets.py $UE_PATH/bin/ueListAssets
 ln -s $UE_PATH/src/tools/ueListGroups.py $UE_PATH/bin/ueListGroups
 ln -s $UE_PATH/src/tools/ueListProjects.py $UE_PATH/bin/ueListProjects
+ln -s $UE_PATH/src/tools/ueInfo.py $UE_PATH/bin/ueInfo
 
 echo "Done!"
 
