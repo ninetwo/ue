@@ -13,13 +13,19 @@ def createAsset():
         print "ERROR: Asset name not set"
         sys.exit(2)
 
-    spec = ueSpec.Spec(asset["spec"]+":"+asset["name"])
+    if "spec" not in asset:
+        print "ERROR: Spec not set"
+        sys.exit(2)
+
+    spec = ueSpec.Spec("%s:%s" % (asset["spec"], asset["name"]))
 
     ueCreate.createAsset(spec, asset["type"], dbMeta=asset["dbMeta"])
 
 def parse():
     sArgs = "hn:s:t:d:"
-    lArgs = ["help", "name=", "spec=", "type=", "directory=", "startFrame=", "endFrame="]
+    lArgs = ["help", "name=", "spec=", "type=", "directory=",
+             "startFrame=", "endFrame=", "frameRate=",
+             "xRes=", "yRes=", "xPad=", "yPad=", "aspectRatio="]
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], sArgs, lArgs)
@@ -27,7 +33,7 @@ def parse():
         print "ERROR: Parsing argument (%s)" % e
         sys.exit(2)
 
-    asset["spec"] = ueSpec.Spec(os.getenv("PROJ"), os.getenv("GRP"))
+    asset["spec"] = "%s:%s" % (os.getenv("PROJ"), os.getenv("GRP"))
     asset["type"] = "default"
     asset["dbMeta"] = {}
 
@@ -47,21 +53,40 @@ def parse():
             asset["dbMeta"]["startFrame"] = a
         elif o in ("--endFrame"):
             asset["dbMeta"]["endFrame"] = a
+        elif o in ("--frameRate"):
+            asset["dbMeta"]["frameRate"] = a
+        elif o in ("--xRes"):
+            asset["dbMeta"]["xRes"] = a
+        elif o in ("--yRes"):
+            asset["dbMeta"]["yRes"] = a
+        elif o in ("--xPad"):
+            asset["dbMeta"]["xPad"] = a
+        elif o in ("--yPad"):
+            asset["dbMeta"]["yPad"] = a
+        elif o in ("--aspectRatio"):
+            asset["dbMeta"]["aspectRatio"] = a
         else:
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)
 
-
 def usage():
-    print "Usage: %s -n [NAME] -g [GROUP] ..." % os.path.basename(sys.argv[0])
+    print "Usage: %s -n [NAME] -s [SPEC] ..." % os.path.basename(sys.argv[0])
     print "Creates a new ue asset."
     print ""
     print "\t-n, --name          Asset name"
-    print "\t-s, --spec          "
+    print "\t-s, --spec          Destination spec"
+    print "\t                    Requires at least a project"
+    print "\t                    and a group"
+    print "\t-t, --type          Asset type"
     print "\t-d, --directory     Asset directory"
-    print "\t                    Will use group or project default if not set"
-    print "\t--startFrame        Start frame"
-    print "\t--endFrame          End frame"
+    print "\t--startFrame        Start frame (float)"
+    print "\t--endFrame          End frame (float)"
+    print "\t--frameRate         Frames per second (float)"
+    print "\t--xRes              X resolution (float)"
+    print "\t--yRes              Y resolution (float)"
+    print "\t--xPad              Total X padding (float)"
+    print "\t--yPad              Total Y padding (float)"
+    print "\t--aspectRatio       Pixel aspect ratio (float)"
     print "\t-h, --help          Print this help"
 
 
@@ -70,9 +95,8 @@ if __name__ == "__main__":
         usage()
         sys.exit(0)
 
-    ueClient.Client()
-
     parse()
+    ueClient.Client()
     createAsset()
 
     sys.exit(0)

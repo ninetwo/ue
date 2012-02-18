@@ -9,12 +9,11 @@ import ueCore.AssetUtils as ueAssetUtils
 settings = {}
 
 def listGroups():
-    for g in sorted(ueAssetUtils.getGroupsList(settings["spec"])):
+    for g in sorted(ueAssetUtils.getGroups(settings["spec"])):
+        group = g["name"]
         if "paths" in settings:
-            print "%s -> %s" % (g, groups[g]["path"])
-        else:
-            print "%s" % g
-
+            group = "%s -> %s" % (group, g["path"])
+        print group
 
 def parse():
     sArgs = "hs:p"
@@ -40,7 +39,6 @@ def parse():
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)
 
-
 def usage():
     print "Usage: %s" % os.path.basename(sys.argv[0])
     print "Lists groups in a ue project."
@@ -51,9 +49,8 @@ def usage():
 
 
 if __name__ == "__main__":
-    ueClient.Client()
-
     parse()
+    ueClient.Client()
     listGroups()
 
     sys.exit(0)

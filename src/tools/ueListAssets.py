@@ -9,12 +9,11 @@ import ueCore.AssetUtils as ueAssetUtils
 settings = {}
 
 def listAssets():
-    for a in sorted(ueAssetUtils.getAssetsList(settings["spec"])):
+    for a in sorted(ueAssetUtils.getAssets(settings["spec"])):
+        asset = a["name"]
         if "paths" in settings:
-            print "%s -> %s" % (a, assets[a]["path"])
-        else:
-            print "%s" % a
-
+            asset = "%s -> %s" % (asset, a["path"])
+        print asset
 
 def parse():
     sArgs = "hs:p"
@@ -40,7 +39,6 @@ def parse():
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)
 
-
 def usage():
     print "Usage: %s" % os.path.basename(sys.argv[0])
     print "Lists assets in a ue group."
@@ -51,9 +49,8 @@ def usage():
 
 
 if __name__ == "__main__":
-    ueClient.Client()
-
     parse()
+    ueClient.Client()
     listAssets()
 
     sys.exit(0)

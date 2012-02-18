@@ -9,12 +9,11 @@ import ueCore.AssetUtils as ueAssetUtils
 settings = {}
 
 def listProjects():
-    for p in sorted(ueAssetUtils.getProjectsList()):
+    for p in sorted(ueAssetUtils.getProjects()):
+        project = p["name"]
         if "paths" in settings:
-            print "%s -> %s" % (p, projects[p]["path"])
-        else:
-            print "%s" % p
-
+            project = "%s -> %s" % (project, p["path"])
+        print project
 
 def parse():
     sArgs = "hp"
@@ -36,7 +35,6 @@ def parse():
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)
 
-
 def usage():
     print "Usage: %s" % os.path.basename(sys.argv[0])
     print "Lists ue projects."
@@ -46,9 +44,8 @@ def usage():
 
 
 if __name__ == "__main__":
-    ueClient.Client()
-
     parse()
+    ueClient.Client()
     listProjects()
 
     sys.exit(0)

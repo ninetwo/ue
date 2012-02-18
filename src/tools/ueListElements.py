@@ -18,11 +18,10 @@ def listElements():
                                 settings["spec"].grp,
                                 settings["spec"].asst,
                                 e, t, n)
+                element = str(a)
                 if "paths" in settings:
-                    print "%s -> %s" % (str(a), elements[e][t][n]["path"])
-                else:
-                    print "%s" % str(a)
-
+                    element = "%s -> %s" % (element, n["path"])
+                print element
 
 def parse():
     sArgs = "hs:p"
@@ -50,7 +49,6 @@ def parse():
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)
 
-
 def usage():
     print "Usage: %s" % os.path.basename(sys.argv[0])
     print "Lists elements in a ue asset."
@@ -61,9 +59,8 @@ def usage():
 
 
 if __name__ == "__main__":
-    ueClient.Client()
-
     parse()
+    ueClient.Client()
     listElements()
 
     sys.exit(0)

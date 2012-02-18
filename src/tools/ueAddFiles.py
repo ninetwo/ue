@@ -17,7 +17,7 @@ def addFiles():
         sys.exit(2)
 
     if not "spec" in config:
-        print "ERROR: No element spec given"
+        print "ERROR: Spec not set"
         sys.exit(2)
 
     d = ueAssetUtils.getElement(config["spec"])
@@ -42,7 +42,6 @@ def addFiles():
             dest = os.path.join(path, "%s.%04d.%s" % (name, files.index(f)+1, ext))
             ueFileUtils.copyFile(f, dest)
 
-
 def parse():
     sArgs = "hs:f:"
     lArgs = ["help", "spec=", "files="]
@@ -65,15 +64,14 @@ def parse():
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)
 
-
 def usage():
-    print "Usage: %s -s [ELEMENT] -f [FILES]" % os.path.basename(sys.argv[0])
+    print "Usage: %s -s [SPEC] -f [FILES]" % os.path.basename(sys.argv[0])
     print "Adds files to a ue element."
     print ""
-    print "\t-s, --spec          ue element name, e.g."
-    print "\t                    proj:grp:asst:name:type:class"
-    print "\t-f, --files         Path to file(s). Can include"
-    print "\t                    wildcards."
+    print "\t-s, --spec          Destination spec"
+    print "\t-f, --files         Path to file(s)"
+    print "\t                    Can include '*' wildcards, and"
+    print "\t                    anything else you can glob"
     print "\t-h, --help          Print this help"
 
 
@@ -82,9 +80,8 @@ if __name__ == "__main__":
         usage()
         sys.exit(0)
 
-    ueClient.Client()
-
     parse()
+    ueClient.Client()
     addFiles()
 
     sys.exit(0)
