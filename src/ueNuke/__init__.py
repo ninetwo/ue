@@ -71,18 +71,18 @@ def ueNewScriptSetup():
 
     formatName = "ueProjectRes"
 
-#    root.knob("fps").setValue(int(asset["frameRate"]))
-#    root.knob("first_frame").setValue(int(asset["startFrame"]))
+    root.knob("fps").setValue(int(asset["frameRate"]))
+    root.knob("first_frame").setValue(int(asset["startFrame"]))
     root.knob("last_frame").setValue(int(asset["endFrame"]))
 
-#    x = int(config["xRes"])+int(asset["xPad"])
-#    y = int(config["yRes"])+int(asset["yPad"])
+    x = int(asset["xRes"])+int(asset["xPad"])
+    y = int(asset["yRes"])+int(asset["yPad"])
 
-#    nuke.addFormat("%i %i %s" % (x, y, formatName))
+    nuke.addFormat("%i %i %s" % (x, y, formatName))
 #    nuke.addFormat("%i %i %i %i %i %i %d %s" % (x, y, int(config["xPad"]), int(config["yPad"]),
 #                                                int(config["xRes"]), int(config["yRes"]),
 #                                                float(config["aspectRatio"]), formatName))
-#    root.knob("format").setValue(formatName)
+    root.knob("format").setValue(formatName)
 
 def getReadPath():
     n = nuke.thisParent()
