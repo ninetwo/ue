@@ -22,12 +22,16 @@ class ElementsController < ApplicationController
     @asset = Project.where(:name => params[:proj]).first.groups.where( 
                            :name => params[:grp]).first.assets.where( 
                            :name =>  params[:asst]).first
-    @element = @asset.elements.new(:elname     => params[:elname],
-                                   :eltype     => params[:eltype],
-                                   :elclass    => params[:elclass],
-                                   :comment    => params[:comment],
-                                   :thumbnail  => params[:thumbnail],
-                                   :created_by => params[:created_by])
+#    @element = @asset.elements.new(:elname     => params[:elname],
+#                                   :eltype     => params[:eltype],
+#                                   :elclass    => params[:elclass],
+#                                   :comment    => params[:comment],
+#                                   :thumbnail  => params[:thumbnail],
+#                                   :created_by => params[:created_by])
+    @element = @asset.elements.new(params[:element])
+    @element.elclass = params[:elclass]
+    @element.eltype = params[:eltype]
+    @element.elname = params[:elname]
 
     respond_to do |format|
       if @element.save
@@ -49,11 +53,12 @@ class ElementsController < ApplicationController
                              :elclass => params[:elclass],
                              :eltype => params[:eltype],
                              :elname => params[:elname]).first
-    @version = @element.versions.new(:version    => params[:version],
-                                     :comment    => params[:comment],
-                                     :passes     => params[:passes],
-                                     :thumbnail  => params[:thumbnail],
-                                     :created_by => params[:created_by])
+#    @version = @element.versions.new(:version    => params[:version],
+#                                     :comment    => params[:comment],
+#                                     :passes     => params[:passes],
+#                                     :thumbnail  => params[:thumbnail],
+#                                     :created_by => params[:created_by])
+    @version = @element.versions.new(params[:version])
 
     respond_to do |format|
       if @version.save

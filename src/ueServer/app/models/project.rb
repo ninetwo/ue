@@ -17,7 +17,7 @@ class Project
   end
   after_save :create_dirs
 
-  def self.get_project(project)
+  def self.get_project project
     p = Project.where(:name => project).first
     if p.nil?
       return {}

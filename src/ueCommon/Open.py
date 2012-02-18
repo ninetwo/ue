@@ -279,7 +279,7 @@ class Open(QtGui.QWidget):
         global elpass
         self.passList.clear()
         if int(vers)-1 <= len(self.versions):
-            if not self.versions[int(vers)-1]["passes"] == None:
+            if "passes" in self.versions[int(vers)-1]:
                 for p in self.versions[int(vers)-1]["passes"].split(","):
                     self.passList.addItem(QtGui.QListWidgetItem(p))
                 self.passList.setCurrentItem(self.passList.item(0))
@@ -324,17 +324,17 @@ class Open(QtGui.QWidget):
             self.verCreatedBy.setText(ver["created_by"])
             self.verCreatedAt.setText(ueCore.formatDatetime(ver["created_at"]))
 
-            files = glob.glob(os.path.join(ueAssetUtils.getVersionPath(spec), ueAssetUtils.getElementName(spec)+"*"))
+            files = glob.glob(os.path.join(ver["path"], ver["file_name"]+"*"))
             self.verFilesList.clear()
             for f in sorted(files):
                 self.verFilesList.addItem(QtGui.QListWidgetItem(os.path.basename(f)))
 
-            if not ver["comment"] == None:
+            if "comment" in ver:
                 self.verComment.setText(ver["comment"])
             else:
                 self.verComment.setText("N/A")
 
-            if not ver["thumbnail"] == None:
+            if "thumbnail" in ver:
                 spec = ueSpec.Spec(proj, grp, asst, elclass, eltype, elname, vers)
                 f = ueAssetUtils.getThumbnailPath(spec)
                 img = QtGui.QImage(f)

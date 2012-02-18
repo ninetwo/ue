@@ -19,13 +19,13 @@ class Group
   end
   after_save :create_dirs
 
-  def Group.get_group(project, group)
-    p = Project.get_project(project)
-    if p == {} || p == nil
+  def self.get_group project, group
+    p = Project.get_project project
+    if p == {} || p.nil?
       return {}
     else
       g = p.groups.where(:name => group).first
-      if g == nil
+      if g.nil?
         return {}
       else
         return g
@@ -33,9 +33,9 @@ class Group
     end
   end
 
-  def self.get_groups(project)
-    p = Project.get_project(project)
-    if p == {} || p == nil
+  def self.get_groups project
+    p = Project.get_project project
+    if p == {} || p.nil?
       return []
     else
       return p.groups

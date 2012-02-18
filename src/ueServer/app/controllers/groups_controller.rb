@@ -19,10 +19,11 @@ class GroupsController < ApplicationController
 
   def create
     @project = Project.where(:name => params[:proj]).first
-    @group = @project.groups.new(:name       => params[:name],
-                                 :group_type => params[:group_type],
-                                 :created_by => params[:created_by],
-                                 :path       => params[:path])
+#    @group = @project.groups.new(:name       => params[:name],
+#                                 :group_type => params[:group_type],
+#                                 :created_by => params[:created_by],
+#                                 :path       => params[:path])
+    @group = @project.groups.new(params[:group])
 
     respond_to do |format|
       if @group.save

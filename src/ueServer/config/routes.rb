@@ -11,11 +11,11 @@ UeServer::Application.routes.draw do
   match "/groups/:proj"            => "groups#destroy", :as => :group,  :via => :destroy
   match "/groups/:proj/:grp"       => "groups#show",    :as => :group
 
-  match "/assets/:proj/:grp"       => "assets#index",   :as => :assets, :via => :get
-  match "/assets/:proj/:grp"       => "assets#create",  :as => :asset,  :via => :post
-  match "/assets/:proj/:grp"       => "assets#update",  :as => :asset,  :via => :put
-  match "/assets/:proj/:grp"       => "assets#destroy", :as => :asset,  :via => :destroy
-  match "/assets/:proj/:grp/:asst" => "assets#show",    :as => :asset
+  match "/ueassets/:proj/:grp"       => "assets#index",   :as => :assets, :via => :get
+  match "/ueassets/:proj/:grp"       => "assets#create",  :as => :asset,  :via => :post
+  match "/ueassets/:proj/:grp"       => "assets#update",  :as => :asset,  :via => :put
+  match "/ueassets/:proj/:grp"       => "assets#destroy", :as => :asset,  :via => :destroy
+  match "/ueassets/:proj/:grp/:asst" => "assets#show",    :as => :asset
 
   match "/elements/:proj/:grp/:asst"                          => "elements#index",   :as => :elements
   match "/elements/:proj/:grp/:asst/:elclass/:eltype/:elname" => "elements#show",    :as => :element,  :via => :get

@@ -18,9 +18,10 @@ class ProjectsController < ApplicationController
   end
 
   def create
-    @project = Project.new(:name       => params[:name],
-                           :created_by => params[:created_by],
-                           :path       => params[:path])
+#    @project = Project.new(:name       => params[:name],
+#                           :created_by => params[:created_by],
+#                           :path       => params[:path])
+    @project = Project.new(params[:project])
 
     respond_to do |format|
       if @project.save

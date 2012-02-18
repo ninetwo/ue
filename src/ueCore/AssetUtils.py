@@ -8,16 +8,13 @@ import os
 
 import ueClient, ueSpec
 
-import ueCore.Config as ueConfig
-
 def getProject(spec):
-    """Returns a project dictionary
-    """
     return ueClient.client.getProject(spec)
 
+def getProjects():
+    return ueClient.client.getProjects()
+
 def getProjectsList():
-    """Returns a string of project dictionaries
-    """
     projects = []
     for p in ueClient.client.getProjects():
         projects.append(p["name"])
@@ -25,13 +22,12 @@ def getProjectsList():
 
 
 def getGroup(spec):
-    """Returns a group dictionary
-    """
     return ueClient.client.getGroup(spec)
 
+def getGroups(spec):
+    return ueClient.client.getGroups(spec)
+
 def getGroupsList(spec):
-    """Returns a list of group dictionaries
-    """
     groups = []
     for g in ueClient.client.getGroups(spec):
         groups.append(g["name"])
@@ -39,13 +35,12 @@ def getGroupsList(spec):
 
 
 def getAsset(spec):
-    """Returns an asset dictionary
-    """
     return ueClient.client.getAsset(spec)
 
+def getAssets(spec):
+    return ueClient.client.getAssets(spec)
+
 def getAssetsList(spec):
-    """Returns a list of asset dictionaries
-    """
     assets = []
     for a in ueClient.client.getAssets(spec):
         assets.append(a["name"])
@@ -53,9 +48,6 @@ def getAssetsList(spec):
 
 
 def getElement(spec):
-    """Returns a formatted dictionary of a single
-       element
-    """
     e = ueClient.client.getElement(spec)
     elementsDict = {}
     if "elclass" in e and "eltype" in e and "elname" in e:
@@ -73,9 +65,6 @@ def getElement(spec):
     return elementsDict
 
 def getElements(spec):
-    """Returns a formatted dictionary with all the
-       elements in an asset
-    """
     elements = ueClient.client.getElements(spec)
     elementsDict = {}
     for e in elements:
@@ -94,49 +83,19 @@ def getElements(spec):
 
 
 def getVersions(spec):
-    """Returns a list of versions
-    """
     element = ueClient.client.getElement(spec)
     if not "versions" in element:
         element["versions"] = []
     return element["versions"]
 
 
-def getClasses(spec):
-    return {}
-
-def getClass(spec):
-    return {}
-
-def getClassesList(spec):
-    return []
-
-
-def getTypesList(spec):
-    return []
-
-
-def getNames(spec):
-    return {}
-
-def getNamesList(spec):
-    return []
-
-
 def parsePath(path, **kwargs):
-    """String replacement operations on paths
-
-       kwargs is a dictionary of arguments to
-       parse
-    """
     p = path
     if "vers" in kwargs:
         p = path.replace("%%version%%", "%04d" % int(kwargs["vers"]))
     return p
 
 def getElementPath(spec, assetClasses=None):
-    """Returns the absolute path of a given element
-    """
     if assetClasses == None:
         assetClasses = ueConfig.Config(spec).config["assetClasses"]
 
@@ -159,9 +118,6 @@ def getElementPath(spec, assetClasses=None):
     return d
 
 def getVersionPath(spec, assetClasses=None):
-    """Returns the absolute path of a given version
-       of a given element
-    """
     if assetClasses == None:
         assetClasses = ueConfig.Config(spec).config["assetClasses"]
 
@@ -177,9 +133,6 @@ def getVersionPath(spec, assetClasses=None):
 
 
 def getElementName(spec):
-    """Returns the file name of a version of a given
-       element without a file extension
-    """
     s = "%s_%s_%s_%s_%s_%s_%04d" % (spec.proj, spec.grp, spec.asst,
                                     spec.elname, spec.eltype,
                                     spec.elclass, int(spec.vers))
@@ -189,11 +142,6 @@ def getElementName(spec):
 
 
 def getThumbnailPath(spec):
-    """Returns the absolute thumbnail path of a given
-       asset/element/version. If the thumbnail image
-       doesn't exist, a default placeholder image is
-       returned.
-    """
     p =  os.path.join(os.getenv("PROJ_ROOT"), "var", "thumbs", spec.grp, spec.asst, getElementName(spec)+".png")
     if not os.path.exists(p):
         p = os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "thumbnail.png")

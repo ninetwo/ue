@@ -133,6 +133,10 @@ module UeFileUtils
     end
   end
 
+  def get_element_name proj, grp, asst, elclass, eltype, elname, vers
+    "%s_%s_%s_%s_%s_%s_%04d" % [proj, grp, asst, eltype, elname, elclass, vers]
+  end
+
   def create_dir_tree d, a
     create_dir d
     if a.is_a? Array

@@ -15,18 +15,18 @@ class Element
   belongs_to :asset
   embeds_many :versions
 
-  after_save :create_dirs
-  after_initialize do
+  before_save do
     self.path = get_path
   end
+  after_save :create_dirs
 
-  def Element.get_element(project, group, asset, elclass, eltype, elname)
-    a = Asset.get_asset(project, group, asset)
-    if a == {} || a == nil
+  def self.get_element project, group, asset, elclass, eltype, elname
+    a = Asset.get_asset project, group, asset
+    if a == {} || a.nil?
       return {}
     else
       e = a.elements.where(:elclass => elclass, :eltype => eltype, :elname => elname).first
-      if e == nil
+      if e.nil?
         return {}
       else
         return e
@@ -34,9 +34,9 @@ class Element
     end
   end
 
-  def Element.get_elements(project, group, asset)
-    a = Asset.get_asset(project, group, asset)
-    if a == {} || a == nil
+  def self.get_elements project, group, asset
+    a = Asset.get_asset project, group, asset
+    if a == {} || a.nil?
       return []
     else
       return a.elements

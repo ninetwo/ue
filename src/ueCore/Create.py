@@ -3,7 +3,6 @@ import time, getpass
 
 import ueClient, ueSpec
 
-import ueCore.Config as ueConfig
 import ueCore.AssetUtils as ueAssetUtils
 import ueCore.FileUtils as ueFileUtils
 
@@ -18,7 +17,7 @@ def createProject(spec, dbMeta={}):
 
     ueClient.client.saveProject(spec, project)
 
-    return project
+    return ueAssetUtils.getProject(spec)
 
 def createGroup(spec, grpType="default", dbMeta={}):
     group = {}
@@ -32,7 +31,7 @@ def createGroup(spec, grpType="default", dbMeta={}):
 
     ueClient.client.saveGroup(spec, group)
 
-    return group
+    return ueAssetUtils.getGroup(spec)
 
 def createAsset(spec, asstType="default", dbMeta={}):
     asset = {}
@@ -46,21 +45,19 @@ def createAsset(spec, asstType="default", dbMeta={}):
 
     ueClient.client.saveAsset(spec, asset)
 
-    return asset
+    return ueAssetUtils.getAsset(spec)
 
 def createElement(spec, dbMeta={}):
     element = {}
 
-#    element["path"] = ueAssetUtils.getElementPath(spec)
     element["created_by"] = getpass.getuser()
 
     for m in dbMeta:
         element[m] = dbMeta[m]
 
     ueClient.client.saveElement(spec, element)
-#    ueFileUtils.createDir(element["path"])
 
-    return element
+    return ueAssetUtils.getElement(spec)
 
 def createVersion(spec, dbMeta={}, layer=None):
     version = {}
@@ -68,7 +65,6 @@ def createVersion(spec, dbMeta={}, layer=None):
     spec.vers = len(ueAssetUtils.getVersions(spec))+1
 
     version["version"] = spec.vers
-#    version["path"] = ueAssetUtils.getVersionPath(spec)
     version["created_by"] = getpass.getuser()
 
     for m in dbMeta:
@@ -78,7 +74,6 @@ def createVersion(spec, dbMeta={}, layer=None):
         p = os.path.join(version["path"])
 
     ueClient.client.saveVersion(spec, version)
-#    ueFileUtils.createDir(version["path"])
 
-    return version
+    return ueAssetUtils.getVersions(spec)[spec.vers-1]
 

@@ -8,20 +8,27 @@ class Version
 
   field :version,    :type => Integer
   field :path,       :type => String
+  field :file_name,  :type => String
   field :created_by, :type => String
 
   embedded_in :element
 
-  after_save :create_dirs
-  after_initialize do
+  before_save do
     self.path = get_path
+    self.file_name = UeFileUtils::get_element_name self.element.asset.group.project.name,
+                                                   self.element.asset.group.name,
+                                                   self.element.asset.name, self.element.elclass,
+                                                   self.element.eltype, self.element.elname,
+                                                   self.version.to_i
   end
+  after_save :create_dirs
 
   private
 
   def get_path
     if self.path.nil?
-      UeFileUtils::get_version_path self.element.path, self.element.elclass, self.element.eltype, self.element.elname, self.version
+      UeFileUtils::get_version_path self.element.path, self.element.elclass,
+                                    self.element.eltype, self.element.elname, self.version.to_i
     else
       self.path
     end

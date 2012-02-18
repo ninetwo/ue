@@ -5,6 +5,27 @@ import ueSpec
 
 global client
 
+# Recursively url encode a multidimensional dictionary by
+# pablobm via stackoverflow. Thank you!
+# http://stackoverflow.com/questions/4013838/urlencode-a-multidimensional-dictionary-in-python
+def recursive_urlencode(d):
+    def recursion(d, base=None):
+        pairs = []
+
+        for key, value in d.items():
+            if hasattr(value, 'values'):
+                pairs += recursion(value, key)
+            else:
+                new_pair = None
+                if base:
+                    new_pair = "%s[%s]=%s" % (base, urllib.quote(unicode(key)), urllib.quote(unicode(value)))
+                else:
+                    new_pair = "%s=%s" % (urllib.quote(unicode(key)), urllib.quote(unicode(value)))
+                pairs.append(new_pair)
+        return pairs
+
+    return '&'.join(recursion(d))
+
 class Client():
     def __init__(self):
         global client
@@ -48,7 +69,7 @@ class Client():
 
         try:
             con = httplib.HTTPConnection(self.host)
-            con.request("POST", url, urllib.urlencode(kwargs["data"]), self.headers)
+            con.request("POST", url, recursive_urlencode(kwargs["data"]), self.headers)
             request = con.getresponse()
         except IOError, e:
             print "FATAL ERROR: %s" % e
@@ -102,10 +123,10 @@ class Client():
         return self.get("groups", spec.proj, spec.grp)
 
     def getAssets(self, spec):
-        return self.get("assets", spec.proj, spec.grp)
+        return self.get("ueassets", spec.proj, spec.grp)
 
     def getAsset(self, spec):
-        return self.get("assets", spec.proj, spec.grp, spec.asst)
+        return self.get("ueassets", spec.proj, spec.grp, spec.asst)
 
     def getElements(self, spec):
         return self.get("elements", spec.proj, spec.grp, spec.asst)
@@ -116,21 +137,24 @@ class Client():
 
 
     def saveProject(self, spec, data):
-        self.post("projects", data=data)
+        self.post("projects", data={"project": data})
 
     def saveGroup(self, spec, data):
-        self.post("groups", spec.proj, data=data)
+        self.post("groups", spec.proj, data={"group": data})
 
     def saveAsset(self, spec, data):
-        self.post("assets", spec.proj, spec.grp, data=data)
+        self.post("ueassets", spec.proj, spec.grp,
+                  data={"asset": data})
 
     def saveElement(self, spec, data):
         self.post("elements", spec.proj, spec.grp, spec.asst,
-                  spec.elclass, spec.eltype, spec.elname, data=data)
+                  spec.elclass, spec.eltype, spec.elname,
+                  data={"element": data})
 
     def saveVersion(self, spec, data):
         self.post("versions", spec.proj, spec.grp, spec.asst,
-                  spec.elclass, spec.eltype, spec.elname, data=data)
+                  spec.elclass, spec.eltype, spec.elname,
+                  data={"version": data})
 
 
     def updateProject(self, spec, data):
@@ -140,35 +164,11 @@ class Client():
         self.put("groups", spec, data=data)
 
     def updateAsset(self, spec, data):
-        self.put("assets", spec, data=data)
+        self.put("ueassets", spec, data=data)
 
     def updateElement(self, spec, data):
         self.put("elements", spec, data=data)
 
     def updateVersion(self, spec, data):
         self.put("versions", spec, data=data)
-
-
-    def getConfig(self, *args):
-        if len(args) == 1:
-            return self.get("config", args[0])
-        elif len(args) == 2:
-            return self.get("config", args[0], args[1])
-        elif len(args) == 3:
-            return self.get("config", args[0], args[1], args[2])
-        elif len(args) >= 6:
-            return self.get("config", args[0], args[1], args[2],
-                                      args[3], args[4], args[5])
-
-    def saveConfig(self, spec, data):
-        if spec.grp == None:
-            self.post("config", spec.proj, data={"config": data})
-        elif spec.asst == None:
-            self.post("config", spec.proj, spec.grp, data={"config": data})
-        elif spec.elclass == None:
-            self.post("config", spec.proj, spec.grp, spec.asst,
-                      data={"config": data})
-
-    def updateConfig(self, spec, data):
-        self.put("config", spec, data={"config": data})
 
