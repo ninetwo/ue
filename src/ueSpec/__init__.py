@@ -24,9 +24,9 @@ class Spec():
         if len(s) > 2:
             self.asst = s[2]
         if len(s) > 3:
-            self.elname = s[3]
+            self.eltype = s[3]
         if len(s) > 4:
-            self.eltype = s[4]
+            self.elname = s[4]
         if len(s) > 5:
             self.elclass = s[5]
         if len(s) > 6:

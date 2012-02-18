@@ -8,7 +8,19 @@
 </head>
 <body>
 
-<%= yield %>
+<div class="treeGraph">
+  <div>
+    <select id="projectMenu">
+    </select>
+  </div>
+  <div id="testproj">
+  </div>
+</div>
+
+<div class="info">
+  <%= yield %>
+  <a href="#" id="foo">Test</a>
+</div>
 
 </body>
 </html>

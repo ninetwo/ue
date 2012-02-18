@@ -1,0 +1,7 @@
+<h1>Project</h1>
+
+<h2><%= @project.name %></h2>
+
+<% @project.groups.each do |g| %>
+<%= link_to g.name, group_path(@project.name, g.name)  %><br />
+<% end %>

@@ -1,6 +1,6 @@
 class ElementsController < ApplicationController
   def index
-    @elements = Element.get_elements(params[:project], params[:group], params[:asset])
+    @elements = Element.get_elements(params[:proj], params[:grp], params[:asst])
 
     respond_to do |format|
       format.html
@@ -9,7 +9,7 @@ class ElementsController < ApplicationController
   end
 
   def show
-    @element = Element.get_element(params[:project], params[:group], params[:asset],
+    @element = Element.get_element(params[:proj], params[:grp], params[:asst],
                                    params[:elclass], params[:eltype], params[:elname])
 
     respond_to do |format|
@@ -19,46 +19,15 @@ class ElementsController < ApplicationController
   end
 
   def create
-    @asset = Project.where(:name => params[:project]).first.groups.where( 
-                           :name => params[:group]).first.assets.where( 
-                           :name =>  params[:asset]).first
-    @asset.elements.create(:elname     => params[:elname],
-                           :eltype     => params[:eltype],
-                           :elclass    => params[:elclass],
-                           :path       => params[:path],
-                           :comment    => params[:comment],
-                           :thumbnail  => params[:thumbnail],
-                           :created_by => params[:created_by])
-
-    FileUtils.mkdir_p(params[:path])
-
-    respond_to do |format|
-      if @asset.save
-        format.html
-        format.json { render :json => @asset,
-                      :status => :created }
-      else
-        format.html
-        format.json { render :json => @asset.errors,
-                      :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  def create_version
-    @element = Project.where(:name => params[:project]).first.groups.where(
-                             :name => params[:group]).first.assets.where(
-                             :name =>  params[:asset]).first.elements.where(
-                             :elclass => params[:elclass],
-                             :eltype => params[:eltype],
-                             :elname => params[:elname]).first
-    @element.versions.create(:version    => params[:version],
-                             :comment    => params[:comment],
-                             :passes     => params[:passes],
-                             :thumbnail  => params[:thumbnail],
-                             :created_by => params[:created_by])
-
-    FileUtils.mkdir_p(params[:path])
+    @asset = Project.where(:name => params[:proj]).first.groups.where( 
+                           :name => params[:grp]).first.assets.where( 
+                           :name =>  params[:asst]).first
+    @element = @asset.elements.new(:elname     => params[:elname],
+                                   :eltype     => params[:eltype],
+                                   :elclass    => params[:elclass],
+                                   :comment    => params[:comment],
+                                   :thumbnail  => params[:thumbnail],
+                                   :created_by => params[:created_by])
 
     respond_to do |format|
       if @element.save
@@ -71,5 +40,37 @@ class ElementsController < ApplicationController
                       :status => :unprocessable_entity }
       end
     end
+  end
+
+  def create_version
+    @element = Project.where(:name => params[:proj]).first.groups.where(
+                             :name => params[:grp]).first.assets.where(
+                             :name =>  params[:asst]).first.elements.where(
+                             :elclass => params[:elclass],
+                             :eltype => params[:eltype],
+                             :elname => params[:elname]).first
+    @version = @element.versions.new(:version    => params[:version],
+                                     :comment    => params[:comment],
+                                     :passes     => params[:passes],
+                                     :thumbnail  => params[:thumbnail],
+                                     :created_by => params[:created_by])
+
+    respond_to do |format|
+      if @version.save
+        format.html
+        format.json { render :json => @version,
+                      :status => :created }
+      else
+        format.html
+        format.json { render :json => @version.errors,
+                      :status => :unprocessable_entity }
+      end
+    end
+  end
+
+  def update
+  end
+
+  def destroy
   end
 end

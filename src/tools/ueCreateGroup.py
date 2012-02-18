@@ -13,13 +13,9 @@ def createGroup():
         print "ERROR: Group name not set"
         sys.exit(2)
 
-    if "directory" not in group:
-        print "ERROR: Directory not set"
-        sysexit(2)
-
     spec = ueSpec.Spec(group["spec"], group["name"])
 
-    ueCreate.createGroup(spec, group["type"])
+    ueCreate.createGroup(spec, group["type"], dbMeta=group["dbMeta"])
 
 
 def parse():
@@ -34,7 +30,7 @@ def parse():
 
     group["spec"] = os.getenv("PROJ")
     group["type"] = "default"
-    group["directory"] = os.getenv("PROJ_ROOT")
+    group["dbMeta"] = {}
 
     for o, a in opts:
         if o in ("-h", "--help"):
@@ -47,7 +43,7 @@ def parse():
         elif o in ("-t", "--type"):
             group["type"] = a
         elif o in ("-d", "--directory"):
-            group["directory"] = a
+            group["dbMeta"]["path"] = a
         else:
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)

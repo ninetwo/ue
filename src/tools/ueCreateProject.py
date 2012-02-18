@@ -13,13 +13,9 @@ def createProject():
         print "ERROR: Project name not set"
         sys.exit(2)
 
-    if "directory" not in project:
-        print "ERROR: Project directory not set"
-        sys.exit(2)
-
     spec = ueSpec.Spec(project["name"])
 
-    ueCreate.createProject(spec)
+    ueCreate.createProject(spec, dbMeta=project["dbMeta"])
 
 def parse():
     sArgs = "hn:d:"
@@ -31,7 +27,7 @@ def parse():
         print "ERROR: Parsing argument (%s)" % e
         sys.exit(2)
 
-    project["directory"] = "/work"
+    project["dbMeta"] = {}
 
     for o, a in opts:
         if o in ("-h", "--help"):
@@ -40,7 +36,7 @@ def parse():
         elif o in ("-n", "--name"):
             project["name"] = a
         elif o in ("-d", "--directory"):
-            project["directory"] = a
+            project["dbMeta"]["path"] = a
         else:
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)

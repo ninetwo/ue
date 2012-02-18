@@ -1,0 +1,7 @@
+<h1>Group</h1>
+
+<h2><%= link_to params[:project], project_path(params[:project]) %>:<%= @group.name %></h2>
+
+<% @group.assets.each do |a| %>
+<%= link_to a.name, asset_path(params[:project], @group.name, a.name) %><br />
+<% end %>

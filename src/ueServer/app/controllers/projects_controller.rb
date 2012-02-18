@@ -9,7 +9,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = Project.get_project(params[:project])
+    @project = Project.get_project(params[:proj])
 
     respond_to do |format|
       format.html
@@ -19,8 +19,8 @@ class ProjectsController < ApplicationController
 
   def create
     @project = Project.new(:name       => params[:name],
-                           :path       => params[:path],
-                           :created_by => params[:created_by])
+                           :created_by => params[:created_by],
+                           :path       => params[:path])
 
     respond_to do |format|
       if @project.save
@@ -36,7 +36,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @project = Project.get_project(params[:project])
+    @project = Project.get_project(params[:proj])
 
     if params[:name] != nil
       @project.name = params[:name]
@@ -58,5 +58,8 @@ class ProjectsController < ApplicationController
                       :status => :unprocessable_entity }
       end
     end
+  end
+
+  def destroy
   end
 end

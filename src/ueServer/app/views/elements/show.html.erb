@@ -1,0 +1,7 @@
+<h1>Element</h1>
+
+<h2><%= link_to params[:project], project_path(params[:project]) %>:<%= link_to params[:group], group_path(params[:project], params[:group]) %>:<%= link_to params[:asset], asset_path(params[:project], params[:group], params[:asset])  %>:<%= @element.eltype %>:<%= @element.elname %>:<%= @element.elclass %></h2>
+
+<% @element.versions.each do |v| %>
+<%= v.version %> - <%= v.comment %> <%= v.passes %><br />
+<% end %>

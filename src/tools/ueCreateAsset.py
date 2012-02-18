@@ -13,13 +13,9 @@ def createAsset():
         print "ERROR: Asset name not set"
         sys.exit(2)
 
-    if "directory" not in asset:
-        print "ERROR: Asset directory not set"
-        sys.exit(2)
-
     spec = ueSpec.Spec(asset["spec"]+":"+asset["name"])
 
-    ueCreate.createAsset(spec, asset["type"], asset["config"])
+    ueCreate.createAsset(spec, asset["type"], dbMeta=asset["dbMeta"])
 
 def parse():
     sArgs = "hn:s:t:d:"
@@ -33,8 +29,7 @@ def parse():
 
     asset["spec"] = ueSpec.Spec(os.getenv("PROJ"), os.getenv("GRP"))
     asset["type"] = "default"
-    asset["directory"] = os.getenv("PROJ_ROOT")
-    asset["config"] = None
+    asset["dbMeta"] = {}
 
     for o, a in opts:
         if o in ("-h", "--help"):
@@ -47,19 +42,11 @@ def parse():
         elif o in ("-t", "--type"):
             asset["type"] = a
         elif o in ("-d", "--directory"):
-            asset["directory"] = a
+            asset["dbMeta"]["path"] = a
         elif o in ("--startFrame"):
-            if asset["config"] == None:
-                asset["config"] = {}
-            if not "assetSettings" in asset["config"]:
-                asset["config"]["assetSettings"] = {}
-            asset["config"]["assetSettings"]["startFrame"] = a
+            asset["dbMeta"]["startFrame"] = a
         elif o in ("--endFrame"):
-            if asset["config"] == None:
-                asset["config"] = {}
-            if not "assetSettings" in asset["config"]:
-                asset["config"]["assetSettings"] = {}
-            asset["config"]["assetSettings"]["endFrame"] = a
+            asset["dbMeta"]["endFrame"] = a
         else:
             print "ERROR: Unrecognised argument '%s'" % o
             sys.exit(2)

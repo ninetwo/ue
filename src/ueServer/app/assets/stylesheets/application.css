@@ -11,3 +11,15 @@
  *= require_self
  *= require_tree .
 */
+
+.treeGraph {
+  float: left;
+  width: 200px;
+  height: 100%;
+}
+
+.info {
+  overflow: auto;
+  background-color: #cccccc;
+}
+

@@ -1,6 +1,6 @@
 class AssetsController < ApplicationController
   def index
-    @assets = Asset.get_assets(params[:project], params[:group])
+    @assets = Asset.get_assets(params[:proj], params[:grp])
 
     respond_to do |format|
       format.html
@@ -9,7 +9,7 @@ class AssetsController < ApplicationController
   end
 
   def show
-    @asset = Asset.get_asset(params[:project], params[:group], params[:asset])
+    @asset = Asset.get_asset(params[:proj], params[:grp], params[:asst])
 
     respond_to do |format|
       format.html
@@ -18,22 +18,31 @@ class AssetsController < ApplicationController
   end
 
   def create
-    @group = Project.where(:name => params[:project]).first.groups.where(
-                           :name => params[:group]).first
-    @group.assets.create(:name       => params[:name],
-                         :path       => params[:path],
-                         :created_by => params[:created_by])
+    @group = Project.where(:name => params[:proj]).first.groups.where(
+                           :name => params[:grp]).first
+    @asset = @group.assets.new(:name       => params[:name],
+                               :asset_type => params[:asset_type],
+                               :created_by => params[:created_by],
+                               :path       => params[:path],
+                               :startFrame => params[:startFrame],
+                               :endFrame   => params[:endFrame])
 
     respond_to do |format|
-      if @group.save
+      if @asset.save
         format.html
-        format.json { render :json => @group,
+        format.json { render :json => @asset,
                       :status => :created }
       else
         format.html
-        format.json { render :json => @group.errors,
+        format.json { render :json => @asset.errors,
                       :status => :unprocessable_entity }
       end
     end
+  end
+
+  def update
+  end
+
+  def destroy
   end
 end
