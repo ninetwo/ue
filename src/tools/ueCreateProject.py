@@ -8,6 +8,11 @@ import ueCore.Create as ueCreate
 
 project = {}
 
+defaults = {"startFrame": 1,       "endFrame": 96,
+             "frameRate": 24,   "aspectRatio": 1,
+                  "xRes": 1920,        "yRes": 1080,
+                  "xPad": 40,          "yPad": 40}
+
 def createProject():
     if "name" not in project:
         print "ERROR: Project name not set"
@@ -29,7 +34,7 @@ def parse():
         print "ERROR: Parsing argument (%s)" % e
         sys.exit(2)
 
-    project["dbMeta"] = {}
+    project["dbMeta"] = defaults
 
     for o, a in opts:
         if o in ("-h", "--help"):
@@ -65,14 +70,14 @@ def usage():
     print ""
     print "\t-n, --name          Project name"
     print "\t-d, --directory     Project directory"
-    print "\t--startFrame        Start frame (float)"
-    print "\t--endFrame          End frame (float)"
-    print "\t--frameRate         Frames per second (float)"
-    print "\t--xRes              X resolution (float)"
-    print "\t--yRes              Y resolution (float)"
-    print "\t--xPad              Total X padding (float)"
-    print "\t--yPad              Total Y padding (float)"
-    print "\t--aspectRatio       Pixel aspect ratio (float)"
+    print "\t--startFrame        Start frame (default '%s')"          % defaults["startFrame"]
+    print "\t--endFrame          End frame (default '%s')"            % defaults["endFrame"]
+    print "\t--frameRate         Frames per second (default '%s')"    % defaults["frameRate"]
+    print "\t--xRes              X resolution (default '%s')"         % defaults["xRes"]
+    print "\t--yRes              Y resolution (default '%s)"          % defaults["yRes"]
+    print "\t--xPad              Total X padding (default '%s')"      % defaults["xPad"]
+    print "\t--yPad              Total Y padding (default '%s)"       % defaults["yPad"]
+    print "\t--aspectRatio       Pixel aspect ratio (default '%s)"    % defaults["aspectRatio"]
     print "\t-h, --help          Print this help"
 
 
