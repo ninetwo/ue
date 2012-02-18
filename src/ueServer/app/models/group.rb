@@ -22,13 +22,13 @@ class Group
   def self.get_group project, group
     p = Project.get_project project
     if p == {} || p.nil?
-      return {}
+      {}
     else
       g = p.groups.where(:name => group).first
       if g.nil?
-        return {}
+        {}
       else
-        return g
+        Group.new JSON.parse(p.to_json).to_hash.merge(JSON.parse(g.to_json).to_hash)
       end
     end
   end

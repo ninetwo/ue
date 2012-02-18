@@ -23,13 +23,13 @@ class Element
   def self.get_element project, group, asset, elclass, eltype, elname
     a = Asset.get_asset project, group, asset
     if a == {} || a.nil?
-      return {}
+      {}
     else
       e = a.elements.where(:elclass => elclass, :eltype => eltype, :elname => elname).first
       if e.nil?
-        return {}
+        {}
       else
-        return e
+        Element.new JSON.parse(a.to_json).to_hash.merge(JSON.parse(e.to_json).to_hash)
       end
     end
   end
@@ -37,9 +37,9 @@ class Element
   def self.get_elements project, group, asset
     a = Asset.get_asset project, group, asset
     if a == {} || a.nil?
-      return []
+      []
     else
-      return a.elements
+      a.elements
     end
   end
 

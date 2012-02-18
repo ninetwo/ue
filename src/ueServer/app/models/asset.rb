@@ -22,13 +22,13 @@ class Asset
   def self.get_asset project, group, asset
     g = Group.get_group project, group
     if g == {} || g.nil?
-      return {}
+      {}
     else
       a = g.assets.where(:name => asset).first
       if a.nil?
-        return {}
+        {}
       else
-        return a
+        Asset.new JSON.parse(g.to_json).to_hash.merge(JSON.parse(a.to_json).to_hash)
       end
     end
   end
@@ -36,9 +36,9 @@ class Asset
   def self.get_assets project, group
     g = Group.get_group project, group
     if g == {} || g.nil?
-      return []
+      []
     else
-      return g.assets
+      g.assets
     end
   end
 
