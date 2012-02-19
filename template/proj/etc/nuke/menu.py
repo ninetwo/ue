@@ -4,6 +4,7 @@ import ueNuke
 import ueNuke.Save as ueNukeSave
 import ueNuke.Open as ueNukeOpen
 import ueNuke.Read as ueNukeRead
+import ueNuke.Render as ueNukeRender
 import ueNuke.Load as ueNukeLoad
 import ueNuke.Checker as ueNukeChecker
 
@@ -25,7 +26,9 @@ def ueChecker(show=False):
     # and it 'saves' the info from then previous script.
     # Un-registering and regstering the widget seems to do the trick.
     nukescripts.unregisterPanel("ue.panel.ueChecker", None)
-    ueCheckerPanel = nukescripts.registerWidgetAsPanel("ueNukeChecker.CheckerPanel", "ueChecker", "ue.panel.ueChecker", create=True)
+    ueCheckerPanel = nukescripts.registerWidgetAsPanel("ueNukeChecker.CheckerPanel",
+                                                       "ueChecker", "ue.panel.ueChecker",
+                                                       create=True)
     if show:
         ueCheckerPanel.show()
     else:
@@ -56,12 +59,15 @@ ueNukeLoad.addGizmos()
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead, "r")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueChecker", ueChecker)
+nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
+nuke.menu("Nuke").addCommand(ueMenu+"/Render", "ueNukeRender.ueRender()")
+
 nuke.menu("Node Graph").addCommand("ueRead", ueRead)
 nuke.menu("Node Graph").addCommand("ueChecker", ueChecker)
 
 # Set the standard read node shortcut to shift+r since we're
 # overriding the r key above.
-nuke.menu("Nodes").addCommand("Image/Read", 'nukescripts.create_read()',
+nuke.menu("Nodes").addCommand("Image/Read", "nukescripts.create_read()",
                               "Shift+r", icon="Read.png")
 
 # Favorites

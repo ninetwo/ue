@@ -42,7 +42,7 @@ class Render(QtGui.QWidget):
         renderFromSorted = sorted(renderFrom)
         for rf in renderFromSorted:
             self.renderFromList.addItem(QtGui.QListWidgetItem(rf))
-        if len(renderFrom) > 0:
+        if len(renderFrom) > 0 and not currentRender == None:
             self.renderFromList.setCurrentItem(self.renderFromList.item(
                                                renderFromSorted.index(currentRender)))
             render[1] = [str(self.renderFromList.currentItem().text())]

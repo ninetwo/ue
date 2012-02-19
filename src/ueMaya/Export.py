@@ -11,7 +11,7 @@ import ueMaya.Utilities as ueMayaUtils
 import ueCommon.Save as ueCommonSave
 
 __exportTypes__ = {
-                   "Selected":            ("selected", ["cam", "lgt", "geo", "ms"]),
+                   "Selected":            ("selected", ["cam", "lgt", "geo", "mrs", "ms"]),
                    "Camera":              ("cameras",  ["cam"]),
                    "Light":               ("lights",   ["lgt"]),
                    "Geometry":            ("geometry", ["geo"]),
