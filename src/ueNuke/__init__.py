@@ -107,13 +107,23 @@ def getReadPath():
        not spec.asst == "" and not spec.elclass == "" and \
        not spec.eltype == "" and not spec.elname == "" and \
        not spec.vers == "":
-        v = ueAssetUtils.getVersions(spec)[int(spec.vers)-1]
+        versions = ueAssetUtils.getVersions(spec)
+        if int(spec.vers) > len(versions):
+            return p
+        v = versions[int(spec.vers)-1]
         if not v == {}:
-            files = glob.glob(os.path.join(v["path"], v["file_name"]+"*"))
+            elpassDir = ""
+            elpassFile = ""
+            if not spec.elpass == None:
+                elpassDir = spec.elpass
+                elpassFile = "_"+spec.elpass
+            files = glob.glob(os.path.join(v["path"], elpassDir,
+                                           v["file_name"]+elpassFile+"*"))
             if len(files) > 0:
                 ext = files[0].split(".")[-1]
 
-                p = os.path.join(v["path"], v["file_name"]+".%04d."+ext)
+                p = os.path.join(v["path"], elpassDir,
+                                 v["file_name"]+elpassFile+".%04d."+ext)
 
                 nuke.thisNode().knob("first").setValue(1)
                 nuke.thisNode().knob("last").setValue(len(files))

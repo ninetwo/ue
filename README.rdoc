@@ -49,7 +49,7 @@ An element is described like so:
 * <i>Projects</i> i.e. a film.
 * <i>Groups</i> i.e. a sequence.
 * <i>Assets</i> are the working base of the pipeline, where applications
-  can be launched from and elements saved to i.e. a shot
+  can be launched from and elements saved to i.e. a shot.
   In ue, assets are also Maya projects and contain a Workspace.mel
   template.
 * <i>Name</i> is the specific name of the element
@@ -129,10 +129,8 @@ parent.
    This can be tedious and not for the feint of heart, but there's some
    good instructions out there and some pre-compiled binaries.
 
-   Maya: http://www.maya-python.com/2011/09/building-and-installing-pyqt
-         http://nathanhorne.com
-   Nuke: http://tdasylum.com/entry.php?5-Nuke-and-PyQt4-on-Fedora-13
-         http://www.kurianos.com/wordpress/?p=546
+   Maya: http://www.maya-python.com/2011/09/building-and-installing-pyqt and http://nathanhorne.com
+   Nuke: http://tdasylum.com/entry.php?5-Nuke-and-PyQt4-on-Fedora-13 and http://www.kurianos.com/wordpress/?p=546
 
 == Todo
 
