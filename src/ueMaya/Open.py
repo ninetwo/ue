@@ -35,9 +35,8 @@ class Open(QtGui.QMainWindow):
 
     def open(self):
         spec = ueCommonOpen.getValues()
-        maPath = ueAssetUtils.getVersionPath(spec)
-        maFile = ueAssetUtils.getElementName(spec)
-        maya.cmds.file(os.path.join(maPath, maFile+".ma"), o=True, f=True)
+        version = ueAssetUtils.getVersions(spec)[spec.vers-1]
+        maya.cmds.file(os.path.join(version["path"], version["file_name"]+".ma"), o=True, f=True)
         print "Opened %s" % spec
         self.close()
 

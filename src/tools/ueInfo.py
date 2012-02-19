@@ -41,7 +41,7 @@ def printInfo():
         print "ERROR: Could not identify spec as a valid element"
         sys.exit(2)
 
-    print "Settings applied to %s:\n%s\n" % (assetType, str(info["spec"]))
+    print "Information on %s:\n%s\n" % (assetType, str(info["spec"]))
 
     for a in sorted(assetInfo):
         # Get rid of the keys with _id because they're database stuff

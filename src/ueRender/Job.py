@@ -26,9 +26,10 @@ class Job():
         proj = ueAssetUtils.getProject(self.destSpec)
         asst = ueAssetUtils.getAsset(self.destSpec)
 
-        path = ueAssetUtils.getVersionPath(self.sourceSpec)
-        name = ueAssetUtils.getElementName(self.sourceSpec)
-        p = os.path.join(path, name+"."+ext)
+        versions = ueAssetUtils.getVersions(self.sourceSpec)
+        version = versions[len(versions)-1]
+
+        p = os.path.join(version["path"], version["file_name"]+"."+ext)
 
         for f in range(self.frame_start, self.frame_end+1):
             frame = {}
@@ -42,8 +43,10 @@ class Job():
             frame["asst_root"] = asst["path"]
             job[f] = frame
 
-        name = ueAssetUtils.getElementName(self.destSpec)
-        p = os.path.join(asst["path"], "tmp", "drQueue", name+"."+str(int(time.time()))+".dq")
+        versions = ueAssetUtils.getVersions(self.destSpec)
+        version = versions[len(versions)-1]
+
+        p = os.path.join(asst["path"], "tmp", "drQueue", version["file_name"]+"."+str(int(time.time()))+".dq")
 
         if not os.path.exists(os.path.dirname(p)):
             import ueCore.FileUtils as ueFileUtils

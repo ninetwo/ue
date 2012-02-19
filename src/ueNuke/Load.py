@@ -41,18 +41,18 @@ def addGizmosFromAsset(asst):
         for n in a["giz"]:
             for p in a["giz"][n]:
                 spec = ueSpec.Spec(asst[0], asst[1], asst[2], "giz", n, p)
-                spec.vers = len(ueAssetUtils.getVersions(spec))
-                gizName = ueAssetUtils.getElementName(spec)
+                versions = ueAssetUtils.getVersions(spec)
+                version = versions[len(versions)-1]
                 menu = "%s:%s:%s/%s/%s" % (spec.proj, spec.grp, spec.asst, n, p)
                 # Add a 'ueGizVers' knob to hold the version of the gizmo
                 # we're bringing in. This can be used for version control later.
                 # When you add a custom knob, Nuke makes the User tab active,
                 # so a hack around that is to add the node with the prefs panel
                 # disabled, add the custom knobs, then show the prefs.
-                command =  str('n = nuke.createNode("'+gizName+'", "name '+p+'", \
+                command =  str('n = nuke.createNode("'+version["file_naame"]+'", "name '+p+'", \
                            inpanel=False); \
                            n.addKnob(nuke.Int_Knob("ueGizmoVers", "gizmo version")); \
-                           n.knob("ueGizmoVers").setValue('+str(spec.vers)+'); \
+                           n.knob("ueGizmoVers").setValue('+str(len(versions)-1)+'); \
                            n.showControlPanel()')
                 nuke.toolbar("Nodes").addCommand("ueTools/"+menu, command)
                 nuke.menu("Nuke").addCommand("ueTools/gizmos/"+menu, command)

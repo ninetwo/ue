@@ -29,7 +29,7 @@ class Element
       if e.nil?
         {}
       else
-        Element.new JSON.parse(a.to_json).to_hash.merge(JSON.parse(e.to_json).to_hash)
+        JSON.parse(a.to_json).to_hash.merge(JSON.parse(e.to_json).to_hash)
       end
     end
   end

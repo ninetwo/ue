@@ -11,16 +11,17 @@ import ueCore.FileUtils as ueFileUtils
 def saveUtility(spec, dbMeta={}):
     root = nuke.root()
 
-    d = ueAssetUtils.getElement(spec)
-    if d == {}:
-        d = ueCreate.createElement(spec, dbMeta=dbMeta)
+    e = ueAssetUtils.getElement(spec)
+    if e == {}:
+        e = ueCreate.createElement(spec, dbMeta=dbMeta)
 
-    p = ueCreate.createVersion(spec, dbMeta=dbMeta)
+    v = ueCreate.createVersion(spec, dbMeta=dbMeta)
 
-    spec.vers = p["version"]
+    spec.vers = v["version"]
 
-    nkName = ueAssetUtils.getElementName(spec)
-    nkPath = os.path.join(p["path"], nkName+".nk")
+    nkPath = v["path"]
+    nkName = v["file_name"]
+    f = os.path.join(nkPath, nkName+".nk")
 
     if root.knob("ueproj") == None:
         root.addKnob(nuke.String_Knob("ueproj", "project", spec.proj))
@@ -53,20 +54,20 @@ def saveUtility(spec, dbMeta={}):
         root.knob("uename").setValue(spec.elname)
 
     if root.knob("uevers") == None:
-        root.addKnob(nuke.Int_Knob("uevers", "vers", int(p["version"])))
+        root.addKnob(nuke.Int_Knob("uevers", "vers", int(spec.vers)))
     else:
-        root.knob("uevers").setValue(int(p["version"]))
+        root.knob("uevers").setValue(int(spec.vers))
 
     if root.knob("version_path") == None:
-        root.addKnob(nuke.String_Knob("version_path", "version_path", p["path"]))
+        root.addKnob(nuke.String_Knob("version_path", "version_path", nkPath))
     else:
-        root.knob("version_path").setValue(p["path"])
+        root.knob("version_path").setValue(nkPath)
 
-    nuke.scriptSaveAs(nkPath)
+    nuke.scriptSaveAs(f)
 
-    if "thumbnail" in p:
-        source = os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_"+str(p["thumbnail"])+".png")
-        dest = os.path.join(os.getenv("PROJ_ROOT"), "var", "thumbs", spec.grp, spec.asst, ueAssetUtils.getElementName(spec)+".png")
+    if "thumbnail" in v:
+        source = os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_"+str(v["thumbnail"])+".png")
+        dest = os.path.join(os.getenv("PROJ_ROOT"), "var", "thumbs", spec.grp, spec.asst, nkName+".png")
         if not os.path.exists(os.path.dirname(dest)):
             ueFileUtils.createDir(os.path.dirname(dest))
         ueFileUtils.moveFile(source, dest)
@@ -76,12 +77,12 @@ def saveUtility(spec, dbMeta={}):
 def ueReadNode():
     spec = ueSpec.Spec(os.getenv("PROJ"), "lib", "global",
                        "giz", "fileUtils", "ueRead")
-    spec.vers = len(ueAssetUtils.getVersions(spec))
-    return ueAssetUtils.getElementName(spec)
+    versions = ueAssetUtils.getVersions(spec)
+    return versions[len(versions)-1]["file_name"]
 
 def ueWriteNode():
     spec = ueSpec.Spec(os.getenv("PROJ"), "lib", "global",
                        "giz", "fileUtils", "ueWrite")
-    spec.vers = len(ueAssetUtils.getVersions(spec))
-    return ueAssetUtils.getElementName(spec)
+    versions = ueAssetUtils.getVersions(spec)
+    return versions[len(versions)-1]["file_name"]
 

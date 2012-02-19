@@ -62,6 +62,9 @@ global proc createUeMenu()
   menuItem -label "Geometry..."
            -command "python(\"import ueMaya.Export\"); \
                      python(\"ueMaya.Export.ueExport(export='Geometry')\")";
+  menuItem -label "Shading Group (mr)..."
+           -command "python(\"import ueMaya.Export\"); \
+                     python(\"ueMaya.Export.ueExport(export='Shading Group (mr)')\")";
   setParent -menu ueMenu;
   menuItem -divider true;
   menuItem -label "Render"

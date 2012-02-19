@@ -20,18 +20,18 @@ def addFiles():
         print "ERROR: Spec not set"
         sys.exit(2)
 
-    d = ueAssetUtils.getElement(config["spec"])
-    if d == {}:
-        d = ueCreate.createElement(config["spec"])
+    e = ueAssetUtils.getElement(config["spec"])
+    if e == {}:
+        e = ueCreate.createElement(config["spec"])
 
-    p = ueCreate.createVersion(config["spec"])
+    v = ueCreate.createVersion(config["spec"])
 
-    config["spec"].vers = p["version"]
+    config["spec"].vers = v["version"]
 
     files = glob.glob(config["files"])
 
-    path = p["path"]
-    name = ueAssetUtils.getElementName(config["spec"])
+    path = v["path"]
+    name = v["file_name"]
     ext = files[0].split(".")[-1]
 
     if len(files) == 1:

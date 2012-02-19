@@ -89,61 +89,9 @@ def getVersions(spec):
     return element["versions"]
 
 
-def parsePath(path, **kwargs):
-    p = path
-    if "vers" in kwargs:
-        p = path.replace("%%version%%", "%04d" % int(kwargs["vers"]))
-    return p
-
-def getElementPath(spec, assetClasses=None):
-    if assetClasses == None:
-        assetClasses = ueConfig.Config(spec).config["assetClasses"]
-
-    # Check class
-    if spec.elclass not in assetClasses:
-        return "Error: Class '%s' not found in asset '%s:%s:%s'" % \
-               (spec.elclass, spec.proj, spec.grp, spec.asst)
-
-    # Check type
-    # Check name
-
-    element = getAsset(spec)
-
-    prepend = ""
-    if "pathprepend" in assetClasses[spec.elclass]:
-        prepend = parsePath(assetClasses[spec.elclass]["pathprepend"])
-
-    d = os.path.join(element["path"], prepend, spec.eltype, spec.elname)
-
-    return d
-
-def getVersionPath(spec, assetClasses=None):
-    if assetClasses == None:
-        assetClasses = ueConfig.Config(spec).config["assetClasses"]
-
-    append = ""
-    if "pathappend" in assetClasses[spec.elclass]:
-        append = parsePath(assetClasses[spec.elclass]["pathappend"], vers=int(spec.vers))
-
-    elpass = ""
-    if not spec.elpass == None:
-        elpass = spec.elpass
-
-    return os.path.join(getElementPath(spec, assetClasses=assetClasses), append, elpass)
-
-
-def getElementName(spec):
-    s = "%s_%s_%s_%s_%s_%s_%04d" % (spec.proj, spec.grp, spec.asst,
-                                    spec.elname, spec.eltype,
-                                    spec.elclass, int(spec.vers))
-    if not spec.elpass == None:
-        s = "%s_%s" % (s, spec.elpass)
-    return s
-
-
 def getThumbnailPath(spec):
-    p =  os.path.join(os.getenv("PROJ_ROOT"), "var", "thumbs", spec.grp, spec.asst, getElementName(spec)+".png")
-    if not os.path.exists(p):
-        p = os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "thumbnail.png")
+#    p =  os.path.join(os.getenv("PROJ_ROOT"), "var", "thumbs", spec.grp, spec.asst, getElementName(spec)+".png")
+#    if not os.path.exists(p):
+    p = os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "thumbnail.png")
     return p
 

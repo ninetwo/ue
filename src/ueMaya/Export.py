@@ -10,10 +10,13 @@ import ueMaya
 import ueMaya.Utilities as ueMayaUtils
 import ueCommon.Save as ueCommonSave
 
-__exportTypes__ = {"Selected": ("selected", ["cam", "lgt", "geo", "ms"]),
-                   "Camera": ("cameras", ["cam"]),
-                   "Light": ("lights", ["lgt"]),
-                   "Geometry": ("geometry", ["geo"])}
+__exportTypes__ = {
+                   "Selected":            ("selected", ["cam", "lgt", "geo", "ms"]),
+                   "Camera":              ("cameras",  ["cam"]),
+                   "Light":               ("lights",   ["lgt"]),
+                   "Geometry":            ("geometry", ["geo"]),
+                   "Shading Group (mr)":  ("mrShader", ["mrs"])
+                  }
 
 global selected
 
@@ -59,14 +62,36 @@ class Export(QtGui.QMainWindow):
 
         self.exportMenu.setCurrentItem(self.exportMenu.findItems(selected,
                                        QtCore.Qt.MatchExactly)[0])
-        self.setExportTypes()
+        self.setExport()
 
         buttonBox.accepted.connect(self.export)
         buttonBox.rejected.connect(self.close)
-        self.exportMenu.itemSelectionChanged.connect(self.setExportTypes)
+        self.exportMenu.itemSelectionChanged.connect(self.setExport)
+
+    def setExport(self):
+        t = __exportTypes__[str(self.exportMenu.currentItem().text())]
+        self.saveWidget.elclasses = t[1]
+        self.saveWidget.loadClasses()
+        if t[0] == "selected":
+            items = maya.cmds.ls(selection=True)
+        elif t[0] == "cameras":
+            items = maya.cmds.ls(cameras=True)
+        elif t[0] == "lights":
+            items = maya.cmds.ls(lights=True)
+        elif t[0] == "geometry":
+            items = maya.cmds.ls(geometry=True)
+        elif t[0] == "mrShader":
+            items = maya.cmds.ls(type="shadingEngine")
+        self.itemMenu.clear()
+        for i in items:
+            self.itemMenu.addItem(QtGui.QListWidgetItem(i))
 
     def export(self):
         spec, dbMeta = ueCommonSave.getValues()
+        selection = []
+        for i in self.itemMenu.selectedItems():
+            selection.append(i.text())
+        maya.cmds.select(selection)
         if spec.elclass == "ms":
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
         elif spec.elclass == "cam":
@@ -83,22 +108,8 @@ class Export(QtGui.QMainWindow):
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="obj", export=True)
             spec.elclass = "ms"
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
+        elif spec.elclass == "mrs":
+            ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
 #        ueFileUtils.deleteFiles(os.path.join(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")))
         self.close()
-
-    def setExportTypes(self):
-        t = __exportTypes__[str(self.exportMenu.currentItem().text())]
-        self.saveWidget.elclasses = t[1]
-        self.saveWidget.loadClasses()
-        if t[0] == "selected":
-            items = maya.cmds.ls(selection=True)
-        elif t[0] == "cameras":
-            items = maya.cmds.ls(cameras=True)
-        elif t[0] == "lights":
-            items = maya.cmds.ls(lights=True)
-        elif t[0] == "geometry":
-            items = maya.cmds.ls(geometry=True)
-        self.itemMenu.clear()
-        for i in items:
-            self.itemMenu.addItem(QtGui.QListWidgetItem(i))
 

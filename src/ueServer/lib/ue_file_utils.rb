@@ -104,6 +104,9 @@ module UeFileUtils
               },
      "tex" => {
                "name" => "Texture"
+              },
+     "mrs" => {
+               "name" => "Mental Ray shading group"
               }
     }
   end
@@ -134,7 +137,7 @@ module UeFileUtils
   end
 
   def get_element_name proj, grp, asst, elclass, eltype, elname, vers
-    "%s_%s_%s_%s_%s_%s_%04d" % [proj, grp, asst, eltype, elname, elclass, vers]
+    "%s_%s_%s_%s_%s_%s_%04d" % [proj, grp, asst, elname, eltype, elclass, vers]
   end
 
   def create_dir_tree d, a

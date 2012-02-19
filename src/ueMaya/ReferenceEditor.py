@@ -39,15 +39,15 @@ class OpenRef(QtGui.QMainWindow):
 
     def createRef(self):
         spec = ueCommonOpen.getValues()
-        maPath = ueAssetUtils.getVersionPath(spec)
-        maFile = ueAssetUtils.getElementName(spec)
+        version = ueAssetUtils.getVersions(spec)[int(spec.vers)-1]
         if spec.elclass == "geo":
             ext = "obj"
         elif spec.elclass == "cam":
             ext = "fbx"
         else:
             ext = "ma"
-        maya.cmds.file(os.path.join(maPath, maFile+"."+ext), namespace=maFile, r=True)
+        maya.cmds.file(os.path.join(version["path"], version["file_name"]+"."+ext),
+                       namespace=version["file_name"], r=True)
         if self.redrawRefList:
             refEditor.drawRefList()
         self.close()

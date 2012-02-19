@@ -19,9 +19,8 @@ def ueOpen():
 
     if p.showModalDialog():
         spec = ueCommonOpen.getValues()
-        nkPath = ueAssetUtils.getVersionPath(spec)
-        nkFile = ueAssetUtils.getElementName(spec)
-        nuke.scriptOpen(os.path.join(nkPath, nkFile+".nk"))
+        version = ueAssetUtils.getVersions(spec)[spec.vers-1]
+        nuke.scriptOpen(os.path.join(version["path"], version["file_name"]+".nk"))
         nuke.tprint("Opened %s" % spec)
 
     nukescripts.unregisterPanel("ue.panel.ueOpen", lambda: "return")

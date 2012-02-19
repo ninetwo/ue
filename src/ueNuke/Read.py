@@ -272,26 +272,23 @@ class AnimationTab(QtGui.QWidget):
 def getUeRead(a):
     spec = ueSpec.Spec(proj, "lib", "global",
                        "giz", "fileUtils", "ueRead")
-    v = ueAssetUtils.getVersions(spec)
-    spec.vers = len(v)
-    n = ueAssetUtils.getElementName(spec)
-    return nuke.createNode(n, " ".join(a), inpanel=False)
+    versions = ueAssetUtils.getVersions(spec)
+    version = versions[len(versions)-1]
+    return nuke.createNode(version["file_name"], " ".join(a), inpanel=False)
 
 def getTvpReformat(a):
     spec = ueSpec.Spec(proj, "lib", "global",
                        "giz", "fileUtils", "tvpReformat")
-    v = ueAssetUtils.getVersions(spec)
-    spec.vers = len(v)
-    n = ueAssetUtils.getElementName(spec)
-    return nuke.createNode(n, " ".join(a), inpanel=False)
+    versions = ueAssetUtils.getVersions(spec)
+    version = versions[len(versions)-1]
+    return nuke.createNode(version["file_name"], " ".join(a), inpanel=False)
 
 def getReColour(a):
     spec = ueSpec.Spec(proj, "lib", "global",
                        "giz", "celUtils", "reColour")
-    v = ueAssetUtils.getVersions(spec)
-    spec.vers = len(v)
-    n = ueAssetUtils.getElementName(spec)
-    return nuke.createNode(n, " ".join(a), inpanel=False)
+    versions = ueAssetUtils.getVersions(spec)
+    version = versions[len(versions)-1]
+    return nuke.createNode(version["file_name"], " ".join(a), inpanel=False)
 
 
 class BackgroundTab(QtGui.QWidget):

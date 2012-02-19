@@ -73,8 +73,8 @@ def ueRender(currentNode):
 
         destSpec.vers = v["version"]
 
-        name = ueAssetUtils.getElementName(destSpec)
         path = v["path"]
+        name = v["file_name"]
 
         # Set up the write nodes with the correct paths
         if len(renderOpts[1]) == 1:
