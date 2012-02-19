@@ -8,27 +8,27 @@ multi-user environment.
 
 It currently has support for Maya and Nuke, with some more limited
 support for Adobe Photoshop, Adobe After Effects, RV and TVPaint. There
-is (alsp currently limited) support for DrQueue, an open source 
+is (also currently limited) support for DrQueue, an open source 
 render farm solution.
 
 Ue is based on a client/server archetecture and is backed by a MongoDB
 database. Comunication between client/server is handled though a CRUD
 JSON interface.
 
-* The server (<tt>src/ueServer</tt>) is implemented in Ruby on Rails with
+* The server (<i>src/ueServer</i>) is implemented in Ruby on Rails with
   Mongoid as the MongoDB interface library.
-* The core asset system (<tt>src/ueClient</tt>, <tt>src/ueCore</tt>, <tt>src/ueRender</tt>,
-  <tt>src/ueSpec</tt>) is implemented in Python.
-* The command line tools and application wrappers (<tt>src/tools</tt>,
-  <tt>src/wrapper</tt>) are implemented in Python and Bash.
-* The core application GUI tools (<tt>src/ueCommon</tt>) are implemented in
+* The core asset system (<i>src/ueClient</i>, <i>src/ueCore</i>, <i>src/ueRender</i>,
+  <i>src/ueSpec</i>) is implemented in Python.
+* The command line tools and application wrappers (<i>src/tools</i>,
+  <i>src/wrapper</i>) are implemented in Python and Bash.
+* The core application GUI tools (<i>src/ueCommon</i>) are implemented in
   Python and PyQt.
-* The applications specific tools (<tt>src/ueAdobe</tt>, <tt>src/ueMaya</tt>, <tt>src/ueNuke</tt>,
-  <tt>src/ueTVP</tt>) and implemented in appropriate application specific
+* The applications specific tools (<i>src/ueAdobe</i>, <i>src/ueMaya</i>, <i>src/ueNuke</i>,
+  <i>src/ueTVP</i>) and implemented in appropriate application specific
   languages - Maya in Python and MEL, Nuke in Python, the Adobe tools
   in JavaScript and the TVPaint tools in George.
 
-This was born out a need for a structured way to develop my own
+Ue was born out a need for a structured way to develop my own
 projects, after getting sick of loosing files, having to navigate
 though endless directory trees and ending up with tons of broken paths
 and references to files.
@@ -93,9 +93,11 @@ parent.
 
    In your .bashrc, put a line like this:
 
-   source /work/bin/ue/ue_env_setup
+   <tt>source /work/bin/ue/ue_env_setup</tt>
 
-4. Run ./ue_setup
+4. Run ue_setup
+
+   <tt>$UE_PATH/ue_setup</tt>
 
    This will set up a bin directory in the ue source root with a
    bunch of symlinks.
@@ -104,9 +106,9 @@ parent.
 
 6. Set up ueServer
 
-   cd $UE_PATH/src/ueServer
-   bundle install
-   rails server
+   <tt>cd $UE_PATH/src/ueServer</tt>
+   <tt>bundle install</tt>
+   <tt>rails server</tt>
 
    Check the server is running (default is on port 3000). This is beyond
    the setup instructions here, but for production, setting up a real
@@ -127,10 +129,10 @@ parent.
    This can be tedious and not for the feint of heart, but there's some
    good instructions out there and some pre-compiled binaries.
 
-   Maya: link:http://www.maya-python.com/2011/09/building-and-installing-pyqt
-         link:http://nathanhorne.com
-   Nuke: link:http://tdasylum.com/entry.php?5-Nuke-and-PyQt4-on-Fedora-13
-         link:http://www.kurianos.com/wordpress/?p=546
+   Maya: http://www.maya-python.com/2011/09/building-and-installing-pyqt
+         http://nathanhorne.com
+   Nuke: http://tdasylum.com/entry.php?5-Nuke-and-PyQt4-on-Fedora-13
+         http://www.kurianos.com/wordpress/?p=546
 
 == Todo
 
@@ -139,6 +141,7 @@ parent.
 * Thumbnail generator for Maya
 * Various fixes and improvements to the Maya Import/Export/Reference
   tools
+
 === Long term
 * Houdini support
 * 3Delight/Renderman compliant renderer support
