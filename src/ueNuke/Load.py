@@ -52,7 +52,7 @@ def addGizmosFromAsset(asst):
                 command =  str('n = nuke.createNode("'+version["file_name"]+'", \
                            "name '+p+'", inpanel=False); \
                            n.addKnob(nuke.Int_Knob("ueGizmoVers", "gizmo version")); \
-                           n.knob("ueGizmoVers").setValue('+str(len(versions)-1)+'); \
+                           n.knob("ueGizmoVers").setValue('+str(len(versions))+'); \
                            n.showControlPanel()')
                 nuke.toolbar("Nodes").addCommand("ueTools/"+menu, command)
                 nuke.menu("Nuke").addCommand("ueTools/gizmos/"+menu, command)
