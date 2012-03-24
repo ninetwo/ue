@@ -15,13 +15,15 @@ class Version
 
   before_save do
     self.path = get_path
-    self.file_name = UeFileUtils::get_element_name self.element.asset.group.project.name,
-                                                   self.element.asset.group.name,
-                                                   self.element.asset.name, self.element.elclass,
-                                                   self.element.eltype, self.element.elname,
-                                                   self.version.to_i
+    self.file_name = get_name
   end
-  after_save :create_dirs
+  after_save do
+    UeFileUtils::create_dir get_path
+  end
+
+  before_destroy do
+    UeFileUtils::delete_dir self.path
+  end
 
   private
 
@@ -34,7 +36,11 @@ class Version
     end
   end
 
-  def create_dirs
-    UeFileUtils::create_dir get_path
+  def get_name
+    UeFileUtils::get_element_name self.element.asset.group.project.name,
+                                  self.element.asset.group.name,
+                                  self.element.asset.name, self.element.elclass,
+                                  self.element.eltype,     self.element.elname,
+                                  self.version.to_i
   end
 end

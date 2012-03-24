@@ -18,11 +18,7 @@ class GroupsController < ApplicationController
   end
 
   def create
-    @project = Project.where(:name => params[:proj]).first
-#    @group = @project.groups.new(:name       => params[:name],
-#                                 :group_type => params[:group_type],
-#                                 :created_by => params[:created_by],
-#                                 :path       => params[:path])
+    @project = Project.get_project(params[:proj])
     @group = @project.groups.new(params[:group])
 
     respond_to do |format|
@@ -42,5 +38,18 @@ class GroupsController < ApplicationController
   end
 
   def destroy
+    @group = Group.get_group(params[:proj], params[:grp])
+
+    respond_to do |format|
+      if @group.destroy
+        format.html
+        format.json { render :json => @group,
+                      :status => :ok }
+      else
+        format.html
+        format.json { render :json => @group.errors,
+                      :status => :unprocessable_entity }
+      end
+    end
   end
 end

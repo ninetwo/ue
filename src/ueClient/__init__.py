@@ -40,6 +40,9 @@ class Client():
         client = self
 
     def get(self, get, *args):
+        if get == "assets":
+            get = "ueassets"
+
         urlargs = self.parseUrlargs(args)
 
         url = "/%s%s.json" % (get, urlargs)
@@ -63,6 +66,9 @@ class Client():
         return jsonDict
 
     def post(self, get, *args, **kwargs):
+        if get == "assets":
+            get = "ueassets"
+
         urlargs = self.parseUrlargs(args)
 
         url = "/%s%s.json" % (get, urlargs)
@@ -76,6 +82,9 @@ class Client():
             sys.exit(2)
 
     def put(self, get, spec, **kwargs):
+        if get == "assets":
+            get = "ueassets"
+
         if not spec.proj == None:
             kwargs["data"]["project"] = spec.proj
         if not spec.grp == None:
@@ -96,6 +105,22 @@ class Client():
         try:
             con = httplib.HTTPConnection(self.host)
             con.request("PUT", url, urllib.urlencode(kwargs["data"]), self.headers)
+            request = con.getresponse()
+        except IOError, e:
+            print "FATAL ERROR: %s" % e
+            sys.exit(2)
+
+    def destroy(self, get, *args):
+        if get == "assets":
+            get = "ueassets"
+
+        urlargs = self.parseUrlargs(args)
+
+        url = "/%s%s.json" % (get, urlargs)
+
+        try:
+            con = httplib.HTTPConnection(self.host)
+            con.request("DELETE", url)
             request = con.getresponse()
         except IOError, e:
             print "FATAL ERROR: %s" % e
@@ -123,10 +148,10 @@ class Client():
         return self.get("groups", spec.proj, spec.grp)
 
     def getAssets(self, spec):
-        return self.get("ueassets", spec.proj, spec.grp)
+        return self.get("assets", spec.proj, spec.grp)
 
     def getAsset(self, spec):
-        return self.get("ueassets", spec.proj, spec.grp, spec.asst)
+        return self.get("assets", spec.proj, spec.grp, spec.asst)
 
     def getElements(self, spec):
         return self.get("elements", spec.proj, spec.grp, spec.asst)
@@ -143,7 +168,7 @@ class Client():
         self.post("groups", spec.proj, data={"group": data})
 
     def saveAsset(self, spec, data):
-        self.post("ueassets", spec.proj, spec.grp,
+        self.post("assets", spec.proj, spec.grp,
                   data={"asset": data})
 
     def saveElement(self, spec, data):
@@ -171,4 +196,18 @@ class Client():
 
     def updateVersion(self, spec, data):
         self.put("versions", spec, data=data)
+
+
+    def destroyProject(self, spec):
+        self.destroy("projects", spec.proj)
+
+    def destroyGroup(self, spec):
+        self.destroy("groups", spec.proj, spec.grp)
+
+    def destroyAsset(self, spec):
+        self.destroy("assets", spec.proj, spec.grp, spec.asst)
+
+    def destroyElement(self, spec):
+        self.destroy("elements", spec.proj, spec.grp, spec.asst,
+                  spec.elclass, spec.eltype, spec.elname)
 

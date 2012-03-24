@@ -17,7 +17,15 @@ class Group
   before_save do
     self.path = get_path
   end
-  after_save :create_dirs
+
+  after_save do
+    UeFileUtils::create_dir_tree get_path, UeFileUtils::group_dirs[self.group_type][0]
+  end
+
+  before_destroy do
+    self.assets.destroy_all
+    UeFileUtils::delete_dir self.path
+  end
 
   def self.get_group project, group
     p = Project.get_project project
@@ -50,9 +58,5 @@ class Group
     else
       self.path
     end
-  end
-
-  def create_dirs
-    UeFileUtils::create_dir_tree get_path, UeFileUtils::group_dirs[self.group_type][0]
   end
 end

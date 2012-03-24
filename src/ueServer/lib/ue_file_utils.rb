@@ -166,4 +166,8 @@ module UeFileUtils
       copy_file(fi, d)
     end
   end
+
+  def delete_dir d
+    FileUtils.rm_rf d
+  end
 end

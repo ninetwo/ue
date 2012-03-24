@@ -4,7 +4,6 @@ import time, getpass
 import ueClient, ueSpec
 
 import ueCore.AssetUtils as ueAssetUtils
-import ueCore.FileUtils as ueFileUtils
 
 def createProject(spec, dbMeta={}):
     project = {}

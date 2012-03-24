@@ -15,7 +15,15 @@ class Project
   before_save do
     self.path = get_path
   end
-  after_save :create_dirs
+
+  after_save do
+    UeFileUtils::create_dir_tree get_path, UeFileUtils::project_dirs
+  end
+
+  before_destroy do
+    self.groups.destroy_all
+    UeFileUtils::delete_dir self.path
+  end
 
   def self.get_project project
     p = Project.where(:name => project).first
@@ -34,9 +42,5 @@ class Project
     else
       self.path
     end
-  end
-
-  def create_dirs
-    UeFileUtils::create_dir_tree get_path, UeFileUtils::project_dirs    
   end
 end

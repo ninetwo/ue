@@ -18,7 +18,15 @@ class Element
   before_save do
     self.path = get_path
   end
-  after_save :create_dirs
+
+  after_save do
+    UeFileUtils::create_dir get_path
+  end
+
+  before_destroy do
+    self.versions.destroy_all
+    UeFileUtils::delete_dir self.path
+  end
 
   def self.get_element project, group, asset, elclass, eltype, elname
     a = Asset.get_asset project, group, asset
@@ -51,9 +59,5 @@ class Element
     else
       self.path
     end
-  end
-
-  def create_dirs
-    UeFileUtils::create_dir get_path
   end
 end

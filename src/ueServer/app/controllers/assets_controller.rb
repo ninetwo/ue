@@ -18,14 +18,7 @@ class AssetsController < ApplicationController
   end
 
   def create
-    @group = Project.where(:name => params[:proj]).first.groups.where(
-                           :name => params[:grp]).first
-#    @asset = @group.assets.new(:name       => params[:name],
-#                               :asset_type => params[:asset_type],
-#                               :created_by => params[:created_by],
-#                               :path       => params[:path],
-#                               :startFrame => params[:startFrame],
-#                               :endFrame   => params[:endFrame])
+    @group = Group.get_group(params[:proj], params[:grp])
     @asset = @group.assets.new(params[:asset])
 
     respond_to do |format|
@@ -45,5 +38,18 @@ class AssetsController < ApplicationController
   end
 
   def destroy
+    @asset = Asset.get_asset(params[:proj], params[:grp], params[:asst])
+
+    respond_to do |format|
+      if @asset.destroy
+        format.html
+        format.json { render :json => @asset,
+                      :status => :ok }
+      else
+        format.html
+        format.json { render :json => @asset.errors,
+                      :status => :unprocessable_entity }
+      end
+    end
   end
 end

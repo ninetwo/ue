@@ -18,9 +18,6 @@ class ProjectsController < ApplicationController
   end
 
   def create
-#    @project = Project.new(:name       => params[:name],
-#                           :created_by => params[:created_by],
-#                           :path       => params[:path])
     @project = Project.new(params[:project])
 
     respond_to do |format|
@@ -62,5 +59,18 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
+    @project = Project.get_project(params[:proj])
+
+    respond_to do |format|
+      if @project.destroy
+        format.html
+        format.json { render :json => @project,
+                      :status => :ok }
+      else
+        format.html
+        format.json { render :json => @project.errors,
+                      :status => :unprocessable_entity }
+      end
+    end
   end
 end
