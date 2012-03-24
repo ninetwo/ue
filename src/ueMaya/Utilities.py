@@ -28,16 +28,8 @@ def saveUtility(spec, dbMeta={}, fileType="ma", export=False):
 
     maPath = v["path"]
     maName = v["file_name"]
-    f = os.path.join(maPath, maName+"."+fileType)
 
-    maya.cmds.fileInfo("ueproj", spec.proj)
-    maya.cmds.fileInfo("uegrp", spec.grp)
-    maya.cmds.fileInfo("ueasst", spec.asst)
-    maya.cmds.fileInfo("ueclass", spec.elclass)
-    maya.cmds.fileInfo("uetype", spec.eltype)
-    maya.cmds.fileInfo("uename", spec.elname)
-    maya.cmds.fileInfo("uevers", spec.vers)
-    maya.cmds.fileInfo("version_path", maPath)
+    f = os.path.join(maPath, maName+"."+fileType)
 
     # Load plugins needed for export
     if fileType == "obj":
@@ -54,6 +46,15 @@ def saveUtility(spec, dbMeta={}, fileType="ma", export=False):
                            options=__fileTypes__[fileType][1],
                            type=__fileTypes__[fileType][0])
     else:
+        maya.cmds.fileInfo("ueproj", spec.proj)
+        maya.cmds.fileInfo("uegrp", spec.grp)
+        maya.cmds.fileInfo("ueasst", spec.asst)
+        maya.cmds.fileInfo("ueclass", spec.elclass)
+        maya.cmds.fileInfo("uetype", spec.eltype)
+        maya.cmds.fileInfo("uename", spec.elname)
+        maya.cmds.fileInfo("uevers", spec.vers)
+        maya.cmds.fileInfo("version_path", maPath)
+
         maya.cmds.file(rename=f)
         maya.cmds.file(save=True,
                        type=__fileTypes__[fileType][0])

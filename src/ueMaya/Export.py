@@ -91,7 +91,7 @@ class Export(QtGui.QMainWindow):
         selection = []
         for i in self.itemMenu.selectedItems():
             selection.append(i.text())
-        maya.cmds.select(selection)
+        maya.cmds.select(selection, ne=True, r=True)
         if spec.elclass == "ms":
             ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
         elif spec.elclass == "cam":

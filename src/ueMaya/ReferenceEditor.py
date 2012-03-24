@@ -10,7 +10,7 @@ import ueCore.AssetUtils as ueAssetUtils
 import ueCommon.Open as ueCommonOpen
 import ueMaya
 
-__ueclasses__ = ["ms", "geo", "cam"]
+__ueclasses__ = ["ms", "geo", "cam", "mrs"]
 
 global refEditor
 
