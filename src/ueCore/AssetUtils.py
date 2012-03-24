@@ -57,11 +57,13 @@ def getElement(spec):
             elementsDict[e["elclass"]][e["eltype"]] = {}
         if not e["elname"] in elementsDict[e["elclass"]][e["eltype"]]:
             elementsDict[e["elclass"]][e["eltype"]][e["elname"]] = {}
-        if "comment" in e:
-            elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["comment"] = e["comment"]
-        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["path"] = e["path"]
-        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_at"] = e["created_at"]
-        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_by"] = e["created_by"]
+#        if "comment" in e:
+#            elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["comment"] = e["comment"]       
+#        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["path"] = e["path"]
+#        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_at"] = e["created_at"]
+#        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_by"] = e["created_by"]
+        for el in e:
+            elementsDict[e["elclass"]][e["eltype"]][e["elname"]][el] = e[el]
     return elementsDict
 
 def getElements(spec):
@@ -74,11 +76,13 @@ def getElements(spec):
             elementsDict[e["elclass"]][e["eltype"]] = {}
         if not e["elname"] in elementsDict[e["elclass"]][e["eltype"]]:
             elementsDict[e["elclass"]][e["eltype"]][e["elname"]] = {}
-        if "comment" in e:
-            elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["comment"] = e["comment"]
-        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["path"] = e["path"]
-        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_at"] = e["created_at"]
-        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_by"] = e["created_by"]
+#        if "comment" in e:
+#            elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["comment"] = e["comment"]
+#        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["path"] = e["path"]
+#        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_at"] = e["created_at"]
+#        elementsDict[e["elclass"]][e["eltype"]][e["elname"]]["created_by"] = e["created_by"]
+        for el in e:
+            elementsDict[e["elclass"]][e["eltype"]][e["elname"]][el] = e[el]
     return elementsDict
 
 

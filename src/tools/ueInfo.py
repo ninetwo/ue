@@ -33,7 +33,8 @@ def printInfo():
         # Element info
         assetType = "element"
         assetInfo = ueAssetUtils.getElement(spec)
-    elif not spec.elpass == None:
+        assetInfo = assetInfo[spec.elclass][spec.eltype][spec.elname]
+    elif spec.elpass == None:
         # Version info
         assetType = "version"
         assetInfo = ueAssetUtils.getVersions(spec)[int(spec.vers)-1]
@@ -45,6 +46,8 @@ def printInfo():
 
     for a in sorted(assetInfo):
         # Get rid of the keys with _id because they're database stuff
+        if a == "versions":
+            assetInfo[a] = len(assetInfo[a])
         if not re.match(".*_id$", a):
             print "%s: %s" % (a, str(assetInfo[a]))
 
