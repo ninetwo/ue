@@ -34,7 +34,7 @@ define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
 }
 Root {
  inputs 0
- name /home/thoms/Desktop/placeholder.nk
+ name /work/bin/ue/lib/placeholders/placeholder.nk
  last_frame 24
  format "1960 1120 0 0 1960 1120 1 ueProjectRes"
  proxy_type scale
@@ -62,6 +62,17 @@ BackdropNode {
  bdwidth 249
  bdheight 156
 }
+BackdropNode {
+ inputs 0
+ name BackdropNode3
+ tile_color 0x8e8e3800
+ label "Nuke geo"
+ note_font_size 42
+ xpos 327
+ ypos -270
+ bdwidth 231
+ bdheight 168
+}
 ColorBars {
  inputs 0
  format "500 320 0 0 500 320 1 jhgf"
@@ -69,7 +80,7 @@ ColorBars {
  xpos -286
  ypos -184
 }
-set N4807b50 [stack 0]
+set N36da070 [stack 0]
 Write {
  file /home/thoms/Desktop/placeholder.png
  file_type png
@@ -85,24 +96,40 @@ ColorBars {
  xpos 27
  ypos -186
 }
-set N4fccc90 [stack 0]
+set N36eb800 [stack 0]
+push $N36da070
+Viewer {
+ inputs 2
+ frame 1
+ input_process false
+ name Viewer1
+ xpos -75
+ ypos -13
+}
+push $N36eb800
 Write {
  file /home/thoms/Desktop/nukePlaceholder.png
  file_type png
  checkHashOnRead false
  version 1
  name Write2
- selected true
  xpos 176
  ypos -168
 }
-push $N4fccc90
-push $N4807b50
-Viewer {
- inputs 2
- input_number 1
- input_process false
- name Viewer1
- xpos -75
- ypos -13
+Sphere {
+ inputs 0
+ rows 20
+ columns 20
+ radius 0.5
+ name Sphere1
+ xpos 346
+ ypos -161
+}
+WriteGeo {
+ file /work/bin/ue/lib/placeholders/nuke.obj
+ file_type obj
+ name WriteGeo1
+ selected true
+ xpos 456
+ ypos -167
 }

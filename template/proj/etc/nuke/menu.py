@@ -44,6 +44,9 @@ def nukeChecker():
             ueChecker(show=True)
             break
 
+def ueReadAsset(node, cmd=None):
+    ueNuke.ueReadAsset(node, cmd=cmd)
+
 # Menus
 ueMenu = "ue&Tools"
 nuke.menu("Nuke").addCommand(ueMenu+"/&Open",
@@ -64,6 +67,10 @@ nuke.menu("Nuke").addCommand(ueMenu+"/Render", "ueNukeRender.ueRender()")
 
 nuke.menu("Node Graph").addCommand("ueRead", ueRead)
 nuke.menu("Node Graph").addCommand("ueChecker", ueChecker)
+
+nuke.menu("Nodes").addCommand("ueTools/ueRead", "ueReadAsset(\"Read\")")
+nuke.menu("Nodes").addCommand("ueTools/ueReadGeo", "ueReadAsset(\"ReadGeo\", cmd=\"ReadGeo\")")
+nuke.menu("Nodes").addCommand("ueTools/ueAtomReadGeo", "ueReadAsset(\"AtomReadGeo\", cmd=\"ReadGeo\")")
 
 # Set the standard read node shortcut to shift+r since we're
 # overriding the r key above.

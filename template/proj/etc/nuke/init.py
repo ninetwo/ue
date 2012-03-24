@@ -11,3 +11,6 @@ nuke.pluginAddPath(ueNukeLoad.loadGizmos())
 def getReadPath():
     return ueNuke.getReadPath()
 
+def getReadGeoPath():
+    return ueNuke.getReadGeoPath()
+

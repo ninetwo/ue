@@ -84,8 +84,30 @@ def ueNewScriptSetup():
 #                                                float(config["aspectRatio"]), formatName))
     root.knob("format").setValue(formatName)
 
+def ueReadAsset(node, cmd=None):
+    n = nuke.createNode(node)
+    if cmd == None:
+        cmd = node
+
+    n.addKnob(nuke.PyScript_Knob("ueOpenReadGeo", "     Browse Elements     ",
+                                 "import ueNuke.Open\nueNuke.Open.ueOpen"+cmd+"()"))
+
+    n.addKnob(nuke.String_Knob("proj", "project"))
+    n.addKnob(nuke.String_Knob("grp", "group"))
+    n.addKnob(nuke.String_Knob("asst", "asset"))
+    n.addKnob(nuke.String_Knob("elclass", "class"))
+    n.addKnob(nuke.String_Knob("eltype", "type"))
+    n.addKnob(nuke.String_Knob("elname", "name"))
+    n.addKnob(nuke.Int_Knob("vers", "version"))
+    n.addKnob(nuke.String_Knob("elpass", "pass"))
+
+    n.knob("file").setValue("[python get"+cmd+"Path()]")
+    n.knob("label").setValue("[value proj]:[value grp]:[value asst]\n"+\
+                             "[value elname]:[value eltype]:[value elclass] v[value vers]")
+
 def getReadPath():
-    n = nuke.thisParent()
+#    n = nuke.thisParent()
+    n = nuke.thisNode()
 
     elpass = n.knob("elpass").value()
     if elpass == "":
@@ -129,6 +151,46 @@ def getReadPath():
                 nuke.thisNode().knob("last").setValue(len(files))
                 nuke.thisNode().knob("origfirst").setValue(1)
                 nuke.thisNode().knob("origlast").setValue(len(files))
+
+    return p
+
+def getReadGeoPath():
+#    n = nuke.thisParent()
+    n = nuke.thisNode()
+
+    spec = ueSpec.Spec(n.knob("proj").value(),
+                       n.knob("grp").value(),
+                       n.knob("asst").value(),
+                       n.knob("elclass").value(),
+                       n.knob("eltype").value(),
+                       n.knob("elname").value(),
+                       n.knob("vers").value())
+
+    p = os.path.join(os.getenv("UE_PATH"), "lib",
+                     "placeholders", "nuke.obj")
+
+    if not spec.proj == "" and not spec.grp == "" and \
+       not spec.asst == "" and not spec.elclass == "" and \
+       not spec.eltype == "" and not spec.elname == "" and \
+       not spec.vers == "":
+        versions = ueAssetUtils.getVersions(spec)
+        if int(spec.vers) > len(versions):
+            return p
+        v = versions[int(spec.vers)-1]
+        if not v == {}:
+            files = glob.glob(os.path.join(v["path"], v["file_name"]+"*.obj"))
+            if len(files) > 0:
+                ext = files[0].split(".")[-1]
+
+                p = os.path.join(v["path"], v["file_name"]+"."+ext)
+
+#                p = os.path.join(v["path"], elpassDir,
+#                                 v["file_name"]+elpassFile+".%04d."+ext)
+
+#                nuke.thisNode().knob("first").setValue(1)
+#                nuke.thisNode().knob("last").setValue(len(files))
+#                nuke.thisNode().knob("origfirst").setValue(1)
+#                nuke.thisNode().knob("origlast").setValue(len(files))
 
     return p
 
