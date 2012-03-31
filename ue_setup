@@ -26,6 +26,7 @@ ln -s $UE_PATH/src/tools/ueAddFiles.py $UE_PATH/bin/ueAddFiles
 ln -s $UE_PATH/src/tools/ueCreateAsset.py $UE_PATH/bin/ueCreateAsset
 ln -s $UE_PATH/src/tools/ueCreateGroup.py $UE_PATH/bin/ueCreateGroup
 ln -s $UE_PATH/src/tools/ueCreateProject.py $UE_PATH/bin/ueCreateProject
+ln -s $UE_PATH/src/tools/ueDestroyVersion.py $UE_PATH/bin/ueDestroyVersion
 ln -s $UE_PATH/src/tools/ueDestroyElement.py $UE_PATH/bin/ueDestroyElement
 ln -s $UE_PATH/src/tools/ueDestroyAsset.py $UE_PATH/bin/ueDestroyAsset
 ln -s $UE_PATH/src/tools/ueDestroyGroup.py $UE_PATH/bin/ueDestroyGroup

@@ -211,3 +211,7 @@ class Client():
         self.destroy("elements", spec.proj, spec.grp, spec.asst,
                   spec.elclass, spec.eltype, spec.elname)
 
+    def destroyVersion(self, spec):
+        self.destroy("versions", spec.proj, spec.grp, spec.asst,
+                  spec.elclass, spec.eltype, spec.elname, str(spec.vers))
+

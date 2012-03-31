@@ -10,6 +10,8 @@ class Spec():
         self.eltype = eltype
         self.elname = elname
         self.vers = vers
+        if not self.vers == None:
+            self.vers = int(self.vers)
         self.elpass = elpass
 
         if not proj == None and grp == None:

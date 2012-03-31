@@ -106,7 +106,8 @@ module UeFileUtils
                "name" => "Texture"
               },
      "mrs" => {
-               "name" => "Mental Ray shading group"
+               "name" => "Mental Ray shading group",
+               "pathprepend" => "shadermr"
               }
     }
   end

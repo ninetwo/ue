@@ -21,9 +21,9 @@ class Version
     UeFileUtils::create_dir get_path
   end
 
-  before_destroy do
-    UeFileUtils::delete_dir self.path
-  end
+#  before_destroy do
+#    UeFileUtils::delete_dir self.path
+#  end
 
   private
 

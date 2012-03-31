@@ -11,6 +11,16 @@ ast=$yellow
 
 sp=`python $UE_PATH/src/tools/ueSetProject.py $*`
 
+#function testComp
+#{
+#  COMPREPLY=()
+#  local opt="testproj testgrp"
+#  local cur=${COMP_WORDS[COMP_CWORD]}
+#  COMPREPLY=($(compgen -W "$opt" -- $cur))
+#}
+
+#complete -F testComp uesp
+
 if [[ $? == 1 ]]; then
   eval $sp
 

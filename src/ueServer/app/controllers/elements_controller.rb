@@ -86,4 +86,26 @@ class ElementsController < ApplicationController
       end
     end
   end
+
+  def destroy_version
+    @version = Project.where(:name => params[:proj]).first.groups.where(
+                             :name => params[:grp]).first.assets.where(
+                             :name =>  params[:asst]).first.elements.where(
+                             :elclass => params[:elclass],
+                             :eltype => params[:eltype],
+                             :elname => params[:elname]).first.versions.where(
+                             :version => params[:vers]).first
+
+    respond_to do |format|
+      if @version.destroy
+        format.html
+        format.json { render :json => @version,
+                      :status => :ok }
+      else
+        format.html
+        format.json { render :json => @version.errors,
+                      :status => :unprocessable_entity }
+      end
+    end
+  end
 end
