@@ -7,8 +7,11 @@ import ueSpec
 import ueCore.AssetUtils as ueAssetUtils
 import ueCore.Create as ueCreate
 import ueCore.FileUtils as ueFileUtils
+import ueCore.Destroy as ueDestroy
+
 import ueNuke.Save as ueNukeSave
 import ueNuke.Utilities as ueNukeUtils
+
 import ueCommon.Render as ueCommonRender
 import ueCommon.Save as ueCommonSave
 
@@ -69,6 +72,16 @@ def ueRender(currentNode=None):
         if e == {}:
             e = ueCreate.createElement(destSpec, dbMeta=dbMeta)
 
+        # If we're rendering into the last existing version, delete it
+        if not renderOpts[2]["newVersion"]:
+            versions = ueAssetUtils.getVersions(destSpec)
+            destSpec.vers = len(versions)
+            ueDestroy.destroyVersion(destSpec)
+
+        if renderOpts[2]["clearLastVersion"]:
+            nuke.tprint("deleting files")
+
+        # Create a new version
         v = ueCreate.createVersion(destSpec, dbMeta=dbMeta)
 
         destSpec.vers = v["version"]

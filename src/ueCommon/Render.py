@@ -25,7 +25,7 @@ class Render(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
 
         global render
-        render = [0, [], {}]
+        render = [0, [], {"newVersion": True, "clearLastVersion": False}]
 
         self.setLayout(QtGui.QVBoxLayout())
         self.layout().setContentsMargins(2, 2, 2, 2)
@@ -33,6 +33,11 @@ class Render(QtGui.QWidget):
 
         self.renderFromList = QtGui.QListWidget()
         self.renderBox = QtGui.QComboBox()
+        self.createNewVersion = QtGui.QCheckBox("Create new version?")
+        self.clearLastVersion = QtGui.QCheckBox("Delete files from previous version?")
+
+        self.createNewVersion.setChecked(render[2]["newVersion"])
+        self.clearLastVersion.setChecked(render[2]["clearLastVersion"])
 
         self.renderFromList.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 
@@ -49,9 +54,13 @@ class Render(QtGui.QWidget):
 
         self.layout().addWidget(self.renderBox)
         self.layout().addWidget(self.renderFromList)
+        self.layout().addWidget(self.createNewVersion)
+        self.layout().addWidget(self.clearLastVersion)
 
         self.renderBox.activated.connect(self.setRender)
         self.renderFromList.itemSelectionChanged.connect(self.setRenderFrom)
+        self.createNewVersion.stateChanged.connect(self.setCreateNewVersion)
+        self.clearLastVersion.stateChanged.connect(self.setClearLastVersion)
 
     def setRender(self):
         global render
@@ -62,6 +71,14 @@ class Render(QtGui.QWidget):
         render[1] = []
         for i in self.renderFromList.selectedItems():
             render[1].append(str(i.text()))
+
+    def setCreateNewVersion(self):
+        global render
+        render[2]["newVersion"] = self.createNewVersion.isChecked()
+
+    def setClearLastVersion(self):
+        global render
+        render[2]["clearLastVersion"] = self.clearLastVersion.isChecked()
 
 
 #if __name__ == "__main__":
