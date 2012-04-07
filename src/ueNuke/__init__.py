@@ -179,18 +179,15 @@ def getReadGeoPath():
         v = versions[int(spec.vers)-1]
         if not v == {}:
             files = glob.glob(os.path.join(v["path"], v["file_name"]+"*.obj"))
-            if len(files) > 0:
-                ext = files[0].split(".")[-1]
-
+            if len(files) < 1:
+                return p
+            ext = files[0].split(".")[-1]
+            if len(files) == 1:
                 p = os.path.join(v["path"], v["file_name"]+"."+ext)
-
+            else:
+                p = os.path.join(v["path"], v["file_name"]+".%04d."+ext)
 #                p = os.path.join(v["path"], elpassDir,
 #                                 v["file_name"]+elpassFile+".%04d."+ext)
-
-#                nuke.thisNode().knob("first").setValue(1)
-#                nuke.thisNode().knob("last").setValue(len(files))
-#                nuke.thisNode().knob("origfirst").setValue(1)
-#                nuke.thisNode().knob("origlast").setValue(len(files))
 
     return p
 

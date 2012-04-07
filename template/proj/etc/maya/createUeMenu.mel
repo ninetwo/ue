@@ -66,6 +66,9 @@ global proc createUeMenu()
            -command "python(\"import ueMaya.Export\"); \
                      python(\"ueMaya.Export.ueExport(export='Shading Group (mr)')\")";
   setParent -menu ueMenu;
+  menuItem -label "Export Anim Geo Cache"
+           -command "python(\"import ueMaya.ExportAnimCache\"); \
+                     python(\"ueMaya.ExportAnimCache.ueExportAnimCache()\")";
   menuItem -divider true;
   menuItem -label "Render"
            -command "python(\"import ueMaya.Render\"); \

@@ -15,7 +15,7 @@ __fileTypes__ = {
                  "fbx": ()
                 }
 
-def saveUtility(spec, dbMeta={}, fileType="ma", export=False):
+def saveUtility(spec, dbMeta={}, fileType="ma", export=False, animated=False):
     fi = ueMaya.parseFileInfo(maya.cmds.fileInfo(query=True))
 
     e = ueAssetUtils.getElement(spec)
@@ -42,9 +42,19 @@ def saveUtility(spec, dbMeta={}, fileType="ma", export=False):
         if fileType == "fbx":
             maya.mel.eval("FBXExport -f \""+f+"\";")
         else:
-            maya.cmds.file(f, exportSelected=True,
-                           options=__fileTypes__[fileType][1],
-                           type=__fileTypes__[fileType][0])
+            if animated:
+                start = int(maya.cmds.playbackOptions(query=True, minTime=True))
+                end = int(maya.cmds.playbackOptions(query=True, maxTime=True))
+                for i in range(start, end):
+                    maya.cmds.currentTime(i, edit=True)
+                    f = os.path.join(maPath, "%s.%04d.%s" % (maName, i, fileType))
+                    maya.cmds.file(f, exportSelected=True,
+                                   options=__fileTypes__[fileType][1],
+                                   type=__fileTypes__[fileType][0])
+            else:
+                maya.cmds.file(f, exportSelected=True,
+                               options=__fileTypes__[fileType][1],
+                               type=__fileTypes__[fileType][0])
     else:
         maya.cmds.fileInfo("ueproj", spec.proj)
         maya.cmds.fileInfo("uegrp", spec.grp)
