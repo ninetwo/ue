@@ -16,6 +16,7 @@ if [[ `ls $UE_PATH/bin | wc -l` > 0 ]]; then
 fi
 
 echo "Creating bin links..."
+ln -s $UE_PATH/src/wrapper/realflow.sh $UE_PATH/bin/realflow
 ln -s $UE_PATH/src/wrapper/houdini.sh $UE_PATH/bin/houdini
 ln -s $UE_PATH/src/wrapper/maya.sh $UE_PATH/bin/maya
 ln -s $UE_PATH/src/wrapper/nuke.sh $UE_PATH/bin/nuke
