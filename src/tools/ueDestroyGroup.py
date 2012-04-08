@@ -30,7 +30,7 @@ def parse():
         print "ERROR: Parsing argument (%s)" % e
         sys.exit(2)
 
-    group["spec"] = os.getenv("PROJ")
+    group = os.getenv("PROJ")
 
     for o, a in opts:
         if o in ("-h", "--help"):
