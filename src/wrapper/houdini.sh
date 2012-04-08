@@ -6,9 +6,9 @@ if [[ $PROJ == "" || $GRP == "" || $ASST == "" ]]; then
   exit 0
 fi
 
-cd $houdni_path
+cd $houdini_path
 source houdini_setup
-cd
+cd -
 
 $houdini_bin $*
 
