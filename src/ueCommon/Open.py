@@ -278,16 +278,15 @@ class Open(QtGui.QWidget):
     def loadPasses(self):
         global elpass
         self.passList.clear()
-        if int(vers)-1 <= len(self.versions):
-            if "passes" in self.versions[int(vers)-1]:
-                for p in self.versions[int(vers)-1]["passes"].split(","):
-                    self.passList.addItem(QtGui.QListWidgetItem(p))
-                self.passList.setCurrentItem(self.passList.item(0))
-                elpass = str(self.passList.currentItem().text())
-            else:
-                elpass = None
-        else:
-            elpass = None
+        if not vers == None:
+            if int(vers) <= len(self.versions):
+                if "passes" in self.versions[int(vers)-1]:
+                    for p in self.versions[int(vers)-1]["passes"].split(","):
+                        self.passList.addItem(QtGui.QListWidgetItem(p))
+                    self.passList.setCurrentItem(self.passList.item(0))
+                    elpass = str(self.passList.currentItem().text())
+                    return
+        elpass = None
 
     def setPass(self):
         global elpass
