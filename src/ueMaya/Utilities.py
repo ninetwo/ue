@@ -29,8 +29,6 @@ def saveUtility(spec, dbMeta={}, fileType="ma", export=False, animated=False):
     maPath = v["path"]
     maName = v["file_name"]
 
-    f = os.path.join(maPath, maName+"."+fileType)
-
     # Load plugins needed for export
     if fileType == "obj":
         maya.cmds.loadPlugin("objExport.so")
@@ -38,6 +36,7 @@ def saveUtility(spec, dbMeta={}, fileType="ma", export=False, animated=False):
         maya.cmds.loadPlugin("fbxmaya.so")
 
     # Export or save
+    f = os.path.join(maPath, maName+"."+fileType)
     if export:
         if fileType == "fbx":
             maya.mel.eval("FBXExport -f \""+f+"\";")
@@ -45,7 +44,7 @@ def saveUtility(spec, dbMeta={}, fileType="ma", export=False, animated=False):
             if animated:
                 start = int(maya.cmds.playbackOptions(query=True, minTime=True))
                 end = int(maya.cmds.playbackOptions(query=True, maxTime=True))
-                for i in range(start, end):
+                for i in range(start, end+1):
                     maya.cmds.currentTime(i, edit=True)
                     f = os.path.join(maPath, "%s.%04d.%s" % (maName, i, fileType))
                     maya.cmds.file(f, exportSelected=True,
