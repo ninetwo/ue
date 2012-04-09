@@ -8,6 +8,7 @@ import ueSpec
 
 import ueMaya
 import ueMaya.Utilities as ueMayaUtils
+import ueMaya.Save as ueMayaSave
 import ueCommon.Save as ueCommonSave
 
 __exportTypes__ = {
@@ -22,6 +23,8 @@ global selected
 
 def ueExport(export="Selected"):
     global selected
+    if maya.cmds.file(q=True, sn=True) == "":
+        ueMayaSave.ueSaveAs()
     selected = export
     Export().show()
 
@@ -98,7 +101,15 @@ class Export(QtGui.QMainWindow):
             self.itemMenu.addItem(QtGui.QListWidgetItem(i))
 
     def export(self):
-        spec, dbMeta = ueCommonSave.getValues()
+        destSpec, dbMeta = ueCommonSave.getValues()
+
+        fi = ueMaya.parseFileInfo(maya.cmds.fileInfo(query=True))
+
+        sourceSpec = ueSpec.Spec(fi["ueproj"], fi["uegrp"], fi["ueasst"],
+                                 fi["ueclass"], fi["uetype"], fi["uename"],
+                                 fi["uevers"])
+
+        dbMeta["comment"] = "Exported from %s" % str(sourceSpec)
 
         # Get the selected nodes from the dialog list
         selection = []
@@ -114,48 +125,48 @@ class Export(QtGui.QMainWindow):
             selection = newSelection
 
         # Iterate over our selection and export
-        if spec.elclass == "ms":
+        if destSpec.elclass == "ms":
             for item in selection:
                 if self.exportAsSeparateElements.isChecked():
-                    spec.elname = item
+                    destSpec.elname = item.replace(":", "")
                 maya.cmds.select(item, r=True)
-                ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
-        elif spec.elclass == "cam":
+                ueMayaUtils.saveUtility(destSpec, dbMeta=dbMeta, fileType="ma", export=True)
+        elif destSpec.elclass == "cam":
             for item in selection:
                 if self.exportAsSeparateElements.isChecked():
-                    spec.elname = item
+                    destSpec.elname = item.replace(":", "")
                 maya.cmds.select(item, r=True)
-                spec.elclass = "ms"
-                ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
+                destSpec.elclass = "ms"
+                ueMayaUtils.saveUtility(destSpec, dbMeta=dbMeta, fileType="ma", export=True)
                 if self.exportCache.isChecked():
-                    spec.elclass = "cam"
-                    ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="fbx", export=True)
-        elif spec.elclass == "lgt":
+                    destSpec.elclass = "cam"
+                    ueMayaUtils.saveUtility(destSpec, dbMeta=dbMeta, fileType="fbx", export=True)
+        elif destSpec.elclass == "lgt":
             for item in selection:
                 if self.exportAsSeparateElements.isChecked():
-                    spec.elname = item
+                    destSpec.elname = item.replace(":", "")
                 maya.cmds.select(item, r=True)
-                spec.elclass = "ms"
-                ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
+                destSpec.elclass = "ms"
+                ueMayaUtils.saveUtility(destSpec, dbMeta=dbMeta, fileType="ma", export=True)
                 if self.exportCache.isChecked():
-                    spec.elclass = "lgt"
-                    ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="fbx", export=True)
-        elif spec.elclass == "geo":
+                    destSpec.elclass = "lgt"
+                    ueMayaUtils.saveUtility(destSpec, dbMeta=dbMeta, fileType="fbx", export=True)
+        elif destSpec.elclass == "geo":
             for item in selection:
                 if self.exportAsSeparateElements.isChecked():
-                    spec.elname = item
+                    destSpec.elname = item.replace(":", "")
                 maya.cmds.select(item, r=True)
-                spec.elclass = "ms"
-                ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
+                destSpec.elclass = "ms"
+                ueMayaUtils.saveUtility(destSpec, dbMeta=dbMeta, fileType="ma", export=True)
                 if self.exportCache.isChecked():
-                    spec.elclass = "geo"
-                    ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="obj", export=True)
-        elif spec.elclass == "mrs":
+                    destSpec.elclass = "geo"
+                    ueMayaUtils.saveUtility(destSpec, dbMeta=dbMeta, fileType="obj", export=True)
+        elif destSpec.elclass == "mrs":
             for item in selection:
                 if self.exportAsSeparateElements.isChecked():
-                    spec.elname = item
+                    destSpec.elname = item.replace(":", "")
                 maya.cmds.select(item, r=True)
-                ueMayaUtils.saveUtility(spec, dbMeta=dbMeta, fileType="ma", export=True)
+                ueMayaUtils.saveUtility(destSpec, dbMeta=dbMeta, fileType="ma", export=True)
 
 #        ueFileUtils.deleteFiles(os.path.join(os.path.join(os.getenv("ASST_ROOT"), "tmp", "ueSaveThumbs_*.png")))
 

@@ -66,7 +66,6 @@ def ueRender(currentNode=None):
         dbMeta = {}
         if len(renderOpts[1]) > 1:
             dbMeta["passes"] = ",".join(renderOpts[1])
-        dbMeta["comment"] = "Render from %s" % str(sourceSpec)
 
         e = ueAssetUtils.getElement(destSpec)
         if e == {}:
@@ -82,6 +81,7 @@ def ueRender(currentNode=None):
             nuke.tprint("deleting files")
 
         # Create a new version
+        dbMeta["comment"] = "Render from %s" % str(sourceSpec)
         v = ueCreate.createVersion(destSpec, dbMeta=dbMeta)
 
         destSpec.vers = v["version"]
