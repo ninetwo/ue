@@ -4,6 +4,7 @@ import sys, os, getopt, re
 
 import ueClient, ueSpec
 
+import ueCore
 import ueCore.AssetUtils as ueAssetUtils
 
 info = {}
@@ -45,11 +46,18 @@ def printInfo():
     print "Information on %s:\n%s\n" % (assetType, str(info["spec"]))
 
     for a in sorted(assetInfo):
-        # Get rid of the keys with _id because they're database stuff
+        # Get a padding value so the key/value columns will be neatly aligned
+        spacePadding = 28-len(a)
+
+        # Parse the version and datetime info correctly
         if a == "versions":
             assetInfo[a] = len(assetInfo[a])
+        elif a in ["created_at", "updated_at"]:
+            assetInfo[a] = ueCore.formatDatetime(str(assetInfo[a]))
+
+        # Get rid of the keys with _id because they're database stuff
         if not re.match(".*_id$", a):
-            print "%s: %s" % (a, str(assetInfo[a]))
+            print "%s:%s%s" % (a, " "*spacePadding, str(assetInfo[a]))
 
     print ""
 
