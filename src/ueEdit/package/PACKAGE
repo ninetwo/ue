@@ -1,0 +1,14 @@
+package: Ue Edit
+version: 1.0
+requires: ''
+rv: 3.12.14
+
+modes: 
+  - file: UeEdit.py
+    load: immediate
+
+description: |
+    <p>
+    Ue Edit
+    </p>
+
