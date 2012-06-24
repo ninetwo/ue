@@ -9,11 +9,13 @@ import ueCore.AssetUtils as ueAssetUtils
 settings = {}
 
 def listAssets():
-    for a in sorted(ueAssetUtils.getAssets(settings["spec"])):
-        asset = a["name"]
+    for asset in sorted(ueAssetUtils.getAssetsList(settings["spec"])):
+        settings["spec"].asst = asset
+        asset = ueAssetUtils.getAsset(settings["spec"])
+        printLine = asset["name"]
         if "paths" in settings:
-            asset = "%s -> %s" % (asset, a["path"])
-        print asset
+            printLine += " -> %s" % asset["path"]
+        print printLine
 
 def parse():
     sArgs = "hs:p"

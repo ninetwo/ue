@@ -79,7 +79,7 @@ def parse():
         if o in ("-h", "--help"):
             usage()
             sys.exit(0)
-        if o in ("-s", "--spec"):
+        elif o in ("-s", "--spec"):
             info["spec"] = a
         else:
             print "ERROR: Unrecognised argument '%s'" % o
