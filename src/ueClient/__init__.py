@@ -81,26 +81,28 @@ class Client():
             print "FATAL ERROR: %s" % e
             sys.exit(2)
 
-    def put(self, get, spec, **kwargs):
+    def put(self, get, *args, **kwargs):
         if get == "assets":
             get = "ueassets"
 
-        if not spec.proj == None:
-            kwargs["data"]["project"] = spec.proj
-        if not spec.grp == None:
-            kwargs["data"]["group"] = spec.grp
-        if not spec.asst == None:
-            kwargs["data"]["asset"] = spec.asst
-        if not spec.elclass == None:
-            kwargs["data"]["elclass"] = spec.elclass
-        if not spec.eltype == None:
-            kwargs["data"]["eltype"] = spec.eltype
-        if not spec.elname == None:
-            kwargs["data"]["elname"] = spec.elname
-        if not spec.vers == None:
-            kwargs["data"]["version"] = spec.vers
+#        if not spec.proj == None:
+#            kwargs["data"]["project"] = spec.proj
+#        if not spec.grp == None:
+#            kwargs["data"]["group"] = spec.grp
+#        if not spec.asst == None:
+#            kwargs["data"]["asset"] = spec.asst
+#        if not spec.elclass == None:
+#            kwargs["data"]["elclass"] = spec.elclass
+#        if not spec.eltype == None:
+#            kwargs["data"]["eltype"] = spec.eltype
+#        if not spec.elname == None:
+#            kwargs["data"]["elname"] = spec.elname
+#        if not spec.vers == None:
+#            kwargs["data"]["version"] = spec.vers
 
-        url = "/%s.json" % (get)
+        urlargs = self.parseUrlargs(args)
+
+        url = "/%s%s.json" % (get, urlargs)
 
         try:
             con = httplib.HTTPConnection(self.host)
@@ -183,19 +185,24 @@ class Client():
 
 
     def updateProject(self, spec, data):
-        self.put("projects", spec, data=data)
+        self.put("projects", spec.proj, data={"project": data})
 
     def updateGroup(self, spec,  data):
-        self.put("groups", spec, data=data)
+        self.put("groups", spec.proj, spec.grp, data={"group": data})
 
     def updateAsset(self, spec, data):
-        self.put("ueassets", spec, data=data)
+        self.put("ueassets", spec.proj, spec.grp, spec.asst,
+                  data={"asset": data})
 
     def updateElement(self, spec, data):
-        self.put("elements", spec, data=data)
+        self.put("elements", spec.proj, spec.grp, spec.asst,
+                 spec.elclass, spec.eltype, spec.elname,
+                 data={"element": data})
 
     def updateVersion(self, spec, data):
-        self.put("versions", spec, data=data)
+        self.put("versions", spec.proj, spec.grp, spec.asst,
+                 spec.elclass, spec.eltype, spec.elname,
+                 data={"version": data})
 
 
     def destroyProject(self, spec):

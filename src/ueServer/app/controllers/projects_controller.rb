@@ -36,16 +36,6 @@ class ProjectsController < ApplicationController
   def update
     @project = Project.get_project(params[:proj])
 
-    if params[:name] != nil
-      @project.name = params[:name]
-    end
-    if params[:path] != nil
-      @project.path = params[:path]
-    end
-    if params[:created_by] != nil
-      @project.created_by = params[:created_by]
-    end
-
     respond_to do |format|
       if @project.update_attributes
         format.html

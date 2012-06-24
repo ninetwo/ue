@@ -28,9 +28,9 @@ class Project
   def self.get_project project
     p = Project.where(:name => project).first
     if p.nil?
-      return {}
+      {}
     else
-      return p
+      p
     end
   end
 

@@ -2,13 +2,14 @@ module UeFileUtils
   def project_dirs
     {
      "bin" => nil,
+     "edt" => nil,
      "etc" => {
                "nuke" => ["template/proj/etc/nuke/*"],
                "maya" => ["template/proj/etc/maya/*"]
               },
      "lib" => nil,
      "seq" => nil,
-     "tmp" => nil,
+     "tmp" => ["template/proj/tmp/*"],
      "var" => {
                "thumbs" => nil
               }
@@ -22,7 +23,10 @@ module UeFileUtils
                    "seq"],
      "lib"     => [{
                     },
-                   "lib"]
+                   "lib"],
+     "edt"     => [{
+                    },
+                   ""]
     }
   end
 
@@ -36,7 +40,13 @@ module UeFileUtils
                    },
                    ""],
      "lib"     => [{
-                    "tmp"    => nil
+                    "tmp"    => nil,
+                    ""       => ["template/asst/workspace.mel"]
+                   },
+                   ""],
+     "edt"     => [{
+                    "tmp"    => nil,
+                    "edl"    => nil
                    },
                    ""]
     }
@@ -46,6 +56,15 @@ module UeFileUtils
     {
      "o"   => {
                "name" => "Output"
+              },
+     "edt" => {
+               "name" => "Edit description"
+              },
+     "col" => {
+               "name" => "Animation colour palette"
+              },
+     "sb"  => {
+               "name" => "Storyboard"
               },
      "ns"  => {
                "name" => "Nuke script"
@@ -108,6 +127,9 @@ module UeFileUtils
      "mrs" => {
                "name" => "Mental Ray shading group",
                "pathprepend" => "shadermr"
+              },
+     "arc" => {
+               "name" => "Architect library"
               }
     }
   end

@@ -1,7 +1,7 @@
 UeServer::Application.routes.draw do
   match "/projects"                => "projects#index",   :as => :projects, :via => :get
   match "/projects"                => "projects#create",  :as => :project,  :via => :post
-  match "/projects/:proj"          => "projects#update",  :as => :project,  :via => :put
+  match "/projects"                => "projects#update",  :as => :project,  :via => :put
   match "/projects/:proj"          => "projects#destroy", :as => :project,  :via => :delete
   match "/projects/:proj"          => "projects#show",    :as => :project
 

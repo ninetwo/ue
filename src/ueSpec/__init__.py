@@ -1,3 +1,15 @@
+import os
+
+class Context():
+    def __init__(self):
+        self.spec = Spec(proj=os.getenv("PROJ", None),
+                         grp=os.getenv("GRP", None),
+                         asst=os.getenv("ASST", None))
+        self.proj = self.spec.proj
+        self.grp = self.spec.grp
+        self.asst = self.spec.asst
+
+
 class Spec():
     def __init__(self, proj=None, grp=None, asst=None,
                  elclass=None, eltype=None, elname=None,

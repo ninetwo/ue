@@ -18,7 +18,7 @@ def getProjectsList():
     projects = []
     for p in ueClient.client.getProjects():
         projects.append(p["name"])
-    return projects
+    return sorted(projects)
 
 
 def getGroup(spec):
@@ -31,7 +31,7 @@ def getGroupsList(spec):
     groups = []
     for g in ueClient.client.getGroups(spec):
         groups.append(g["name"])
-    return groups
+    return sorted(groups)
 
 
 def getAsset(spec):
@@ -44,7 +44,7 @@ def getAssetsList(spec):
     assets = []
     for a in ueClient.client.getAssets(spec):
         assets.append(a["name"])
-    return assets
+    return sorted(assets)
 
 
 def getElement(spec):
@@ -85,6 +85,17 @@ def getElements(spec):
             elementsDict[e["elclass"]][e["eltype"]][e["elname"]][el] = e[el]
     return elementsDict
 
+
+def getVersion(spec):
+    versions = getVersions(spec)
+    if spec.vers == None:
+        spec.vers = -1
+    elif not spec.vers < 0:
+        spec.vers -= 1
+    if spec.vers >= len(versions):
+        return []
+    else:
+        return versions[spec.vers]
 
 def getVersions(spec):
     element = ueClient.client.getElement(spec)

@@ -6,7 +6,10 @@ import ueClient, ueSpec
 import ueCore.AssetUtils as ueAssetUtils
 
 def createProject(spec, dbMeta={}):
-    project = {}
+    project = ueAssetUtils.getProject(spec)
+
+    if project:
+        return project
 
     project["name"] = spec.proj
     project["created_by"] = getpass.getuser()
@@ -19,7 +22,10 @@ def createProject(spec, dbMeta={}):
     return ueAssetUtils.getProject(spec)
 
 def createGroup(spec, grpType="default", dbMeta={}):
-    group = {}
+    group = ueAssetUtils.getGroup(spec)
+
+    if group:
+        return group
 
     group["name"] = spec.grp
     group["group_type"] = grpType
@@ -33,7 +39,10 @@ def createGroup(spec, grpType="default", dbMeta={}):
     return ueAssetUtils.getGroup(spec)
 
 def createAsset(spec, asstType="default", dbMeta={}):
-    asset = {}
+    asset = ueAssetUtils.getAsset(spec)
+
+    if asset:
+        return asset
 
     asset["name"] = spec.asst
     asset["asset_type"] = asstType
@@ -47,7 +56,10 @@ def createAsset(spec, asstType="default", dbMeta={}):
     return ueAssetUtils.getAsset(spec)
 
 def createElement(spec, dbMeta={}):
-    element = {}
+    element = ueAssetUtils.getElement(spec)
+
+    if element:
+        return element
 
     element["created_by"] = getpass.getuser()
 

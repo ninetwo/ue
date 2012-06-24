@@ -47,7 +47,11 @@ class Element
     if a == {} || a.nil?
       []
     else
-      a.elements
+      e = []
+      for element in a.elements
+        e[e.size] = JSON.parse(a.to_json).to_hash.merge(JSON.parse(element.to_json).to_hash)
+      end
+      e
     end
   end
 

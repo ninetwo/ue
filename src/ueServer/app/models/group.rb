@@ -44,9 +44,9 @@ class Group
   def self.get_groups project
     p = Project.get_project project
     if p == {} || p.nil?
-      return []
+      []
     else
-      return p.groups
+      p.groups
     end
   end
 
