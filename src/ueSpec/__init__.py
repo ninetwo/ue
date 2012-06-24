@@ -9,6 +9,12 @@ class Context():
         self.grp = self.spec.grp
         self.asst = self.spec.asst
 
+    def toArray(self):
+        return self.spec.toArray()
+
+    def __str__(self):
+        return str(self.spec)
+
 
 class Spec():
     def __init__(self, proj=None, grp=None, asst=None,
