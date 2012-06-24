@@ -20,9 +20,11 @@ ln -s $UE_PATH/src/wrapper/realflow.sh $UE_PATH/bin/realflow
 ln -s $UE_PATH/src/wrapper/houdini.sh $UE_PATH/bin/houdini
 ln -s $UE_PATH/src/wrapper/maya.sh $UE_PATH/bin/maya
 ln -s $UE_PATH/src/wrapper/nuke.sh $UE_PATH/bin/nuke
+ln -s $UE_PATH/src/wrapper/mari.sh $UE_PATH/bin/mari
 ln -s $UE_PATH/src/wrapper/tvpaint.sh $UE_PATH/bin/tvpaint
 ln -s $UE_PATH/src/wrapper/rv.sh $UE_PATH/bin/rv
 ln -s $UE_PATH/src/wrapper/rvio.sh $UE_PATH/bin/rvio
+ln -s $UE_PATH/src/wrapper/ueEdit.sh $UE_PATH/bin/ueEdit
 ln -s $UE_PATH/src/tools/ueAddFiles.py $UE_PATH/bin/ueAddFiles
 ln -s $UE_PATH/src/tools/ueCreateAsset.py $UE_PATH/bin/ueCreateAsset
 ln -s $UE_PATH/src/tools/ueCreateGroup.py $UE_PATH/bin/ueCreateGroup
@@ -37,6 +39,9 @@ ln -s $UE_PATH/src/tools/ueListAssets.py $UE_PATH/bin/ueListAssets
 ln -s $UE_PATH/src/tools/ueListGroups.py $UE_PATH/bin/ueListGroups
 ln -s $UE_PATH/src/tools/ueListProjects.py $UE_PATH/bin/ueListProjects
 ln -s $UE_PATH/src/tools/ueInfo.py $UE_PATH/bin/ueInfo
+ln -s $UE_PATH/src/tools/ueTree.py $UE_PATH/bin/ueTree
+ln -s $UE_PATH/src/tools/ueEditTool.py $UE_PATH/bin/ueEditTool
+ln -s $UE_PATH/src/tools/ueBuildTool.py $UE_PATH/bin/ueBuildTool
 
 echo "Done!"
 
