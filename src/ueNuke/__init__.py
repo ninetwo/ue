@@ -84,12 +84,16 @@ def ueNewScriptSetup():
 #                                                float(config["aspectRatio"]), formatName))
     root.knob("format").setValue(formatName)
 
-def ueReadAsset(node, cmd=None):
+def ueReadAsset(node, cmd=None, name=None):
     n = nuke.createNode(node)
+
+    if name is not None:
+        n.setName(name)
+
     if cmd == None:
         cmd = node
 
-    n.addKnob(nuke.PyScript_Knob("ueOpenReadGeo", "     Browse Elements     ",
+    n.addKnob(nuke.PyScript_Knob("ueOpen"+cmd, "     Browse Elements     ",
                                  "import ueNuke.Open\nueNuke.Open.ueOpen"+cmd+"()"))
 
     n.addKnob(nuke.String_Knob("proj", "project"))
@@ -104,6 +108,34 @@ def ueReadAsset(node, cmd=None):
     n.knob("file").setValue("[python get"+cmd+"Path()]")
     n.knob("label").setValue("[value proj]:[value grp]:[value asst]\n"+\
                              "[value elname]:[value eltype]:[value elclass] v[value vers]")
+
+    return n
+
+def ueWriteAsset(node, cmd=None, name=None):
+    n = nuke.createNode(node)
+
+    if name is not None:
+        n.setName(name)
+
+    if cmd == None:
+        cmd = node
+
+    n.addKnob(nuke.PyScript_Knob("ueOpen"+cmd, "     Browse Elements     ",
+                                 "import ueNuke.Save\nueNuke.Save.ueSave"+cmd+"()"))
+
+    n.addKnob(nuke.String_Knob("proj", "project"))
+    n.addKnob(nuke.String_Knob("grp", "group"))
+    n.addKnob(nuke.String_Knob("asst", "asset"))
+    n.addKnob(nuke.String_Knob("elclass", "class"))
+    n.addKnob(nuke.String_Knob("eltype", "type"))
+    n.addKnob(nuke.String_Knob("elname", "name"))
+#    n.addKnob(nuke.String_Knob("elpass", "pass"))
+
+    n.knob("file").setValue("/tmp/temp.%04d.exr")
+    n.knob("label").setValue("[value proj]:[value grp]:[value asst]\n"+\
+                             "[value elname]:[value eltype]:[value elclass]")
+
+    return n
 
 def getReadPath():
 #    n = nuke.thisParent()

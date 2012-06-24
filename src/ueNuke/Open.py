@@ -65,21 +65,21 @@ def ueOpenReadGeo():
 
     nukescripts.unregisterPanel("ue.panel.ueOpen", lambda: "return")
 
-def ueOpenWrite():
-    p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
-                                          "ue.panel.ueOpen", create=True)
-    p.setMinimumSize(600, 940)
-    ueCommonOpen.setClasses(__ueclasses_write__)
-
-    if p.showModalDialog():
-        spec = ueCommonOpen.getValues()
-        n = nuke.thisNode()
-        n.knob("proj").setValue(spec.proj)
-        n.knob("grp").setValue(spec.grp)
-        n.knob("asst").setValue(spec.asst)
-        n.knob("elclass").setValue(spec.elclass)
-        n.knob("eltype").setValue(spec.eltype)
-        n.knob("elname").setValue(spec.elname)
-
-    nukescripts.unregisterPanel("ue.panel.ueOpen", lambda: "return")
+#def ueOpenWrite():
+#    p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
+#                                          "ue.panel.ueOpen", create=True)
+#    p.setMinimumSize(600, 940)
+#    ueCommonOpen.setClasses(__ueclasses_write__)
+#
+#    if p.showModalDialog():
+#        spec = ueCommonOpen.getValues()
+#        n = nuke.thisNode()
+#        n.knob("proj").setValue(spec.proj)
+#        n.knob("grp").setValue(spec.grp)
+#        n.knob("asst").setValue(spec.asst)
+#        n.knob("elclass").setValue(spec.elclass)
+#        n.knob("eltype").setValue(spec.eltype)
+#        n.knob("elname").setValue(spec.elname)
+#
+#    nukescripts.unregisterPanel("ue.panel.ueOpen", lambda: "return")
 

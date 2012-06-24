@@ -54,9 +54,12 @@ def saveUtility(spec, dbMeta={}):
         root.knob("uename").setValue(spec.elname)
 
     if root.knob("uevers") == None:
-        root.addKnob(nuke.Int_Knob("uevers", "vers", int(spec.vers)))
+        root.addKnob(nuke.Int_Knob("uevers", "vers", spec.vers))
+        # Nuke bug? Passing a value into Int_Knob doesn't actually set the value
+        # on the knob. Calling setValue explicitly to get around this.
+        root.knob("uevers").setValue(spec.vers)
     else:
-        root.knob("uevers").setValue(int(spec.vers))
+        root.knob("uevers").setValue(spec.vers)
 
     if root.knob("version_path") == None:
         root.addKnob(nuke.String_Knob("version_path", "version_path", nkPath))
@@ -73,16 +76,4 @@ def saveUtility(spec, dbMeta={}):
         ueFileUtils.moveFile(source, dest)
 
     nuke.tprint("Saved %s" % spec)
-
-def ueReadNode():
-    spec = ueSpec.Spec(os.getenv("PROJ"), "lib", "global",
-                       "giz", "fileUtils", "ueRead")
-    versions = ueAssetUtils.getVersions(spec)
-    return versions[len(versions)-1]["file_name"]
-
-def ueWriteNode():
-    spec = ueSpec.Spec(os.getenv("PROJ"), "lib", "global",
-                       "giz", "fileUtils", "ueWrite")
-    versions = ueAssetUtils.getVersions(spec)
-    return versions[len(versions)-1]["file_name"]
 

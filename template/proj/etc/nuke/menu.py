@@ -44,9 +44,6 @@ def nukeChecker():
             ueChecker(show=True)
             break
 
-def ueReadAsset(node, cmd=None):
-    ueNuke.ueReadAsset(node, cmd=cmd)
-
 # Menus
 ueMenu = "ue&Tools"
 nuke.menu("Nuke").addCommand(ueMenu+"/&Open",
@@ -60,7 +57,7 @@ nuke.menu("Nuke").addCommand(ueMenu+"/Save New &Version",
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 ueNukeLoad.addGizmos()
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
-nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead, "r")
+nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead)
 nuke.menu("Nuke").addCommand(ueMenu+"/ueChecker", ueChecker)
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 nuke.menu("Nuke").addCommand(ueMenu+"/Render", "ueNukeRender.ueRender()")
@@ -68,25 +65,21 @@ nuke.menu("Nuke").addCommand(ueMenu+"/Render", "ueNukeRender.ueRender()")
 nuke.menu("Node Graph").addCommand("ueRead", ueRead)
 nuke.menu("Node Graph").addCommand("ueChecker", ueChecker)
 
-nuke.menu("Nodes").addCommand("ueTools/ueRead", "ueReadAsset(\"Read\")")
+nuke.menu("Nodes").addCommand("ueTools/ueRead", "ueReadAsset(\"Read\")", "r")
 nuke.menu("Nodes").addCommand("ueTools/ueReadGeo", "ueReadAsset(\"ReadGeo\", cmd=\"ReadGeo\")")
 nuke.menu("Nodes").addCommand("ueTools/ueAtomReadGeo", "ueReadAsset(\"AtomReadGeo\", cmd=\"ReadGeo\")")
+nuke.menu("Nodes").addCommand("ueTools/-", "")
+nuke.menu("Nodes").addCommand("ueTools/ueWrite", "ueWriteAsset(\"Write\")", "w")
 
-# Set the standard read node shortcut to shift+r since we're
-# overriding the r key above.
-nuke.menu("Nodes").addCommand("Image/Read", "nukescripts.create_read()",
-                              "Shift+r", icon="Read.png")
+# Set new shortcuts for read and write nodes as we're overriding the defaults above
+nuke.menu("Nodes").addCommand("Image/Read", "nukescripts.create_read()", "Shift+r", icon="Read.png")
+nuke.menu("Nodes").addCommand("Image/Write", "nuke.createNode(\"Write\")", "Shift+w", icon="Write.png")
 
 # Favorites
-nuke.addFavoriteDir("asst root",
-                    os.getenv("ASST_ROOT"),
-                    nuke.ALL)
-nuke.addFavoriteDir("render",
-                    os.path.join(os.getenv("ASST_ROOT"), "render"),
-                    nuke.IMAGE)
+nuke.addFavoriteDir("asst root", os.getenv("ASST_ROOT"), nuke.ALL)
+nuke.addFavoriteDir("render", os.path.join(os.getenv("ASST_ROOT"), "render"), nuke.IMAGE)
 
 # Auto-run
-nuke.addOnUserCreate(ueNuke.ueNewScriptSetup, nodeClass="Root")
 #nuke.addOnScriptLoad(nukeChecker)
 #nuke.addBeforeRender(ueNuke.render, nodeClass="Write")
 

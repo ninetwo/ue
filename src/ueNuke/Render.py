@@ -22,50 +22,38 @@ def ueRender(currentNode=None):
     ueCommonRender.setCurrentRender(currentNode)
 
     if p.showModalDialog():
-        root = nuke.root()
-        renderOpts = ueCommonRender.getValues()
+        runRender(ueCommonRender.getValues())
 
-        if root.name() == "Root":
-            ueNukeSave.ueSaveAs()
+    nukescripts.unregisterPanel("ue.panel.ueRender", lambda: "return")
 
-        sourceSpec = ueSpec.Spec(root.knob("ueproj").value(),
-                                 root.knob("uegrp").value(),
-                                 root.knob("ueasst").value(),
-                                 root.knob("ueclass").value(),
-                                 root.knob("uetype").value(),
-                                 root.knob("uename").value(),
-                                 root.knob("uevers").value())
-        destSpec = None
+def runRender(renderOpts):
+    root = nuke.root()
 
-        if len(renderOpts[1]) == 1:
-            n = nuke.toNode(renderOpts[1][0])
-            destSpec = ueSpec.Spec(n.knob("proj").value(),
-                                   n.knob("grp").value(),
-                                   n.knob("asst").value(),
-                                   n.knob("elclass").value(),
-                                   n.knob("eltype").value(),
-                                   n.knob("elname").value())
-        elif len(renderOpts[1]) > 1:
-            p = nukescripts.registerWidgetAsPanel("ueCommonSave.Save", "ueSave",
-                                                  "ue.panel.ueSave", create=True)
+    if root.name() == "Root":
+        ueNukeSave.ueSaveAs()
 
-            p.setMinimumSize(400, 600)
-            ueCommonSave.setClasses(["nr"])
+    sourceSpec = ueSpec.Spec(root.knob("ueproj").value(),
+                             root.knob("uegrp").value(),
+                             root.knob("ueasst").value(),
+                             root.knob("ueclass").value(),
+                             root.knob("uetype").value(),
+                             root.knob("uename").value(),
+                             root.knob("uevers").value())
 
-            if p.showModalDialog():
-                destSpec, dbMeta = ueCommonSave.getValues()
+    writeNodes = []
+    frameRanges = []
+    for writeNode in renderOpts[1]:
+        n = nuke.toNode(writeNode)
 
-            nukescripts.unregisterPanel("ue.panel.ueSave", lambda: "return")
-        else:
-            return
-
-        if destSpec == None:
-            return
+        destSpec = ueSpec.Spec(n.knob("proj").value(),
+                               n.knob("grp").value(),
+                               n.knob("asst").value(),
+                               n.knob("elclass").value(),
+                               n.knob("eltype").value(),
+                               n.knob("elname").value())
 
         # Create the element(s)/version(s) to render into
         dbMeta = {}
-        if len(renderOpts[1]) > 1:
-            dbMeta["passes"] = ",".join(renderOpts[1])
 
         e = ueAssetUtils.getElement(destSpec)
         if e == {}:
@@ -90,71 +78,57 @@ def ueRender(currentNode=None):
         name = v["file_name"]
 
         # Set up the write nodes with the correct paths
-        if len(renderOpts[1]) == 1:
-            n = nuke.toNode(renderOpts[1][0])
-            p = os.path.join(path, name+".%04d.exr")
-            n.knob("file").setValue(p)
-        else:
-            for render in renderOpts[1]:
-                n = nuke.toNode(render)
-                p = os.path.join(path, render, name+"_"+render+".%04d.exr")
-                if not os.path.exists(os.path.dirname(p)):
-                    ueFileUtils.createDir(os.path.dirname(p))
-                n.knob("file").setValue(p)
+        p = os.path.join(path, name+".%04d."+n.knob("file_type").value())
+        n.knob("file").setValue(p)
 
         # Get the frame range from the ueWrite gizmo, else default to
         # the scripts asset settings
         first = nuke.root().knob("first_frame").value()
         last = nuke.root().knob("last_frame").value()
-        if len(renderOpts[1]) == 1:
-            n = nuke.toNode(renderOpts[1][0])
-            if n.knob("limit_range").value():
-                first = n.knob("first").value()
-                last = n.knob("last").value()
+        if n.knob("use_limit").value():
+            first = n.knob("first").value()
+            last = n.knob("last").value()
 
-        dbMeta = {}
-        dbMeta["comment"] = "Auto-save of render %s" % str(destSpec)
+        writeNodes.append(n)
+        frameRanges.append((int(first), int(last), 1))
 
-        ueNukeUtils.saveUtility(sourceSpec, dbMeta=dbMeta)
-        ueNukeUtils.saveUtility(sourceSpec)
+    dbMeta = {}
+    dbMeta["comment"] = "Auto-save of render %s" % str(destSpec)
 
-        # Render
-        # 0 = Standard nuke "interactive" render
-        # 1 = DrQueue render farm (os.system is a little weird, but it's
-        #     so you don't have to compile it's python module for nuke)
-        # 2 = Cloud render farm, maybe sometime in the future
-        if renderOpts[0] == 0:
-            nuke.tprint("Rendering %s ..." % str(destSpec))
-            if len(renderOpts[1]) == 1:
-                nuke.execute(n.name()+"."+n.knob("format").value(),
-                             int(first), int(last), 1)
-            else:
-                writeNodes = []
-                frameRanges = []
-                for render in renderOpts[1]:
-                    n = nuke.toNode(render)
-                    writeNodes.append(nuke.toNode(n.name()+"."+n.knob("format").value()))
-                    frameRanges.append(tuple([int(first), int(last), 1]))
-                nuke.executeMultiple(tuple(writeNodes), tuple(frameRanges))
-        elif renderOpts[0] == 1:
-            nuke.tprint("Spooling %s ..." % str(destSpec))
-            sourceSpec.vers = sourceSpec.vers-1
-            options = {}
-            options["writeNode"] = []
-            for render in renderOpts[1]:
-                n = nuke.toNode(render)
-                options["writeNode"].append(n.name()+"."+n.knob("format").value())
-            p = os.path.join(os.getenv("UE_PATH"), "src", "ueRender", "Spool.py")
-            os.system("python %s %s %s nuke %i %i '%s'" % (p, str(sourceSpec), str(destSpec),
-                                                           int(first), int(last),
-                                                           json.dumps(options)))
-        elif renderOpts[0] == 2:
-            nuke.tprint("Spooling to cloud currently not avaliable")
+    ueNukeUtils.saveUtility(sourceSpec, dbMeta=dbMeta)
+    ueNukeUtils.saveUtility(sourceSpec)
 
-    nukescripts.unregisterPanel("ue.panel.ueRender", lambda: "return")
+    # Render
+    # 0 = Standard nuke "interactive" render
+    # 1 = DrQueue render farm (os.system is a little weird, but it's
+    #     so you don't have to compile it's python module for nuke)
+    # 2 = Cloud render farm, maybe sometime in the future
+    if renderOpts[0] == 0:
+        nuke.tprint("Rendering %s ..." % str(destSpec))
+        # execute() takes a string for the node name, executeMultiple() takes a tuple of node objects
+        if len(writeNodes) == 1:
+            nuke.execute(writeNodes[0].name(), frameRanges[0][0], frameRanges[0][1], frameRanges[0][2])
+        else:
+            nuke.tprint(tuple(writeNodes))
+            nuke.tprint(tuple(frameRanges))
+            nuke.executeMultiple(tuple(writeNodes), tuple(frameRanges))
+    elif renderOpts[0] == 1:
+        nuke.tprint("Spooling %s ..." % str(destSpec))
+        sourceSpec.vers = sourceSpec.vers-1
+        options = {}
+        options["writeNode"] = []
+        for render in renderOpts[1]:
+            n = nuke.toNode(render)
+            options["writeNode"].append(n.name()+"."+n.knob("file_type").value())
+        p = os.path.join(os.getenv("UE_PATH"), "src", "ueRender", "Spool.py")
+        os.system("python %s %s %s nuke %i %i '%s'" % (p, str(sourceSpec), str(destSpec),
+                                                       int(first), int(last),
+                                                       json.dumps(options)))
+    elif renderOpts[0] == 2:
+        nuke.tprint("Spooling to cloud currently not avaliable")
 
 def getWriteNodeList():
-    nodes = nuke.allNodes(ueNukeUtils.ueWriteNode(), nuke.root())
+    nodes = nuke.allNodes("Write", nuke.root())
     nodeList = []
     for n in nodes:
         nodeList.append(n.name())
