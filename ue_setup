@@ -24,7 +24,9 @@ ln -s $UE_PATH/src/wrapper/mari.sh $UE_PATH/bin/mari
 ln -s $UE_PATH/src/wrapper/tvpaint.sh $UE_PATH/bin/tvpaint
 ln -s $UE_PATH/src/wrapper/rv.sh $UE_PATH/bin/rv
 ln -s $UE_PATH/src/wrapper/rvio.sh $UE_PATH/bin/rvio
+ln -s $UE_PATH/src/wrapper/rvls.sh $UE_PATH/bin/rvls
 ln -s $UE_PATH/src/wrapper/ueEdit.sh $UE_PATH/bin/ueEdit
+ln -s $UE_PATH/src/wrapper/publishCels.py $UE_PATH/bin/publishCels
 ln -s $UE_PATH/src/tools/ueAddFiles.py $UE_PATH/bin/ueAddFiles
 ln -s $UE_PATH/src/tools/ueCreateAsset.py $UE_PATH/bin/ueCreateAsset
 ln -s $UE_PATH/src/tools/ueCreateGroup.py $UE_PATH/bin/ueCreateGroup
