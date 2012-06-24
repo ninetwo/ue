@@ -176,8 +176,12 @@ def getReadPath():
             if len(files) > 0:
                 ext = files[0].split(".")[-1]
 
-                p = os.path.join(v["path"], elpassDir,
-                                 v["file_name"]+elpassFile+".%04d."+ext)
+                if len(files) == 1:
+                    p = os.path.join(v["path"], elpassDir,
+                                     v["file_name"]+elpassFile+"."+ext)
+                else:
+                    p = os.path.join(v["path"], elpassDir,
+                                     v["file_name"]+elpassFile+".%04d."+ext)
 
                 nuke.thisNode().knob("first").setValue(1)
                 nuke.thisNode().knob("last").setValue(len(files))
