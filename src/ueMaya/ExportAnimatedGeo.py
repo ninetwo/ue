@@ -8,21 +8,17 @@ import ueSpec
 
 import ueMaya
 import ueMaya.Utilities as ueMayaUtils
+import ueMaya.Save as ueMayaSave
 import ueCommon.Save as ueCommonSave
 
-__exportTypes__ = {
-                   "Selected":            ("selected", ["cam", "lgt", "geo", "mrs", "ms"]),
-                   "Camera":              ("cameras",  ["cam"]),
-                   "Light":               ("lights",   ["lgt"]),
-                   "Geometry":            ("geometry", ["geo"]),
-                   "Shading Group (mr)":  ("mrShader", ["mrs"])
-                  }
-
-def ueExportAnimCache():
+def ueExportAnimatedGeo():
+    if maya.cmds.file(q=True, sn=True) == "":
+        ueMayaSave.ueSaveAs()
+        return
     ExportAnimCache().show()
 
 
-class ExportAnimCache(QtGui.QMainWindow):
+class ExportAnimatedGeo(QtGui.QMainWindow):
     def __init__(self, parent=ueMaya.getMayaWindow()):
         QtGui.QMainWindow.__init__(self, parent)
 

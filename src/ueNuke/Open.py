@@ -15,7 +15,7 @@ __ueclasses_write__    = ["nr"]
 def ueOpen():
     p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
                                           "ue.panel.ueOpen", create=True)
-    p.setMinimumSize(600, 920)
+    p.setMinimumSize(600, 940)
     ueCommonOpen.setClasses(__ueclasses__)
 
     if p.showModalDialog():
@@ -29,7 +29,7 @@ def ueOpen():
 def ueOpenRead():
     p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
                                           "ue.panel.ueOpen", create=True)
-    p.setMinimumSize(600, 920)
+    p.setMinimumSize(600, 940)
     ueCommonOpen.setClasses(__ueclasses_read__)
 
     if p.showModalDialog():
@@ -49,7 +49,7 @@ def ueOpenRead():
 def ueOpenReadGeo():
     p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
                                           "ue.panel.ueOpen", create=True)
-    p.setMinimumSize(600, 920)
+    p.setMinimumSize(600, 940)
     ueCommonOpen.setClasses(__ueclasses_read_geo__)
 
     if p.showModalDialog():
@@ -68,7 +68,7 @@ def ueOpenReadGeo():
 def ueOpenWrite():
     p = nukescripts.registerWidgetAsPanel("ueCommonOpen.Open", "ueOpen",
                                           "ue.panel.ueOpen", create=True)
-    p.setMinimumSize(600, 920)
+    p.setMinimumSize(600, 940)
     ueCommonOpen.setClasses(__ueclasses_write__)
 
     if p.showModalDialog():

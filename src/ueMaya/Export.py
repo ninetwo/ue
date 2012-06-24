@@ -25,6 +25,7 @@ def ueExport(export="Selected"):
     global selected
     if maya.cmds.file(q=True, sn=True) == "":
         ueMayaSave.ueSaveAs()
+        return
     selected = export
     Export().show()
 

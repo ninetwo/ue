@@ -43,9 +43,6 @@ global proc createUeMenu()
            -command "python(\"import ueMaya.ReferenceEditor\"); \
                      python(\"ueMaya.ReferenceEditor.ReferenceEditor().show()\")";
   menuItem -divider true;
-  menuItem -label "Import"
-           -command "python(\"import ueMaya.Import\"); \
-                     python(\"ueMaya.Import.ueImport()\")";
   menuItem -label "Export"
            -subMenu true
            -tearOff true;
@@ -66,12 +63,16 @@ global proc createUeMenu()
            -command "python(\"import ueMaya.Export\"); \
                      python(\"ueMaya.Export.ueExport(export='Shading Group (mr)')\")";
   setParent -menu ueMenu;
-  menuItem -label "Export Anim Geo Cache"
-           -command "python(\"import ueMaya.ExportAnimCache\"); \
-                     python(\"ueMaya.ExportAnimCache.ueExportAnimCache()\")";
+  menuItem -label "Export Animated Geo"
+           -command "python(\"import ueMaya.ExportAnimatedGeo\"); \
+                     python(\"ueMaya.ExportAnimatedGeo.ueExportAnimatedGeo()\")";
   menuItem -divider true;
   menuItem -label "Render"
            -command "python(\"import ueMaya.Render\"); \
                      python(\"ueMaya.Render.ueRender()\")";
+  menuItem -divider true;
+  menuItem -label "Architect"
+           -command "python(\"import Architect\"); \
+                     python(\"Architect.showArchitect()\")";
 }
 

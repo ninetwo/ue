@@ -10,7 +10,7 @@ import ueCore.AssetUtils as ueAssetUtils
 import ueCommon.Open as ueCommonOpen
 import ueMaya
 
-__ueclasses__ = ["ms", "geo", "cam", "mrs"]
+__ueclasses__ = ["ms", "geo", "cam", "lgt", "mrs"]
 
 global refEditor
 
@@ -43,6 +43,8 @@ class OpenRef(QtGui.QMainWindow):
         if spec.elclass == "geo":
             ext = "obj"
         elif spec.elclass == "cam":
+            ext = "fbx"
+        elif spec.elclass == "lgt":
             ext = "fbx"
         else:
             ext = "ma"
