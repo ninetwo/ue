@@ -39,7 +39,7 @@ def saveUtility(spec, dbMeta={}, fileType="ma", export=False, animated=False):
     f = os.path.join(maPath, maName+"."+fileType)
     if export:
         if fileType == "fbx":
-            maya.mel.eval("FBXExport -f \""+f+"\";")
+            maya.mel.eval("FBXExport -s -f \""+f+"\";")
         else:
             if animated:
                 start = int(maya.cmds.playbackOptions(query=True, minTime=True))
