@@ -57,7 +57,7 @@ nuke.menu("Nuke").addCommand(ueMenu+"/Save New &Version",
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 ueNukeLoad.addGizmos()
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
-nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead)
+nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead, "ctrl+r")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueChecker", ueChecker)
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 nuke.menu("Nuke").addCommand(ueMenu+"/Render", "ueNukeRender.ueRender()")
@@ -81,7 +81,6 @@ nuke.addFavoriteDir("render", os.path.join(os.getenv("ASST_ROOT"), "render"), nu
 
 # Auto-run
 #nuke.addOnScriptLoad(nukeChecker)
-#nuke.addBeforeRender(ueNuke.render, nodeClass="Write")
 
 # Register panels
 ueReadPanel = nukescripts.registerWidgetAsPanel("ueNukeRead.ReadPanel", "ueRead", "ue.panel.ueRead", create=True)
