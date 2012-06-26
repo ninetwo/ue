@@ -37,6 +37,7 @@ def loadGizmosFromAsset(asst):
     return path
 
 def addGizmosFromAsset(asst):
+    gizmos = False
     a = ueAssetUtils.getElements(ueSpec.Spec(asst[0], asst[1], asst[2]))
     if "giz" in a:
         for n in a["giz"]:
@@ -57,4 +58,7 @@ def addGizmosFromAsset(asst):
                            n.showControlPanel()')
                 nuke.toolbar("Nodes").addCommand("ueTools/"+menu, command)
                 nuke.menu("Nuke").addCommand("ueTools/gizmos/"+menu, command)
+                gizmos = True
+    if gizmos:
+        nuke.toolbar("Nodes").addCommand("ueTools/-", "")
 
