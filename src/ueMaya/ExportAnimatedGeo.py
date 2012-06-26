@@ -12,9 +12,6 @@ import ueMaya.Save as ueMayaSave
 import ueCommon.Save as ueCommonSave
 
 def ueExportAnimatedGeo():
-    if maya.cmds.file(q=True, sn=True) == "":
-        ueMayaSave.ueSaveAs()
-        return
     ExportAnimCache().show()
 
 
