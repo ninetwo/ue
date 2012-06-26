@@ -8,6 +8,8 @@ import ueSpec
 
 import ueCore.AssetUtils as ueAssetUtils
 
+import ueNuke
+
 global proj, grp, asst
 global elements
 
@@ -131,7 +133,7 @@ class AnimationTab(QtGui.QWidget):
         self.layout().setContentsMargins(2, 2, 2, 2)
         self.layout().setSpacing(2)
 
-        self.layerListFile = os.getenv("ASST_ROOT")
+        self.layerListFile = None
 
         self.layerList = QtGui.QListWidget()
         self.passList = QtGui.QListWidget()
@@ -215,14 +217,16 @@ class AnimationTab(QtGui.QWidget):
                 self.passList.setCurrentItem(self.passList.item(0))
                 self.elname = str(self.passList.currentItem().text())
 
-                f = os.path.join(elements[__anClass__][self.eltype][self.elname]["path"],
+                asset = ueAssetUtils.getAsset(ueSpec.Spec(proj, grp, asst))
+
+                f = os.path.join(asset["path"], "tmp", "fromTVP",
                                  self.eltype+"_layerList.txt")
 
                 if os.path.isfile(f):
                     self.layerListFile = f
                     self.layerListPicker.setText(f)
                 else:
-                    self.layerListFile = os.getenv("ASST_ROOT")
+                    self.layerListFile = None
                     self.layerListPicker.setText(os.getenv("ASST_ROOT"))
 
                 self.loadVersions()
@@ -237,57 +241,70 @@ class AnimationTab(QtGui.QWidget):
             self.versList.addItem(item)
         self.versList.setCurrentItem(self.versList.item(0))
 
-    def nukeImportPass(self):
-        args = ["proj", proj, "grp", grp, "asst", asst, "elclass", __anClass__,
-                "eltype", self.eltype, "elname", self.elname,
-                "vers", str(self.versList.currentItem().text()),
-                "postage_stamp", "0",
-                "name", "ueRead"]
-        read = getUeRead(args)
-        #tvpReformat = getTvpReformat(["name", "tvpReformat"])
+    def nukeImportPass(self, name=None, x=None, y=None):
+        if not name:
+            name = self.elname
+
+        read = ueNuke.ueReadAsset("Read", name="%s_%s" % (self.eltype, name))
         reColour = getReColour(["name", "reColour", "postage_stamp", "1"])
         colour = nuke.createNode("Constant", inpanel=False)
 
         reColour.setInput(0, colour)
-        reColour.setInput(1, read)#tvpReformat)
+        reColour.setInput(1, read)
 
-        x = reColour.xpos()
-        y = reColour.ypos()
+        if x:
+            reColour.setXYpos(x, y)
+        else:
+            x = reColour.xpos()
+            y = reColour.ypos()
 
         colour.setXYpos(x-100, y)
-        #tvpReformat.setXYpos(x, y-30)
-        read.setXYpos(x, y-80)
+        read.setXYpos(x, y-140)
+
+        read.knob("proj").setValue(proj)
+        read.knob("grp").setValue(grp)
+        read.knob("asst").setValue(asst)
+        read.knob("elname").setValue(name)
+        read.knob("eltype").setValue(self.eltype)
+        read.knob("elclass").setValue(__anClass__)
+        read.knob("vers").setValue(int(self.versList.currentItem().text()))
+
+        return reColour
 
     def nukeImportLayer(self):
+        if self.layerListFile == None:
+            return
+
+        f = open(self.layerListFile)
+
         n = []
-        for c in config["tvp"][str(self.layerList.currentItem().text())]:
-            n.append(nuke.nodes.Read(name=str(self.layerList.currentItem().text())+"_"+c,
-                                     file=config["tvp"][str(self.layerList.currentItem().text())][c]["path"]))
-        for nn in n:
-            if nn == 0:
-                print "Yes"
-            m = nuke.nodes.Merge(inputs=[nn, n[n.index(nn)+1]])
-            n[n.index(nn)+1] = m
+        x = None
+        y = None
+        for elpass in f:
+            node = self.nukeImportPass(name=elpass.strip(), x=x, y=y)
+            x = node.xpos()+200
+            y = node.ypos()
+            n.append(node)
 
-def getUeRead(a):
-    spec = ueSpec.Spec(proj, "lib", "global",
-                       "giz", "fileUtils", "ueRead")
-    versions = ueAssetUtils.getVersions(spec)
-    version = versions[len(versions)-1]
-    return nuke.createNode(version["file_name"], " ".join(a), inpanel=False)
+        f.close()
 
-def getTvpReformat(a):
-    spec = ueSpec.Spec(proj, "lib", "global",
-                       "giz", "fileUtils", "tvpReformat")
-    versions = ueAssetUtils.getVersions(spec)
-    version = versions[len(versions)-1]
-    return nuke.createNode(version["file_name"], " ".join(a), inpanel=False)
+        for i, nn in enumerate(n):
+            if i == 0:
+                # Create a dot node
+                print "yes"
+            if i < len(n)-1:
+                # Create the merge
+                m = nuke.nodes.Merge(inputs=[nn, n[i+1]])
+                n[n.index(nn)+1] = m
+            if i == 0:
+                # Set the position
+                y = m.ypos()+100
+            m.setYpos(y)
 
 def getReColour(a):
-    spec = ueSpec.Spec(proj, "lib", "global",
+    spec = ueSpec.Spec(proj, "lib", "nuke",
                        "giz", "celUtils", "reColour")
-    versions = ueAssetUtils.getVersions(spec)
-    version = versions[len(versions)-1]
+    version = ueAssetUtils.getVersions(spec)[-1]
     return nuke.createNode(version["file_name"], " ".join(a), inpanel=False)
 
 

@@ -11,7 +11,8 @@ grp = os.getenv("GRP")
 asst = os.getenv("ASST")
 
 # List of assets to scan for gizmos and scriptlets
-libs = [(proj, "lib", "global"),
+libs = [(proj, "lib", "nuke"),
+        (proj, "lib", "global"),
         (proj, grp, "global"),
         (proj, grp, asst)]
 
