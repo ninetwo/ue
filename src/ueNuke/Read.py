@@ -201,10 +201,9 @@ class AnimationTab(QtGui.QWidget):
     def loadLayers(self):
         self.layerList.clear()
         if __anClass__ in elements:
-            for l in elements[__anClass__]:
+            for l in sorted(elements[__anClass__]):
                 self.layerList.addItem(QtGui.QListWidgetItem(l))
             self.layerList.setCurrentItem(self.layerList.item(0))
-            self.eltype = str(self.layerList.currentItem().text())
             self.loadPasses()
 
     def loadPasses(self):
@@ -212,10 +211,9 @@ class AnimationTab(QtGui.QWidget):
         self.passList.clear()
         if __anClass__ in elements:
             if self.eltype in elements[__anClass__]:
-                for c in elements[__anClass__][self.eltype]:
+                for c in sorted(elements[__anClass__][self.eltype]):
                     self.passList.addItem(QtGui.QListWidgetItem(c))
                 self.passList.setCurrentItem(self.passList.item(0))
-                self.elname = str(self.passList.currentItem().text())
 
                 asset = ueAssetUtils.getAsset(ueSpec.Spec(proj, grp, asst))
 
@@ -232,12 +230,13 @@ class AnimationTab(QtGui.QWidget):
                 self.loadVersions()
 
     def loadVersions(self):
+        self.elname = str(self.passList.currentItem().text())
         self.versList.clear()
         spec = ueSpec.Spec(proj, grp, asst, __anClass__,
                            self.eltype, self.elname)
-        vers = ueAssetUtils.getVersions(spec)
-        for v in sorted(range(len(vers)), reverse=True):
-            item = QtGui.QListWidgetItem("%3d" % int(v+1))
+        versions = ueAssetUtils.getVersions(spec)
+        for v in sorted(range(len(versions)), reverse=True):
+            item = QtGui.QListWidgetItem("%04d" % int(v+1))
             self.versList.addItem(item)
         self.versList.setCurrentItem(self.versList.item(0))
 
@@ -358,7 +357,8 @@ class BackgroundTab(QtGui.QWidget):
                 for b in sorted(elements[__bgClass__][__bgType__]):
                     self.backgroundList.addItem(QtGui.QListWidgetItem(b))
                 self.backgroundList.setCurrentItem(self.backgroundList.item(0))
-                self.elname = str(self.backgroundList.currentItem().text())
+
+                self.loadVersions()
 
     def loadVersions(self):
         self.elname = str(self.backgroundList.currentItem().text())
@@ -367,12 +367,20 @@ class BackgroundTab(QtGui.QWidget):
                            self.elname)
         vers = ueAssetUtils.getVersions(spec)
         for v in sorted(range(len(vers)), reverse=True):
-            item = QtGui.QListWidgetItem("%3d" % int(v+1))
+            item = QtGui.QListWidgetItem("%04d" % int(v+1))
             self.versList.addItem(item)
         self.versList.setCurrentItem(self.versList.item(0))
 
     def nukeImportBackground(self):
-        print "test"
+        read = ueNuke.ueReadAsset("Read", name=self.elname)
+
+        read.knob("proj").setValue(proj)
+        read.knob("grp").setValue(grp)
+        read.knob("asst").setValue(asst)
+        read.knob("elname").setValue(self.elname)
+        read.knob("eltype").setValue(__bgType__)
+        read.knob("elclass").setValue(__bgClass__)
+        read.knob("vers").setValue(int(self.versList.currentItem().text()))
 
 
 class RenderTab(QtGui.QWidget):
@@ -386,12 +394,14 @@ class RenderTab(QtGui.QWidget):
         self.typeList = QtGui.QListWidget()
         self.nameList = QtGui.QListWidget()
         self.versList = QtGui.QListWidget()
+        self.passList = QtGui.QListWidget()
         self.renderButton = QtGui.QPushButton("insert render")
 
         zero = QtGui.QWidget()
         one = QtGui.QWidget()
         two = QtGui.QWidget()
         three = QtGui.QWidget()
+        topWidget = QtGui.QWidget()
 
         zero.setLayout(QtGui.QHBoxLayout())
         zero.layout().setContentsMargins(2, 2, 2, 2)
@@ -417,9 +427,16 @@ class RenderTab(QtGui.QWidget):
         two.layout().addWidget(self.versList)
         three.layout().addWidget(self.renderButton)
 
-        self.layout().addWidget(zero)
-        self.layout().addWidget(one)
-        self.layout().addWidget(two)
+        topWidget.setLayout(QtGui.QVBoxLayout())
+        topWidget.layout().setContentsMargins(2, 2, 2, 2)
+        topWidget.layout().setSpacing(2)
+        topWidget.layout().addWidget(zero)
+        topWidget.layout().addWidget(one)
+        topWidget.layout().addWidget(two)
+
+        self.layout().addWidget(topWidget)
+        self.layout().addWidget(QtGui.QLabel("pass"))
+        self.layout().addWidget(self.passList)
         self.layout().addWidget(three)
 
         self.reload()
@@ -427,6 +444,7 @@ class RenderTab(QtGui.QWidget):
         self.classList.activated.connect(self.loadTypes)
         self.typeList.itemSelectionChanged.connect(self.loadNames)
         self.nameList.itemSelectionChanged.connect(self.loadVersions)
+        self.versList.itemSelectionChanged.connect(self.loadPasses)
         self.renderButton.clicked.connect(self.nukeImportRender)
 
     def reload(self):
@@ -434,7 +452,7 @@ class RenderTab(QtGui.QWidget):
 
     def loadClasses(self):
         self.classList.clear()
-        for c in __rnClasses__:
+        for c in sorted(__rnClasses__):
             self.classList.addItem(c)
         self.elclass = str(self.classList.currentText())
         self.loadTypes()
@@ -464,10 +482,24 @@ class RenderTab(QtGui.QWidget):
                            self.elclass, self.eltype, self.elname)
         self.versList.clear()
         vers = ueAssetUtils.getVersions(spec)
-        for v in sorted(range(len(vers)), reverse=True):
-            item = QtGui.QListWidgetItem("%04d" % int(v+1))
-            self.versList.addItem(item)
-        self.versList.setCurrentItem(self.versList.item(0))
+        if vers:
+            for v in sorted(range(len(vers)), reverse=True):
+                item = QtGui.QListWidgetItem("%04d" % int(v+1))
+                self.versList.addItem(item)
+            self.versList.setCurrentItem(self.versList.item(0))
+            self.loadPasses()
+
+    def loadPasses(self):
+        self.vers = int(self.versList.currentItem().text())
 
     def nukeImportRender(self):
-        nuke.tprint("import render")
+        read = ueNuke.ueReadAsset("Read", name=self.elname)
+
+        read.knob("proj").setValue(proj)
+        read.knob("grp").setValue(grp)
+        read.knob("asst").setValue(asst)
+        read.knob("elname").setValue(self.elname)
+        read.knob("eltype").setValue(self.eltype)
+        read.knob("elclass").setValue(self.elclass)
+        read.knob("vers").setValue(int(self.versList.currentItem().text()))
+
