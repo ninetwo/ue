@@ -21,15 +21,18 @@ def parseFileInfo(fi):
         fiDict[fi[i*2]] = fi[i*2+1]
     return fiDict
 
+def loadPlugin(plugin):
+    if not maya.cmds.pluginInfo(plugin, q=True, l=True):
+        maya.cmds.loadPlugin(plugin)
+
 def ueNewScriptSetup():
-    spec = ueSpec.Spec(os.getenv("PROJ"),
-                       os.getenv("GRP"),
-                       os.getenv("ASST"))
+    context = ueSpec.Context()
+    spec = context.spec
 
     asset = ueAssetUtils.getAsset(spec)
 
     # Set up renderer - default to Mental Ray
-    maya.cmds.loadPlugin("Mayatomr.so")
+    loadPlugin("Mayatomr.so")
     maya.cmds.setAttr("defaultRenderGlobals.currentRenderer", "mentalRay", type="string")
 
     # Set up the timeline
