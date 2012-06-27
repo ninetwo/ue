@@ -12,7 +12,7 @@ import ueMaya.Save as ueMayaSave
 import ueCommon.Save as ueCommonSave
 
 def ueExportAnimatedGeo():
-    ExportAnimCache().show()
+    ExportAnimatedGeo().show()
 
 
 class ExportAnimatedGeo(QtGui.QMainWindow):
