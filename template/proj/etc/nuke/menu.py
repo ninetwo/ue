@@ -6,13 +6,11 @@ import ueNuke.Open as ueNukeOpen
 import ueNuke.Read as ueNukeRead
 import ueNuke.Render as ueNukeRender
 import ueNuke.Load as ueNukeLoad
-import ueNuke.Checker as ueNukeChecker
 
+import ueCommon.Checker as ueCommonChecker
 import ueCommon.Save as ueCommonSave
 import ueCommon.Open as ueCommonOpen
 import ueCommon.Render as ueCommonRender
-
-checker = ueNuke.checker
 
 # Utilities
 def ueRead():
@@ -26,7 +24,7 @@ def ueChecker(show=False):
     # and it 'saves' the info from then previous script.
     # Un-registering and regstering the widget seems to do the trick.
     nukescripts.unregisterPanel("ue.panel.ueChecker", None)
-    ueCheckerPanel = nukescripts.registerWidgetAsPanel("ueNukeChecker.CheckerPanel",
+    ueCheckerPanel = nukescripts.registerWidgetAsPanel("ueCommonChecker.Checker",
                                                        "ueChecker", "ue.panel.ueChecker",
                                                        create=True)
     if show:
@@ -36,13 +34,12 @@ def ueChecker(show=False):
         ueCheckerPanel.addToPane(p)
 
 def nukeChecker():
-    checks = checker["nuke"]
-
-    for check in checks:
-        c = checks[check]
-        if (lambda: eval(c["eval"]))():
-            ueChecker(show=True)
-            break
+    for group in ueNuke.checks:
+        for check in ueNuke.checks[group]:
+            c = ueNuke.checks[group][check]
+            if (lambda: eval(c["check"]))():
+                ueChecker(show=True)
+                break
 
 # Menus
 ueMenu = "ue&Tools"
@@ -80,7 +77,7 @@ nuke.addFavoriteDir("asst root", os.getenv("ASST_ROOT"), nuke.ALL)
 nuke.addFavoriteDir("render", os.path.join(os.getenv("ASST_ROOT"), "render"), nuke.IMAGE)
 
 # Auto-run
-#nuke.addOnScriptLoad(nukeChecker)
+nuke.addOnScriptLoad(nukeChecker)
 
 # Register panels
 ueReadPanel = nukescripts.registerWidgetAsPanel("ueNukeRead.ReadPanel", "ueRead", "ue.panel.ueRead", create=True)

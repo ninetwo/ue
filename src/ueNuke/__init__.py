@@ -6,67 +6,61 @@ import ueSpec
 
 import ueCore.AssetUtils as ueAssetUtils
 
-checker = \
-{
- "nuke": {
-          "Framerate":  {
-                         "desc": "Framerate",
-                         "eval": "float(nuke.root().knob(\"fps\").value()) != float(os.getenv(\"FRAMERATE\"))",
-                         "update": "nuke.root().knob(\"fps\").setValue(float(os.getenv(\"FRAMERATE\")))",
-                         "curval": "float(nuke.root().knob(\"fps\").value())",
-                         "newval": "float(os.getenv(\"FRAMERATE\"))"
-                        },
+checks = {
+ "Framerate": {
+          "FPS":         {
+                          "name": "FPS",
+                          "check": "float(nuke.root().knob(\"fps\").value()) != float(os.getenv(\"FRAME_RATE\"))",
+                          "update": "nuke.root().knob(\"fps\").setValue(float(os.getenv(\"FRAME_RATE\")))",
+                          "curval": "float(nuke.root().knob(\"fps\").value())",
+                          "newval": "float(os.getenv(\"FRAME_RATE\"))"
+                         },
           "Start Frame": {
-                         "desc": "Start frame",
-                         "eval": "float(nuke.root().knob(\"first_frame\").value()) != float(os.getenv(\"STARTFRAME\"))",
-                         "update": "nuke.root().knob(\"first_frame\").setValue(float(os.getenv(\"STARTFRAME\")))",
-                         "curval": "float(nuke.root().knob(\"first_frame\").value())",
-                         "newval": "float(os.getenv(\"STARTFRAME\"))"
-                        },
-          "End Frame": {
-                         "desc": "End frame",
-                         "eval": "float(nuke.root().knob(\"last_frame\").value()) != float(os.getenv(\"ENDFRAME\"))",
-                         "update": "nuke.root().knob(\"last_frame\").setValue(float(os.getenv(\"ENDFRAME\")))",
-                         "curval": "float(nuke.root().knob(\"last_frame\").value())",
-                         "newval": "float(os.getenv(\"ENDFRAME\"))"
-                       }
-        },
- "test": {
-         "Project":    {
-                        "desc": "Project",
-                        "eval": "nuke.root.knob(\"proj\").value() != os.getenv(\"PROJ\")",
-                        "update": "nuke.root().knob(\"proj\").setValue(os.getenv(\"PROJ\"))",
-                        "curval": "nuke.root().knob(\"proj\").value()",
-                        "newval": "os.getenv(\"PROJ\")"
-                       },
-         "Group":    {
-                        "desc": "Group",
-                        "eval": "nuke.root.knob(\"grp\").value() != os.getenv(\"GROUP\")",
-                        "update": "nuke.root().knob(\"grp\").setValue(os.getenv(\"GROUP\"))",
-                        "curval": "nuke.root().knob(\"grp\").value()",
-                        "newval": "os.getenv(\"GROUP\")"
-                       },
-         "Asset":    {
-                        "desc": "Asset",
-                        "eval": "nuke.root.knob(\"asst\").value() != os.getenv(\"ASST\")",
-                        "update": "nuke.root().knob(\"asst\").setValue(os.getenv(\"ASST\"))",
-                        "curval": "nuke.root().knob(\"asst\").value()",
-                        "newval": "os.getenv(\"ASST\")"
-                       },
-         "Asset Root":    {
-                        "desc": "Asset Root",
-                        "eval": "nuke.root.knob(\"asst_root\").value() != os.getenv(\"ASST_ROOT\")",
-                        "update": "nuke.root().knob(\"asst_root\").setValue(os.getenv(\"ASST_ROOT\"))",
-                        "curval": "nuke.root().knob(\"asst_root\").value()",
-                        "newval": "os.getenv(\"ASST_ROOT\")"
-                       },
+                          "name": "Start frame",
+                          "check": "float(nuke.root().knob(\"first_frame\").value()) != float(os.getenv(\"FIRST_FRAME\"))",
+                          "update": "nuke.root().knob(\"first_frame\").setValue(float(os.getenv(\"FIRST_FRAME\")))",
+                          "curval": "float(nuke.root().knob(\"first_frame\").value())",
+                          "newval": "float(os.getenv(\"FIRST_FRAME\"))"
+                         },
+          "End Frame":   {
+                          "name": "End frame",
+                          "check": "float(nuke.root().knob(\"last_frame\").value()) != float(os.getenv(\"LAST_FRAME\"))",
+                          "update": "nuke.root().knob(\"last_frame\").setValue(float(os.getenv(\"LAST_FRAME\")))",
+                          "curval": "float(nuke.root().knob(\"last_frame\").value())",
+                          "newval": "float(os.getenv(\"LAST_FRAME\"))"
+                         }
+         },
+ "Asset": {
+          "Project":     {
+                          "name": "Project",
+                          "check": "nuke.root().knob(\"ueproj\").value() != os.getenv(\"PROJ\")",
+                          "update": "nuke.root().knob(\"ueproj\").setValue(os.getenv(\"PROJ\"))",
+                          "curval": "nuke.root().knob(\"ueproj\").value()",
+                          "newval": "os.getenv(\"PROJ\")"
+                         },
+          "Group":       {
+                          "name": "Group",
+                          "check": "nuke.root().knob(\"uegrp\").value() != os.getenv(\"GRP\")",
+                          "update": "nuke.root().knob(\"uegrp\").setValue(os.getenv(\"GRP\"))",
+                          "curval": "nuke.root().knob(\"uegrp\").value()",
+                          "newval": "os.getenv(\"GRP\")"
+                         },
+          "Asset":       {
+                          "name": "Asset",
+                          "check": "nuke.root().knob(\"ueasst\").value() != os.getenv(\"ASST\")",
+                          "update": "nuke.root().knob(\"ueasst\").setValue(os.getenv(\"ASST\"))",
+                          "curval": "nuke.root().knob(\"ueasst\").value()",
+                          "newval": "os.getenv(\"ASST\")"
+                         }
         }
 }
 
 def ueNewScriptSetup():
     root = nuke.root()
 
-    spec = ueSpec.Spec(os.getenv("PROJ"), os.getenv("GRP"), os.getenv("ASST"))
+    context = ueSpec.Context()
+    spec = context.spec
+
     asset = ueAssetUtils.getAsset(spec)
 
     formatName = "ueProjectRes"
@@ -83,6 +77,10 @@ def ueNewScriptSetup():
 #                                                int(config["xRes"]), int(config["yRes"]),
 #                                                float(config["aspectRatio"]), formatName))
     root.knob("format").setValue(formatName)
+
+    os.environ["FRAME_RATE"] = asset["frameRate"]
+    os.environ["FIRST_FRAME"] = asset["startFrame"]
+    os.environ["LAST_FRAME"] = asset["endFrame"]
 
 def ueReadAsset(node, cmd=None, name=None):
     n = nuke.createNode(node)
