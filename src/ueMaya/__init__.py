@@ -54,7 +54,7 @@ def ueNewScriptSetup():
     maya.cmds.setAttr("defaultResolution.width", x)
     maya.cmds.setAttr("defaultResolution.height", y)
 
-    # Render file name
-    #maya.cmds.setAttr("defaultRenderGlobals.putFrameBeforeExt", 1)
-    #maya.cmds.setAttr("defaultRenderGlobals.extensionPadding", 4)
+    os.environ["FRAME_RATE"] = asset["frameRate"]
+    os.environ["FIRST_FRAME"] = asset["startFrame"]
+    os.environ["LAST_FRAME"] = asset["endFrame"]
 
