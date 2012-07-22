@@ -240,9 +240,12 @@ class AnimationTab(QtGui.QWidget):
             self.versList.addItem(item)
         self.versList.setCurrentItem(self.versList.item(0))
 
-    def nukeImportPass(self, name=None, x=None, y=None):
+    def nukeImportPass(self, name=None, version=None, x=None, y=None):
         if not name:
             name = self.elname
+
+        if not version:
+            version = int(self.versList.currentItem().text())
 
         read = ueNuke.ueReadAsset("Read", name="%s_%s" % (self.eltype, name), inpanel=False)
         reColour = getReColour(["name", "reColour", "postage_stamp", "1"])
@@ -271,7 +274,7 @@ class AnimationTab(QtGui.QWidget):
         read.knob("elname").setValue(name)
         read.knob("eltype").setValue(self.eltype)
         read.knob("elclass").setValue(__anClass__)
-        read.knob("vers").setValue(int(self.versList.currentItem().text()))
+        read.knob("vers").setValue(version)
 
         return reColour
 
@@ -288,7 +291,11 @@ class AnimationTab(QtGui.QWidget):
         x = None
         y = None
         for elpass in reversed(passes):
-            node = self.nukeImportPass(name=elpass.strip(), x=x, y=y)
+            elpass = elpass.strip()
+            spec = ueSpec.Spec(proj, grp, asst, __anClass__,
+                               self.eltype, elpass)
+            versions = ueAssetUtils.getVersions(spec)
+            node = self.nukeImportPass(name=elpass.strip(), version=len(versions), x=x, y=y)
             x = node.xpos()+200
             y = node.ypos()
             n.append(node)
