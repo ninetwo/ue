@@ -66,6 +66,10 @@ module UeFileUtils
      "sb"  => {
                "name" => "Storyboard"
               },
+     "an"  => {
+               "name" => "Animatic",
+               "pathappend"  => "%%version%%"
+              },
      "ns"  => {
                "name" => "Nuke script"
               },
@@ -125,8 +129,7 @@ module UeFileUtils
                "name" => "Texture"
               },
      "mrs" => {
-               "name" => "Mental Ray shading group",
-               "pathprepend" => "shadermr"
+               "name" => "Mental Ray shading group"
               },
      "arc" => {
                "name" => "Architect library"
