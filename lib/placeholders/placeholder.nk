@@ -1,5 +1,5 @@
-#! /usr/local/Nuke6.3v2/Nuke6.3 -nx
-version 6.3 v2
+#! /usr/local/Nuke6.3v3/Nuke6.3 -nx
+version 6.3 v3
 define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
 <layout version="1.0">
     <window x="0" y="22" w="1686" h="1051" screen="0">
@@ -73,6 +73,28 @@ BackdropNode {
  bdwidth 231
  bdheight 168
 }
+BackdropNode {
+ inputs 0
+ name BackdropNode4
+ tile_color 0x8e8e3800
+ label Black
+ note_font_size 42
+ xpos 25
+ ypos -62
+ bdwidth 235
+ bdheight 156
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode5
+ tile_color 0x7171c600
+ label White
+ note_font_size 42
+ xpos 315
+ ypos -61
+ bdwidth 235
+ bdheight 156
+}
 ColorBars {
  inputs 0
  format "500 320 0 0 500 320 1 jhgf"
@@ -80,7 +102,7 @@ ColorBars {
  xpos -286
  ypos -184
 }
-set N36da070 [stack 0]
+set N4c69010 [stack 0]
 Write {
  file /home/thoms/Desktop/placeholder.png
  file_type png
@@ -96,17 +118,7 @@ ColorBars {
  xpos 27
  ypos -186
 }
-set N36eb800 [stack 0]
-push $N36da070
-Viewer {
- inputs 2
- frame 1
- input_process false
- name Viewer1
- xpos -75
- ypos -13
-}
-push $N36eb800
+set N4422680 [stack 0]
 Write {
  file /home/thoms/Desktop/nukePlaceholder.png
  file_type png
@@ -129,7 +141,48 @@ WriteGeo {
  file /work/bin/ue/lib/placeholders/nuke.obj
  file_type obj
  name WriteGeo1
- selected true
  xpos 456
  ypos -167
+}
+push $N4422680
+push $N4c69010
+Viewer {
+ inputs 2
+ input_process false
+ name Viewer1
+ xpos -185
+ ypos 17
+}
+Constant {
+ inputs 0
+ channels rgb
+ name Constant1
+ xpos 35
+ ypos 18
+}
+Write {
+ file /work/bin/ue/lib/placeholders/black.png
+ file_type png
+ checkHashOnRead false
+ version 1
+ name Write3
+ xpos 170
+ ypos 36
+}
+Constant {
+ inputs 0
+ channels rgb
+ color {1 1 1 0}
+ name Constant2
+ xpos 325
+ ypos 19
+}
+Write {
+ file /work/bin/ue/lib/placeholders/white.png
+ file_type png
+ checkHashOnRead false
+ version 1
+ name Write4
+ xpos 460
+ ypos 37
 }
