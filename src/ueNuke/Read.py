@@ -298,15 +298,16 @@ class AnimationTab(QtGui.QWidget):
         for i, nn in enumerate(n):
             if i == 0:
                 # Create a dot node
-                print "yes"
+                dot = nuke.nodes.Dot(xpos=nn.xpos(), ypos=nn.ypos())
+                dot.setInput(0, nn)
+                nn = dot
             if i < len(n)-1:
                 # Create the merge
                 m = nuke.nodes.Merge(inputs=[nn, n[i+1]])
-                n[n.index(nn)+1] = m
+                n[i+1] = m
             if i == 0:
-                # Set the position
-                y = m.ypos()+100
-            m.setXPos(m.xpos())
+                y = m.ypos()+20
+            m.setXpos(m.xpos())
             m.setYpos(y)
 
 def getReColour(a):
