@@ -1,3 +1,5 @@
+import os
+
 from PyQt4 import QtGui, QtCore
 
 from rv import rvtypes, commands
@@ -25,23 +27,52 @@ class ToolBox(QtGui.QToolBar):
         button.connect(a, QtCore.SIGNAL("triggered()"), self.load)
 
     def load(self):
-        retimeNodes = []
-	for source in commands.nodesOfType("RVSourceGroup"):
-		node = commands.newNode("RVRetimeGroup", "%sRetime" % source)
-		commands.setNodeInputs(node, [source])
-                retimeNodes.append(node)
-                commands.setViewNode(node)
-                nodes = commands.nodesInGroup(node)
-                if "%s_retime" % node in nodes:
-                    properties =  commands.properties("%s_retime" % node)
-                    if "%s_retime.visual.scale" % node in properties:
-                        commands.setFloatProperty("%s_retime.visual.scale" % node, [4.0], False)
-        commands.setNodeInputs("defaultSequence", retimeNodes)
+        nodes = []
+        for sequence in self.parent.edit["sequences"]:
+            for shot in self.parent.edit[sequence]["shots"]:
+                editShot = self.parent.edit[sequence][shot]
+                storyboard = []
+                animatic = []
+
+                spec = ueSpec.Spec(os.getenv("PROJ"), sequence, shot, "sb", "storyboard", "master")
+
+                storyboard = ueAssetUtils.getVersions(spec)
+
+                if storyboard:
+                    path = os.path.join(storyboard[-1]["path"], storyboard[-1]["file_name"]+".jpg")
+                    spec.eltype = "animatic"
+                    spec.elclass = "an"
+                    animatic = ueAssetUtils.getVersions(spec)
+                    if animatic:
+                        path = os.path.join(animatic[-1]["path"], animatic[-1]["file_name"]+".####.jpeg")
+                elif shot == "black":
+                    path = os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "black.png")
+                elif shot == "white":
+                    path = os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "white.png")
+                else:
+                    path = os.path.join(os.getenv("UE_PATH"), "lib", "placeholders", "nuke.png")
+
+                commands.addSource(path, None)
+
+                sourceNode = commands.nodesOfType("RVSourceGroup")[-1]
+
+                if storyboard and not animatic:
+                    retimeNode = commands.newNode("RVRetimeGroup", "%s_%sRetime" % (sequence, shot))
+                    commands.setNodeInputs(retimeNode, [sourceNode])
+                    time = float(editShot["endFrame"])-float(editShot["startFrame"])+1
+                    commands.setFloatProperty("%s_retime.visual.scale" % retimeNode, [float(time)], False)
+                    node = retimeNode
+                else:
+                    node = sourceNode
+
+                nodes.append(node)
+
+        commands.setNodeInputs("defaultSequence", nodes)
         commands.setViewNode("defaultSequence")
 
 
 class AbstractEdit(QtGui.QDockWidget):
-    def __init__(self, editType, spec=ueSpec.Context().spec, parent=None):
+    def __init__(self, editType, spec=ueSpec.Spec(os.getenv("PROJ"), "edt", "master"), parent=None):
         QtGui.QDockWidget.__init__(self, parent)
 
         self.parent = parent
@@ -123,12 +154,12 @@ class AbstractEdit(QtGui.QDockWidget):
             self.spec.vers = version["version"]
 
 class Edit(AbstractEdit):
-    def __init__(self, spec=ueSpec.Context().spec, parent=None):
+    def __init__(self, spec=ueSpec.Spec(os.getenv("PROJ"), "edt", "master"), parent=None):
         AbstractEdit.__init__(self, "edit", spec, parent)
 
         self.setWindowTitle("Edit (sequence)")
 
-        self.parent.edit = ueEdit.getEdit(self.spec)
+        self.parent.edit = ueEdit.getEdit(spec)
 
         for sequence in self.parent.edit["sequences"]:
                 sequenceItem = QtGui.QTreeWidgetItem(self.editTree)
@@ -139,12 +170,12 @@ class Edit(AbstractEdit):
 
 
 class Build(AbstractEdit):
-    def __init__(self, spec=ueSpec.Context().spec, parent=None):
+    def __init__(self, spec=ueSpec.Spec(os.getenv("PROJ"), "edt", "master"), parent=None):
         AbstractEdit.__init__(self, "build", spec, parent)
 
         self.setWindowTitle("Build (libraries)")
 
-	build = ueEdit.getBuild(self.spec)
+	build = ueEdit.getBuild(spec)
 
         for sequence in sorted(build):
             sequenceItem = QtGui.QTreeWidgetItem(self.editTree)

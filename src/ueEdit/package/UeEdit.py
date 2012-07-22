@@ -25,8 +25,8 @@ class UeEdit(rvtypes.MinorMode):
         self.edit = {"sequences": []}
 
         self.toolBox = ueEditUI.ToolBox(parent=self.mainWindow)
-        self.edit = ueEditUI.Edit(spec=self.spec, parent=self.mainWindow)
-        self.build = ueEditUI.Build(spec=self.spec, parent=self.mainWindow)
+        self.edit = ueEditUI.Edit(parent=self.mainWindow)
+        self.build = ueEditUI.Build(parent=self.mainWindow)
         self.assets = ueEditUI.Assets(spec=self.spec, parent=self.mainWindow)
         self.media = ueEditUI.Media(spec=self.spec, parent=self.mainWindow)
         self.assetInfo = ueEditUI.AssetInfo(spec=self.spec, parent=self.mainWindow)
@@ -45,6 +45,8 @@ class UeEdit(rvtypes.MinorMode):
         self.mainWindow.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.spreadsheet)
         self.mainWindow.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.timeline)
         self.mainWindow.tabifyDockWidget(self.spreadsheet, self.timeline)
+
+        self.toolBox.load()
 
 
 def createMode():
