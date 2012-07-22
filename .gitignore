@@ -2,3 +2,4 @@ bin/*
 *.pyc
 .DS_Store
 ._*
+*.rvpkg
