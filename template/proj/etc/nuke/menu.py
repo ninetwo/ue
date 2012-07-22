@@ -37,9 +37,10 @@ def nukeChecker():
     for group in ueNuke.checks:
         for check in ueNuke.checks[group]:
             c = ueNuke.checks[group][check]
-            if (lambda: eval(c["check"]))():
-                ueChecker(show=True)
-                break
+            if c["type"] == "single":
+                if (lambda: eval(c["check"]))():
+                    ueChecker(show=True)
+                    break
 
 # Menus
 ueMenu = "ue&Tools"
