@@ -13,7 +13,7 @@ import ueNuke.Utilities as ueNukeUtils
 import ueCommon.Save as ueCommonSave
 
 __ueclasses__ = ["ns"]
-__ueclasses_write__ = ["nr"]
+__ueclasses_write__ = ["nr", "an"]
 
 def ueSave():
     root = nuke.root()

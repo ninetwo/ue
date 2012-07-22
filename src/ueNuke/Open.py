@@ -8,7 +8,7 @@ import ueCore.AssetUtils as ueAssetUtils
 import ueCommon.Open as ueCommonOpen
 
 __ueclasses__          = ["ns"]
-__ueclasses_read__     = ["nr", "mr", "cel", "bg"]
+__ueclasses_read__     = ["nr", "mr", "cel", "bg", "an", "sb"]
 __ueclasses_read_geo__ = ["geo"]
 __ueclasses_write__    = ["nr"]
 

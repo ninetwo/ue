@@ -6,6 +6,10 @@ import ueNuke
 
 from PyQt4 import QtCore, QtGui
 
+import ueSpec
+
+import ueCore.AssetUtils as ueAssetUtils
+
 class Checker(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -42,25 +46,41 @@ class Checker(QtGui.QWidget):
             for check in self.checks[group]:
                 c = self.checks[group][check]
 
-                updateqt = []
-                updateqt.append(QtGui.QLabel(c["name"]))
-                updateqt.append(QtGui.QLabel(str(eval(c["curval"]))))
-                updateqt.append(QtGui.QLabel(str(eval(c["newval"]))))
-                updateqt.append(QtGui.QPushButton(""))
+                cc = []
 
-                for i, item in enumerate(updateqt):
-                    self.checkArea.layout().addWidget(item, n, i)
+                if c["type"] == "single":
+                    cc.append(c)
+                elif c["type"] == "multi":
+                    for item in (lambda: eval(c["checkMulti"]))():
+                        item = item.name()
+                        newCheck = {}
+                        newCheck["name"] = item
+                        newCheck["check"] = c["check"] % (item, item, item, item, item, item, item)
+                        newCheck["curval"] = c["curval"] % item
+                        newCheck["newval"] = c["newval"] % (item, item, item, item, item, item)
+                        newCheck["update"] = c["update"] % (item, item, item, item, item, item, item)
+                        cc.append(newCheck)
 
-                if (lambda: eval(c["check"]))():
-                    updateqt[3].setText("Update")
-                    self.connect(updateqt[3], QtCore.SIGNAL("clicked()"),
-                                 lambda x=c, y=updateqt, z=check: self.update(x, y, z))
-                    self.toUpdate[check] = {"cmd": c, "qt": updateqt}
-                else:
-                    updateqt[3].setText("Up to date")
-                    updateqt[3].setEnabled(False)
+                for c in cc:
+                    updateqt = []
+                    updateqt.append(QtGui.QLabel(c["name"]))
+                    updateqt.append(QtGui.QLabel(str(eval(c["curval"]))))
+                    updateqt.append(QtGui.QLabel(str(eval(c["newval"]))))
+                    updateqt.append(QtGui.QPushButton(""))
 
-                n += 1
+                    for i, item in enumerate(updateqt):
+                        self.checkArea.layout().addWidget(item, n, i)
+
+                    if (lambda: eval(c["check"]))():
+                        updateqt[3].setText("Update")
+                        self.connect(updateqt[3], QtCore.SIGNAL("clicked()"),
+                                     lambda x=c, y=updateqt, z="%s_%s" % (check, c): self.update(x, y, z))
+                        self.toUpdate["%s_%s" % (check, c)] = {"cmd": c, "qt": updateqt}
+                    else:
+                        updateqt[3].setText("Up to date")
+                        updateqt[3].setEnabled(False)
+
+                    n += 1
 
         checkButton = QtGui.QPushButton("Check")
         self.updateButton = QtGui.QPushButton("Update All")

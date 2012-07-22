@@ -16,7 +16,7 @@ global elements
 __anClass__ = "cel"
 __bgClass__ = "bg"
 __bgType__ = "background"
-__rnClasses__ = ["nr", "mr"]
+__rnClasses__ = ["nr", "mr", "sb", "an"]
 
 class ReadPanel(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -244,9 +244,14 @@ class AnimationTab(QtGui.QWidget):
         if not name:
             name = self.elname
 
-        read = ueNuke.ueReadAsset("Read", name="%s_%s" % (self.eltype, name))
+        read = ueNuke.ueReadAsset("Read", name="%s_%s" % (self.eltype, name), inpanel=False)
         reColour = getReColour(["name", "reColour", "postage_stamp", "1"])
         colour = nuke.createNode("Constant", inpanel=False)
+
+        colour.knob("color").setValue(1.0, 0)
+        colour.knob("color").setValue(0.0, 1)
+        colour.knob("color").setValue(0.0, 2)
+        colour.knob("color").setValue(1.0, 3)
 
         reColour.setInput(0, colour)
         reColour.setInput(1, read)
@@ -275,11 +280,14 @@ class AnimationTab(QtGui.QWidget):
             return
 
         f = open(self.layerListFile)
+        passes = []
+        for elpass in f:
+            passes.append(elpass)
 
         n = []
         x = None
         y = None
-        for elpass in f:
+        for elpass in reversed(passes):
             node = self.nukeImportPass(name=elpass.strip(), x=x, y=y)
             x = node.xpos()+200
             y = node.ypos()
@@ -298,6 +306,7 @@ class AnimationTab(QtGui.QWidget):
             if i == 0:
                 # Set the position
                 y = m.ypos()+100
+            m.setXPos(m.xpos())
             m.setYpos(y)
 
 def getReColour(a):
@@ -372,7 +381,7 @@ class BackgroundTab(QtGui.QWidget):
         self.versList.setCurrentItem(self.versList.item(0))
 
     def nukeImportBackground(self):
-        read = ueNuke.ueReadAsset("Read", name=self.elname)
+        read = ueNuke.ueReadAsset("Read", name=self.elname, inpanel=False)
 
         read.knob("proj").setValue(proj)
         read.knob("grp").setValue(grp)
@@ -493,7 +502,7 @@ class RenderTab(QtGui.QWidget):
         self.vers = int(self.versList.currentItem().text())
 
     def nukeImportRender(self):
-        read = ueNuke.ueReadAsset("Read", name=self.elname)
+        read = ueNuke.ueReadAsset("Read", name=self.elname, inpanel=False)
 
         read.knob("proj").setValue(proj)
         read.knob("grp").setValue(grp)

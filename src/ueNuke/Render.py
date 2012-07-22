@@ -119,7 +119,7 @@ def runRender(renderOpts):
         options["writeNode"] = []
         for render in renderOpts[1]:
             n = nuke.toNode(render)
-            options["writeNode"].append(n.name()+"."+n.knob("file_type").value())
+            options["writeNode"].append(n.name())
         p = os.path.join(os.getenv("UE_PATH"), "src", "ueRender", "Spool.py")
         os.system("python %s %s %s nuke %i %i '%s'" % (p, str(sourceSpec), str(destSpec),
                                                        int(first), int(last),

@@ -10,6 +10,7 @@ checks = {
  "Framerate": {
           "FPS":         {
                           "name": "FPS",
+                          "type": "single",
                           "check": "float(nuke.root().knob(\"fps\").value()) != float(os.getenv(\"FRAME_RATE\"))",
                           "update": "nuke.root().knob(\"fps\").setValue(float(os.getenv(\"FRAME_RATE\")))",
                           "curval": "float(nuke.root().knob(\"fps\").value())",
@@ -17,6 +18,7 @@ checks = {
                          },
           "Start Frame": {
                           "name": "Start frame",
+                          "type": "single",
                           "check": "float(nuke.root().knob(\"first_frame\").value()) != float(os.getenv(\"FIRST_FRAME\"))",
                           "update": "nuke.root().knob(\"first_frame\").setValue(float(os.getenv(\"FIRST_FRAME\")))",
                           "curval": "float(nuke.root().knob(\"first_frame\").value())",
@@ -24,6 +26,7 @@ checks = {
                          },
           "End Frame":   {
                           "name": "End frame",
+                          "type": "single",
                           "check": "float(nuke.root().knob(\"last_frame\").value()) != float(os.getenv(\"LAST_FRAME\"))",
                           "update": "nuke.root().knob(\"last_frame\").setValue(float(os.getenv(\"LAST_FRAME\")))",
                           "curval": "float(nuke.root().knob(\"last_frame\").value())",
@@ -33,6 +36,7 @@ checks = {
  "Asset": {
           "Project":     {
                           "name": "Project",
+                          "type": "single",
                           "check": "nuke.root().knob(\"ueproj\").value() != os.getenv(\"PROJ\")",
                           "update": "nuke.root().knob(\"ueproj\").setValue(os.getenv(\"PROJ\"))",
                           "curval": "nuke.root().knob(\"ueproj\").value()",
@@ -40,6 +44,7 @@ checks = {
                          },
           "Group":       {
                           "name": "Group",
+                          "type": "single",
                           "check": "nuke.root().knob(\"uegrp\").value() != os.getenv(\"GRP\")",
                           "update": "nuke.root().knob(\"uegrp\").setValue(os.getenv(\"GRP\"))",
                           "curval": "nuke.root().knob(\"uegrp\").value()",
@@ -47,12 +52,23 @@ checks = {
                          },
           "Asset":       {
                           "name": "Asset",
+                          "type": "single",
                           "check": "nuke.root().knob(\"ueasst\").value() != os.getenv(\"ASST\")",
                           "update": "nuke.root().knob(\"ueasst\").setValue(os.getenv(\"ASST\"))",
                           "curval": "nuke.root().knob(\"ueasst\").value()",
                           "newval": "os.getenv(\"ASST\")"
                          }
-        }
+        },
+ "Writes": {
+           "rites": {
+                     "type": "multi",
+                     "checkMulti": "nuke.allNodes(\"Write\")",
+                     "check": "nuke.toNode(\"%s\").knob(\"vers\").value() < len(ueAssetUtils.getVersions(ueSpec.Spec(nuke.toNode(\"%s\").knob(\"proj\").value(), nuke.toNode(\"%s\").knob(\"grp\").value(), nuke.toNode(\"%s\").knob(\"asst\").value(), nuke.toNode(\"%s\").knob(\"elclass\").value(), nuke.toNode(\"%s\").knob(\"eltype\").value(), nuke.toNode(\"%s\").knob(\"elname\").value())))",
+                     "update": "nuke.toNode(\"%s\").knob(\"vers\").setValue(len(ueAssetUtils.getVersions(ueSpec.Spec(nuke.toNode(\"%s\").knob(\"proj\").value(), nuke.toNode(\"%s\").knob(\"grp\").value(), nuke.toNode(\"%s\").knob(\"asst\").value(), nuke.toNode(\"%s\").knob(\"elclass\").value(), nuke.toNode(\"%s\").knob(\"eltype\").value(), nuke.toNode(\"%s\").knob(\"elname\").value()))))",
+                     "curval": "int(nuke.toNode(\"%s\").knob(\"vers\").value())",
+                     "newval": "len(ueAssetUtils.getVersions(ueSpec.Spec(nuke.toNode(\"%s\").knob(\"proj\").value(), nuke.toNode(\"%s\").knob(\"grp\").value(), nuke.toNode(\"%s\").knob(\"asst\").value(), nuke.toNode(\"%s\").knob(\"elclass\").value(), nuke.toNode(\"%s\").knob(\"eltype\").value(), nuke.toNode(\"%s\").knob(\"elname\").value())))"
+                    }
+          }
 }
 
 def ueNewScriptSetup():
@@ -82,8 +98,8 @@ def ueNewScriptSetup():
     os.environ["FIRST_FRAME"] = asset["startFrame"]
     os.environ["LAST_FRAME"] = asset["endFrame"]
 
-def ueReadAsset(node, cmd=None, name=None):
-    n = nuke.createNode(node)
+def ueReadAsset(node, cmd=None, name=None, inpanel=True):
+    n = nuke.createNode(node, inpanel=inpanel)
 
     if name is not None:
         n.setName(name)
