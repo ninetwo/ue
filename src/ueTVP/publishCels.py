@@ -123,6 +123,8 @@ for t in filesDict:
 # Save the script
 ueNukeUtils.saveUtility(spec)
 
+print writeNodes
+
 # Render
-ueNukeRender.runRender([0, writeNodes, {"newVersion": True, "clearLastVersion": False}])
+#ueNukeRender.runRender([0, writeNodes, {"newVersion": True, "clearLastVersion": False}])
 
