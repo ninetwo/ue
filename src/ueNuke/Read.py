@@ -176,6 +176,7 @@ class AnimationTab(QtGui.QWidget):
         two.layout().addWidget(self.layerListPickerBox)
         two.layout().addWidget(QtGui.QLabel("character"))
         two.layout().addWidget(self.characterPickerBox)
+        two.layout().addStretch(0)
         three.layout().addWidget(self.layerButton)
         three.layout().addWidget(self.passButton)
 
