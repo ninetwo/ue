@@ -54,6 +54,7 @@ nuke.menu("Nuke").addCommand(ueMenu+"/Save New &Version",
                              ueNukeSave.ueSaveVers, "Ctrl+Alt+s")
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 ueNukeLoad.addGizmos()
+nuke.menu("Nuke").addCommand(ueMenu+"/backdrops/test", lambda: ueNuke.ueAutoBackdrop("Test", (155, 155, 155, 255)))
 nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead, "ctrl+r")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueChecker", ueChecker)

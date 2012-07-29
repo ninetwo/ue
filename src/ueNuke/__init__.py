@@ -241,3 +241,10 @@ def getReadGeoPath():
 
     return p
 
+def ueAutoBackdrop(name, colour, fontsize=144):
+    backdrop = nukescripts.autoBackdrop()
+
+    backdrop["label"].setValue(name)
+    backdrop["note_font_size"].setValue(fontsize)
+    backdrop["tile_color"].setValue(int("%02x%02x%02x%02x" % colour, 16))
+
