@@ -1,4 +1,5 @@
 import sys, os
+import json
 
 from PyQt4 import QtCore, QtGui
 
@@ -13,10 +14,16 @@ import ueNuke
 global proj, grp, asst
 global elements
 
+__colName__ = "master"
 __anClass__ = "cel"
 __bgClass__ = "bg"
+__colClass__ = "col"
 __bgType__ = "background"
+__colType__ = "palette"
 __rnClasses__ = ["nr", "mr", "sb", "an"]
+__colGroup__ = "libAnim"
+__layerClass__ = "lay"
+__layerType__ = "layers"
 
 class ReadPanel(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -133,13 +140,11 @@ class AnimationTab(QtGui.QWidget):
         self.layout().setContentsMargins(2, 2, 2, 2)
         self.layout().setSpacing(2)
 
-        self.layerListFile = os.getenv("ASST_ROOT")
-
         self.layerList = QtGui.QListWidget()
         self.passList = QtGui.QListWidget()
         self.versList = QtGui.QListWidget()
-        self.layerListPicker = QtGui.QLineEdit()
-        self.layerListPickerButton = QtGui.QPushButton("...")
+        self.layerListPickerBox = QtGui.QComboBox()
+        self.characterPickerBox = QtGui.QComboBox()
         self.layerButton = QtGui.QPushButton("insert layer")
         self.passButton = QtGui.QPushButton("insert pass")
 
@@ -167,8 +172,10 @@ class AnimationTab(QtGui.QWidget):
         one.layout().addWidget(self.layerList)
         one.layout().addWidget(self.passList)
         one.layout().addWidget(self.versList)
-        two.layout().addWidget(self.layerListPicker)
-        two.layout().addWidget(self.layerListPickerButton)
+        two.layout().addWidget(QtGui.QLabel("layer list"))
+        two.layout().addWidget(self.layerListPickerBox)
+        two.layout().addWidget(QtGui.QLabel("character"))
+        two.layout().addWidget(self.characterPickerBox)
         three.layout().addWidget(self.layerButton)
         three.layout().addWidget(self.passButton)
 
@@ -181,22 +188,27 @@ class AnimationTab(QtGui.QWidget):
 
         self.layerList.itemSelectionChanged.connect(self.loadPasses)
         self.passList.itemSelectionChanged.connect(self.loadVersions)
-        self.layerListPickerButton.clicked.connect(self.fileBrowser)
         self.layerButton.clicked.connect(self.nukeImportLayer)
         self.passButton.clicked.connect(self.nukeImportPass)
 
-    def fileBrowser(self):
-        f = QtGui.QFileDialog.getOpenFileName(self, "Open file",
-                                              self.layerListFile,
-                                              "Text files (*.txt)")
-        if f != None:
-            self.layerListFile = f
-            self.layerListPicker.setText(self.layerListFile)
-
     def reload(self):
-        self.layerListFile = os.getenv("ASST_ROOT")
-        self.layerListPicker.setText(self.layerListFile)
         self.loadLayers()
+        self.loadLayerLists()
+        self.loadCharacters()
+
+    def loadCharacters(self):
+        assets = ueAssetUtils.getAssets(ueSpec.Spec(proj, __colGroup__))
+        self.characterPickerBox.clear()
+        for asset in sorted(assets):
+            self.characterPickerBox.addItem(asset["name"])
+
+    def loadLayerLists(self):
+        elements = ueAssetUtils.getElements(ueSpec.Spec(proj, grp, asst))
+        self.layerListPickerBox.clear()
+        if __layerClass__ in elements:
+            if __layerType__ in elements[__layerClass__]:
+                for layerList in sorted(elements[__layerClass__][__layerType__]):
+                    self.layerListPickerBox.addItem(layerList)
 
     def loadLayers(self):
         self.layerList.clear()
@@ -208,24 +220,17 @@ class AnimationTab(QtGui.QWidget):
 
     def loadPasses(self):
         self.eltype = str(self.layerList.currentItem().text())
+        if self.layerListPickerBox.count() > 0:
+            self.layerListPickerBox.setCurrentIndex(0)
+        for layerList in range(self.layerListPickerBox.count()):
+            if str(self.layerListPickerBox.itemText(layerList)) == self.eltype:
+                self.layerListPickerBox.setCurrentIndex(layerList)
         self.passList.clear()
         if __anClass__ in elements:
             if self.eltype in elements[__anClass__]:
                 for c in sorted(elements[__anClass__][self.eltype]):
                     self.passList.addItem(QtGui.QListWidgetItem(c))
                 self.passList.setCurrentItem(self.passList.item(0))
-
-                asset = ueAssetUtils.getAsset(ueSpec.Spec(proj, grp, asst))
-
-                f = os.path.join(asset["path"], "tmp", "fromTVP",
-                                 self.eltype+"_layerList.txt")
-
-                if os.path.isfile(f):
-                    self.layerListFile = f
-                    self.layerListPicker.setText(f)
-                else:
-                    self.layerListFile = os.getenv("ASST_ROOT")
-                    self.layerListPicker.setText(self.layerListFile)
 
                 self.loadVersions()
 
@@ -240,12 +245,41 @@ class AnimationTab(QtGui.QWidget):
             self.versList.addItem(item)
         self.versList.setCurrentItem(self.versList.item(0))
 
-    def nukeImportPass(self, name=None, version=None, x=None, y=None):
+    def getPalette(self):
+        character = str(self.characterPickerBox.currentText())
+        element = ueAssetUtils.getVersions(ueSpec.Spec(proj, __colGroup__, character,
+                                          __colClass__, __colType__, __colName__))
+        fileName = os.path.join(element[-1]["path"], "%s.col" % element[-1]["file_name"])
+        if os.path.exists(fileName):
+            f = open(fileName)
+            palette = json.loads(f.read())
+            f.close()
+        else:
+            palette = {}
+        return palette
+
+    def getLayers(self):
+        layer = str(self.layerListPickerBox.currentText())
+        element = ueAssetUtils.getVersions(ueSpec.Spec(proj, grp, asst,
+                                          __layerClass__, __layerType__, layer))
+        fileName = os.path.join(element[-1]["path"], "%s.lay" % element[-1]["file_name"])
+        if os.path.exists(fileName):
+            f = open(fileName)
+            layers = json.loads(f.read())
+            f.close()
+        else:
+            layers = {}
+        return layers
+
+    def nukeImportPass(self, name=None, version=None, x=None, y=None, palette=None):
         if not name:
             name = self.elname
 
         if not version:
             version = int(self.versList.currentItem().text())
+
+        if not palette:
+	        palette = self.getPalette()
 
         read = ueNuke.ueReadAsset("Read", name="%s_%s" % (self.eltype, name), inpanel=False)
         reColour = getReColour(["name", "reColour", "postage_stamp", "1"])
@@ -279,28 +313,27 @@ class AnimationTab(QtGui.QWidget):
         return reColour
 
     def nukeImportLayer(self):
-        if self.layerListFile == None:
+        palette = self.getPalette()
+
+        if not palette:
             return
 
-        f = open(self.layerListFile)
-        passes = []
-        for elpass in f:
-            passes.append(elpass)
+        layers = self.getLayers()
+
+        if not layers:
+            return
 
         n = []
         x = None
         y = None
-        for elpass in reversed(passes):
-            elpass = elpass.strip()
+        for elpass in reversed(layers):
             spec = ueSpec.Spec(proj, grp, asst, __anClass__,
                                self.eltype, elpass)
             versions = ueAssetUtils.getVersions(spec)
-            node = self.nukeImportPass(name=elpass.strip(), version=len(versions), x=x, y=y)
+            node = self.nukeImportPass(name=elpass.strip(), version=len(versions), x=x, y=y, palette=palette)
             x = node.xpos()+200
             y = node.ypos()
             n.append(node)
-
-        f.close()
 
         for i, nn in enumerate(n):
             if i == 0:
