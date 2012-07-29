@@ -1,6 +1,12 @@
-import os, sys, glob, re
+import os, sys
+import glob
+import re
+import json
 
 import ueSpec
+
+import ueCore.AssetUtils as ueAssetUtils
+import ueCore.Create as ueCreate
 
 import ueNuke.Utilities as ueNukeUtils
 import ueNuke.Render as ueNukeRender
@@ -54,6 +60,35 @@ writeNodes = []
 
 # For each layer
 for t in filesDict:
+    # Create the layer list asset
+    layerFile = os.path.join(path, "%s_layerList.txt" % t)
+    if os.path.exists(layerFile):
+        layerFileSpec = context
+        layerFileSpec.elclass = "lay"
+        layerFileSpec.eltype = "layers"
+        layerFileSpec.elname = t
+
+        element = ueAssetUtils.getElement(layerFileSpec)
+        if not element:
+            element = ueCreate.createElement(layerFileSpec)
+
+        version = ueCreate.createVersion(layerFileSpec)
+        layerFileSpec.vers = version["version"]
+
+        f = open(layerFile)
+        layers = []
+        for layer in f:
+            layers.append(layer.strip())
+        f.close()
+
+        layerFileDest = os.path.join(version["path"], "%s.lay" % version["file_name"])
+
+        f = open(layerFileDest, "w")
+        f.write(json.dumps(layers))
+        f.close()
+
+        nuke.tprint("Saved layer file %s" % layerFileSpec)
+
     # For each pass
     for n in filesDict[t]:
         elclass = "cel"
@@ -122,8 +157,6 @@ for t in filesDict:
 
 # Save the script
 ueNukeUtils.saveUtility(spec)
-
-print writeNodes
 
 # Render
 ueNukeRender.runRender([0, writeNodes, {"newVersion": True, "clearLastVersion": False}])
