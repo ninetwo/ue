@@ -4,7 +4,7 @@ selectedClip=result
 tv_ClipName
 clipName=result
 
-filePath="/work/cml/seq/dev/rnd/tmp/fromTVP"
+filePath="/work/cml/tmp/fromTVP"
 
 // Check we're trying to export a valid clip
 IF CMP(clipName, "none")==1 || CMP(clipName, "X")==1 || CMP(clipName, "BG")==1

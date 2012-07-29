@@ -116,7 +116,7 @@ for t in filesDict:
         if re.match(".*Line$", elname, flags=re.IGNORECASE):
             write.knob("channels").setValue("rgba")
         else:
-            write.knob("channels").setValue("r")
+            write.knob("channels").setValue("a")
 
         writeNodes.append(write.name())
 
@@ -126,5 +126,5 @@ ueNukeUtils.saveUtility(spec)
 print writeNodes
 
 # Render
-#ueNukeRender.runRender([0, writeNodes, {"newVersion": True, "clearLastVersion": False}])
+ueNukeRender.runRender([0, writeNodes, {"newVersion": True, "clearLastVersion": False}])
 
