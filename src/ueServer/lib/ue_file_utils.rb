@@ -63,6 +63,9 @@ module UeFileUtils
      "col" => {
                "name" => "Animation colour palette"
               },
+     "lay" => {
+               "name" => "Animation layer list"
+              },
      "sb"  => {
                "name" => "Storyboard"
               },
