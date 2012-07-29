@@ -133,7 +133,7 @@ class AnimationTab(QtGui.QWidget):
         self.layout().setContentsMargins(2, 2, 2, 2)
         self.layout().setSpacing(2)
 
-        self.layerListFile = None
+        self.layerListFile = os.getenv("ASST_ROOT")
 
         self.layerList = QtGui.QListWidget()
         self.passList = QtGui.QListWidget()
@@ -189,9 +189,9 @@ class AnimationTab(QtGui.QWidget):
         f = QtGui.QFileDialog.getOpenFileName(self, "Open file",
                                               self.layerListFile,
                                               "Text files (*.txt)")
-        if not f == None:
-            self.layerList = f
-            self.layerListPicker.setText(f)
+        if f != None:
+            self.layerListFile = f
+            self.layerListPicker.setText(self.layerListFile)
 
     def reload(self):
         self.layerListFile = os.getenv("ASST_ROOT")
@@ -224,8 +224,8 @@ class AnimationTab(QtGui.QWidget):
                     self.layerListFile = f
                     self.layerListPicker.setText(f)
                 else:
-                    self.layerListFile = None
-                    self.layerListPicker.setText(os.getenv("ASST_ROOT"))
+                    self.layerListFile = os.getenv("ASST_ROOT")
+                    self.layerListPicker.setText(self.layerListFile)
 
                 self.loadVersions()
 
