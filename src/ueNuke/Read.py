@@ -247,16 +247,21 @@ class AnimationTab(QtGui.QWidget):
 
     def getPalette(self):
         character = str(self.characterPickerBox.currentText())
-        element = ueAssetUtils.getVersions(ueSpec.Spec(proj, __colGroup__, character,
-                                          __colClass__, __colType__, __colName__))
-        fileName = os.path.join(element[-1]["path"], "%s.col" % element[-1]["file_name"])
+
+        spec = ueSpec.Spec(proj, __colGroup__, character,
+                           __colClass__, __colType__, __colName__)
+        versions = ueAssetUtils.getVersions(spec)
+        spec.vers = versions[-1]["version"]
+
+        fileName = os.path.join(versions[-1]["path"], "%s.col" % versions[-1]["file_name"])
         if os.path.exists(fileName):
             f = open(fileName)
             palette = json.loads(f.read())
             f.close()
         else:
             palette = {}
-        return palette
+
+        return palette, spec
 
     def getLayers(self):
         layer = str(self.layerListPickerBox.currentText())
@@ -271,24 +276,25 @@ class AnimationTab(QtGui.QWidget):
             layers = {}
         return layers
 
-    def nukeImportPass(self, name=None, version=None, x=None, y=None, palette=None):
+    def nukeImportPass(self, name=None, version=None, x=None, y=None, palette=None, paletteSpec=None):
         if not name:
             name = self.elname
 
         if not version:
             version = int(self.versList.currentItem().text())
 
-        if not palette:
-	        palette = self.getPalette()
+        if not palette or not paletteSpec:
+	    palette, paletteSpec = self.getPalette()
 
         read = ueNuke.ueReadAsset("Read", name="%s_%s" % (self.eltype, name), inpanel=False)
-        reColour = getReColour(["name", "reColour", "postage_stamp", "1"])
-        colour = nuke.createNode("Constant", inpanel=False)
+        reColour = getReColour(["name", "%s_%s_reColour" % (self.eltype, name), "postage_stamp", "1"])
+        colour = ueNuke.ueConstant(name="%s_%s_constant" % (self.eltype, name), inpanel=False)
 
-        colour.knob("color").setValue(1.0, 0)
-        colour.knob("color").setValue(0.0, 1)
-        colour.knob("color").setValue(0.0, 2)
-        colour.knob("color").setValue(1.0, 3)
+        if name in palette:
+            colour.knob("color").setValue(palette[name][0], 0)
+            colour.knob("color").setValue(palette[name][1], 1)
+            colour.knob("color").setValue(palette[name][2], 2)
+            colour.knob("color").setValue(1.0, 3)
 
         reColour.setInput(0, colour)
         reColour.setInput(1, read)
@@ -310,10 +316,18 @@ class AnimationTab(QtGui.QWidget):
         read.knob("elclass").setValue(__anClass__)
         read.knob("vers").setValue(version)
 
+        colour.knob("proj").setValue(paletteSpec.proj)
+        colour.knob("grp").setValue(paletteSpec.grp)
+        colour.knob("asst").setValue(paletteSpec.asst)
+        colour.knob("elname").setValue(paletteSpec.elname)
+        colour.knob("eltype").setValue(paletteSpec.eltype)
+        colour.knob("elclass").setValue(paletteSpec.elclass)
+        colour.knob("vers").setValue(paletteSpec.vers)
+
         return reColour
 
     def nukeImportLayer(self):
-        palette = self.getPalette()
+        palette, paletteSpec = self.getPalette()
 
         if not palette:
             return
@@ -330,7 +344,8 @@ class AnimationTab(QtGui.QWidget):
             spec = ueSpec.Spec(proj, grp, asst, __anClass__,
                                self.eltype, elpass)
             versions = ueAssetUtils.getVersions(spec)
-            node = self.nukeImportPass(name=elpass.strip(), version=len(versions), x=x, y=y, palette=palette)
+            node = self.nukeImportPass(name=elpass.strip(), version=len(versions), x=x, y=y,
+                                       palette=palette, paletteSpec=paletteSpec)
             x = node.xpos()+200
             y = node.ypos()
             n.append(node)
