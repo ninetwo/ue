@@ -125,8 +125,8 @@ def ueReadAsset(node, cmd=None, name=None, inpanel=True):
 
     return n
 
-def ueWriteAsset(node, cmd=None, name=None):
-    n = nuke.createNode(node)
+def ueWriteAsset(node, cmd=None, name=None, inpanel=True):
+    n = nuke.createNode(node, inpanel=inpanel)
 
     if name is not None:
         n.setName(name)
@@ -151,8 +151,23 @@ def ueWriteAsset(node, cmd=None, name=None):
 
     return n
 
+def ueConstant(name=None, inpanel=True):
+    n = nuke.createNode("Constant", inpanel=inpanel)
+
+    if name is not None:
+        n.setName(name)
+
+    n.addKnob(nuke.String_Knob("proj", "project"))
+    n.addKnob(nuke.String_Knob("grp", "group"))
+    n.addKnob(nuke.String_Knob("asst", "asset"))
+    n.addKnob(nuke.String_Knob("elclass", "class"))
+    n.addKnob(nuke.String_Knob("eltype", "type"))
+    n.addKnob(nuke.String_Knob("elname", "name"))
+    n.addKnob(nuke.Int_Knob("vers", "version"))
+
+    return n
+
 def getReadPath():
-#    n = nuke.thisParent()
     n = nuke.thisNode()
 
     elpass = n.knob("elpass").value()
@@ -205,7 +220,6 @@ def getReadPath():
     return p
 
 def getReadGeoPath():
-#    n = nuke.thisParent()
     n = nuke.thisNode()
 
     spec = ueSpec.Spec(n.knob("proj").value(),
