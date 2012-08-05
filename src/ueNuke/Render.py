@@ -42,7 +42,7 @@ def runRender(renderOpts):
 
     writeNodes = []
     frameRanges = []
-    for writeNode in renderOpts[1]:
+    for i, writeNode in enumerate(renderOpts[1]):
         n = nuke.toNode(writeNode)
 
         destSpec = ueSpec.Spec(n.knob("proj").value(),
@@ -90,7 +90,10 @@ def runRender(renderOpts):
             last = n.knob("last").value()
 
         writeNodes.append(n)
-        frameRanges.append((int(first), int(last), 1))
+        if i == 0:
+            frameRanges.append((int(first), int(last), 1))
+        else:
+            frameRanges.append((int(first), int(first), 1))
 
     dbMeta = {}
     dbMeta["comment"] = "Auto-save of render %s" % str(destSpec)
@@ -109,8 +112,6 @@ def runRender(renderOpts):
         if len(writeNodes) == 1:
             nuke.execute(writeNodes[0].name(), frameRanges[0][0], frameRanges[0][1], frameRanges[0][2])
         else:
-            nuke.tprint(tuple(writeNodes))
-            nuke.tprint(tuple(frameRanges))
             nuke.executeMultiple(tuple(writeNodes), tuple(frameRanges))
     elif renderOpts[0] == 1:
         nuke.tprint("Spooling %s ..." % str(destSpec))
