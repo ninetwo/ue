@@ -65,13 +65,13 @@ class Client():
 
         return jsonDict
 
-    def post(self, get, *args, **kwargs):
-        if get == "assets":
-            get = "ueassets"
+    def post(self, post, *args, **kwargs):
+        if post == "assets":
+            post = "ueassets"
 
         urlargs = self.parseUrlargs(args)
 
-        url = "/%s%s.json" % (get, urlargs)
+        url = "/%s%s.json" % (post, urlargs)
 
         try:
             con = httplib.HTTPConnection(self.host)
@@ -81,44 +81,29 @@ class Client():
             print "FATAL ERROR: %s" % e
             sys.exit(2)
 
-    def put(self, get, *args, **kwargs):
-        if get == "assets":
-            get = "ueassets"
-
-#        if not spec.proj == None:
-#            kwargs["data"]["project"] = spec.proj
-#        if not spec.grp == None:
-#            kwargs["data"]["group"] = spec.grp
-#        if not spec.asst == None:
-#            kwargs["data"]["asset"] = spec.asst
-#        if not spec.elclass == None:
-#            kwargs["data"]["elclass"] = spec.elclass
-#        if not spec.eltype == None:
-#            kwargs["data"]["eltype"] = spec.eltype
-#        if not spec.elname == None:
-#            kwargs["data"]["elname"] = spec.elname
-#        if not spec.vers == None:
-#            kwargs["data"]["version"] = spec.vers
+    def put(self, put, *args, **kwargs):
+        if put == "assets":
+            put = "ueassets"
 
         urlargs = self.parseUrlargs(args)
 
-        url = "/%s%s.json" % (get, urlargs)
+        url = "/%s%s.json" % (put, urlargs)
 
         try:
             con = httplib.HTTPConnection(self.host)
-            con.request("PUT", url, urllib.urlencode(kwargs["data"]), self.headers)
+            con.request("PUT", url, recursive_urlencode(kwargs["data"]), self.headers)
             request = con.getresponse()
         except IOError, e:
             print "FATAL ERROR: %s" % e
             sys.exit(2)
 
-    def destroy(self, get, *args):
-        if get == "assets":
-            get = "ueassets"
+    def destroy(self, delete, *args):
+        if delete == "assets":
+            delete = "ueassets"
 
         urlargs = self.parseUrlargs(args)
 
-        url = "/%s%s.json" % (get, urlargs)
+        url = "/%s%s.json" % (delete, urlargs)
 
         try:
             con = httplib.HTTPConnection(self.host)
