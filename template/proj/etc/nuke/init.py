@@ -23,3 +23,5 @@ def ueReadAsset(node, cmd=None, name=None):
 def ueWriteAsset(node, cmd=None, name=None):
     return ueNuke.ueWriteAsset(node, cmd=cmd, name=name)
 
+def ueConstant(name=None):
+    return ueNuke.ueConstant(name=name)
