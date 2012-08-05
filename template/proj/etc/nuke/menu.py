@@ -42,8 +42,9 @@ def nukeChecker():
                     ueChecker(show=True)
                     break
 
-# Menus
+# Tool bar menus
 ueMenu = "ue&Tools"
+# File utils
 nuke.menu("Nuke").addCommand(ueMenu+"/&Open",
                              ueNukeOpen.ueOpen, "Ctrl+o")
 nuke.menu("Nuke").addCommand(ueMenu+"/&Save",
@@ -52,23 +53,40 @@ nuke.menu("Nuke").addCommand(ueMenu+"/Save &As...",
                              ueNukeSave.ueSaveAs, "Ctrl+Shift+s")
 nuke.menu("Nuke").addCommand(ueMenu+"/Save New &Version",
                              ueNukeSave.ueSaveVers, "Ctrl+Alt+s")
-nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
+nuke.menu("Nuke").addCommand(ueMenu+"/-", "")
+# Gizmo menu
 ueNukeLoad.addGizmos()
-nuke.menu("Nuke").addCommand(ueMenu+"/backdrops/test", lambda: ueNuke.ueAutoBackdrop("Test", (155, 155, 155, 255)))
-nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
+# Nodes menu
+nuke.menu("Nuke").addCommand(ueMenu+"/nodes/ueRead", "ueReadAsset(\"Read\")")
+nuke.menu("Nuke").addCommand(ueMenu+"/nodes/ueReadGeo", "ueReadAsset(\"ReadGeo\", cmd=\"ReadGeo\")")
+nuke.menu("Nuke").addCommand(ueMenu+"/nodes/ueAtomReadGeo", "ueReadAsset(\"AtomReadGeo\", cmd=\"ReadGeo\")")
+nuke.menu("Nuke").addCommand(ueMenu+"/nodes/-", "")
+nuke.menu("Nuke").addCommand(ueMenu+"/nodes/ueWrite", "ueWriteAsset(\"Write\")")
+nuke.menu("Nuke").addCommand(ueMenu+"/nodes/-", "")
+nuke.menu("Nuke").addCommand(ueMenu+"/nodes/ueConstant", "ueConstant()")
+# Backdrops menu
+nuke.menu("Nuke").addCommand(ueMenu+"/backdrops/test",
+                             lambda: ueNuke.ueAutoBackdrop("Test", (155, 155, 155, 255)))
+nuke.menu("Nuke").addCommand(ueMenu+"/-", "")
+# Script utils
 nuke.menu("Nuke").addCommand(ueMenu+"/ueRead", ueRead, "ctrl+r")
 nuke.menu("Nuke").addCommand(ueMenu+"/ueChecker", ueChecker)
-nuke.menu("Nuke").addCommand(ueMenu+"/-", "", "")
-nuke.menu("Nuke").addCommand(ueMenu+"/Render", "ueNukeRender.ueRender()")
+nuke.menu("Nuke").addCommand(ueMenu+"/-", "")
+# Render utils
+nuke.menu("Nuke").addCommand(ueMenu+"/Render All", "ueNukeRender.ueRender(0)", "F5")
+nuke.menu("Nuke").addCommand(ueMenu+"/Render Selected", "ueNukeRender.ueRender(1)", "F7")
 
 nuke.menu("Node Graph").addCommand("ueRead", ueRead)
 nuke.menu("Node Graph").addCommand("ueChecker", ueChecker)
 
+# Nodes menu
 nuke.menu("Nodes").addCommand("ueTools/ueRead", "ueReadAsset(\"Read\")", "r")
 nuke.menu("Nodes").addCommand("ueTools/ueReadGeo", "ueReadAsset(\"ReadGeo\", cmd=\"ReadGeo\")")
 nuke.menu("Nodes").addCommand("ueTools/ueAtomReadGeo", "ueReadAsset(\"AtomReadGeo\", cmd=\"ReadGeo\")")
 nuke.menu("Nodes").addCommand("ueTools/-", "")
 nuke.menu("Nodes").addCommand("ueTools/ueWrite", "ueWriteAsset(\"Write\")", "w")
+nuke.menu("Nodes").addCommand("ueTools/-", "")
+nuke.menu("Nodes").addCommand("ueTools/ueConstant", "ueConstant()")
 
 # Set new shortcuts for read and write nodes as we're overriding the defaults above
 nuke.menu("Nodes").addCommand("Image/Read", "nukescripts.create_read()", "Shift+r", icon="Read.png")
