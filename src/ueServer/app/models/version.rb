@@ -25,6 +25,20 @@ class Version
 #    UeFileUtils::delete_dir self.path
 #  end
 
+  def self.get_version project, group, asset, elclass, eltype, elname, version
+    e = Element.get_element project, group, asset, elclass, eltype, elname
+    if e == {} || a.nil?
+      {}
+    else
+      v = e.versions.where(:version => version).first
+      if v.nil?
+        {}
+      else
+        JSON.parse(e.to_json).to_hash.merge(JSON.parse(v.to_json).to_hash)
+      end
+    end
+  end
+
   private
 
   def get_path

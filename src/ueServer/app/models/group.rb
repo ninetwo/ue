@@ -36,7 +36,7 @@ class Group
       if g.nil?
         {}
       else
-        Group.new JSON.parse(p.to_json).to_hash.merge(JSON.parse(g.to_json).to_hash)
+        JSON.parse(p.to_json).to_hash.merge(JSON.parse(g.to_json).to_hash)
       end
     end
   end

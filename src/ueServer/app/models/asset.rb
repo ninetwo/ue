@@ -36,7 +36,7 @@ class Asset
       if a.nil?
         {}
       else
-        Asset.new JSON.parse(g.to_json).to_hash.merge(JSON.parse(a.to_json).to_hash)
+        JSON.parse(g.to_json).to_hash.merge(JSON.parse(a.to_json).to_hash)
       end
     end
   end

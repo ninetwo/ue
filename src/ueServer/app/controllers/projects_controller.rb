@@ -34,12 +34,14 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @project = Project.get_project(params[:proj])
+    @project = Project.where(:name => params[:proj]).first
+    @project.update_attributes(params[:project])
 
     respond_to do |format|
-      if @project.update_attributes
+      if @project.save
         format.html
-        format.json { head :no_content }
+        format.json { render :json => @project,
+                      :status => :created }
       else
         format.html
         format.json { render :json => @project.errors,
@@ -49,7 +51,7 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    @project = Project.get_project(params[:proj])
+    @project = Project.where(:name => params[:proj]).first
 
     respond_to do |format|
       if @project.destroy

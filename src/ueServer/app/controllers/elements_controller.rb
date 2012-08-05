@@ -19,9 +19,6 @@ class ElementsController < ApplicationController
   end
 
   def create
-#    @asset = Project.where(:name => params[:proj]).first.groups.where( 
-#                           :name => params[:grp]).first.assets.where( 
-#                           :name =>  params[:asst]).first
     @asset = Asset.get_asset(params[:proj], params[:grp], params[:asst])
     @element = @asset.elements.new(params[:element])
     @element.elclass = params[:elclass]
@@ -64,6 +61,48 @@ class ElementsController < ApplicationController
   end
 
   def update
+    @element = Project.where(:name => params[:proj]).first.groups.where(
+                             :name => params[:grp]).first.assets.where(
+                             :name =>  params[:asst]).first.elements.where(
+                             :elclass => params[:elclass],
+                             :eltype => params[:eltype],
+                             :elname => params[:elname]).first
+    @element.update_attributes(params[:element])
+
+    respond_to do |format|
+      if @element.save
+        format.html
+        format.json { render :json => @element,
+                      :status => :created }
+      else
+        format.html
+        format.json { render :json => @element.errors,
+                      :status => :unprocessable_entity }
+      end
+    end
+  end
+
+  def update_versions
+    @version = Project.where(:name => params[:proj]).first.groups.where(
+                             :name => params[:grp]).first.assets.where(
+                             :name =>  params[:asst]).first.elements.where(
+                             :elclass => params[:elclass],
+                             :eltype => params[:eltype],
+                             :elname => params[:elname]).first.versions.where(
+                             :version => params[:vers]).first
+    @version.update_attributes(params[:version])
+
+    respond_to do |format|
+      if @eversion.save
+        format.html
+        format.json { render :json => @version,
+                      :status => :created }
+      else
+        format.html
+        format.json { render :json => @version.errors,
+                      :status => :unprocessable_entity }
+      end
+    end
   end
 
   def destroy
