@@ -157,6 +157,7 @@ def ueConstant(name=None, inpanel=True):
     if name is not None:
         n.setName(name)
 
+    n.addKnob(nuke.PyScript_Knob("reload", "Reload", "import ueNuke\nuenuke.setUeConstant()"))
     n.addKnob(nuke.String_Knob("proj", "project"))
     n.addKnob(nuke.String_Knob("grp", "group"))
     n.addKnob(nuke.String_Knob("asst", "asset"))
@@ -194,7 +195,7 @@ def getReadPath():
         if int(spec.vers) > len(versions):
             return p
         v = versions[int(spec.vers)-1]
-        if not v == {}:
+        if v:
             elpassDir = ""
             elpassFile = ""
             if not spec.elpass == None:
@@ -241,7 +242,7 @@ def getReadGeoPath():
         if int(spec.vers) > len(versions):
             return p
         v = versions[int(spec.vers)-1]
-        if not v == {}:
+        if v:
             files = glob.glob(os.path.join(v["path"], v["file_name"]+"*.obj"))
             if len(files) < 1:
                 return p
@@ -254,6 +255,38 @@ def getReadGeoPath():
 #                                 v["file_name"]+elpassFile+".%04d."+ext)
 
     return p
+
+def getUeConstant():
+    n = nuke.thisNode()
+
+    spec = ueSpec.Spec(n.knob("proj").value(),
+                       n.knob("grp").value(),
+                       n.knob("asst").value(),
+                       n.knob("elclass").value(),
+                       n.knob("eltype").value(),
+                       n.knob("elname").value(),
+                       n.knob("vers").value())
+
+    if not spec.proj == "" and not spec.grp == "" and \
+       not spec.asst == "" and not spec.elclass == "" and \
+       not spec.eltype == "" and not spec.elname == "" and \
+       not spec.vers == "":
+        versions = ueAssetUtils.getVersions(spec)
+        if int(spec.vers) > len(versions):
+            return
+        v = versions[int(spec.vers)-1]
+        if v:
+            layerFile = os.path.join(v["path"], "%s.col" % v["file_path"])
+            if os.path.exists(layerFile):
+                f = open(layerFile)
+                palette = json.loads(layerfile.read())
+                f.close()
+                if spec.elname in palette:
+                    colour.knob("color").setValue(palette[spec.elname][0], 0)
+                    colour.knob("color").setValue(palette[spec.elname][1], 1)
+                    colour.knob("color").setValue(palette[spec.elname][2], 2)
+                    colour.knob("color").setValue(1.0, 3)
+
 
 def ueAutoBackdrop(name, colour, fontsize=144):
     backdrop = nukescripts.autoBackdrop()

@@ -15,7 +15,7 @@ import ueNuke.Utilities as ueNukeUtils
 import ueCommon.Render as ueCommonRender
 import ueCommon.Save as ueCommonSave
 
-def ueRender(currentNode=None):
+def ueRender(foo, currentNode=None):
     p = nukescripts.registerWidgetAsPanel("ueCommonRender.Render", "ueRender",
                                           "ue.panel.ueRender", create=True)
     ueCommonRender.setRenderFrom(getWriteNodeList())
