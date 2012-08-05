@@ -1,12 +1,12 @@
 ﻿#include "Core.jsx"
 
-Open();
+Save();
 
 var win;
 var elements, elclasses;
-var ueproj, uegrp, ueasst, ueclass, uetype, uename, uevers = null;
+var ueproj, uegrp, ueasst, ueclass, uetype, uename = null;
 
-function Open()
+function Save()
 {
   if (BridgeTalk.appName == "photoshop")
   {
@@ -17,10 +17,10 @@ function Open()
     elclasses = ["ae"];
   }
 
-  win = new Window("dialog", "ueOpen", [100,100,670,500]);
+  win = new Window("dialog", "ueSave", [100,100,670,350]);
 
   win.assetPanel = win.add("panel", [10,10,560,70], "Asset");
-  win.elementPanel = win.add("panel", [10,80,560,360], "Element");
+  win.elementPanel = win.add("panel", [10,80,560,210], "Element");
 
   win.assetPanel.add("StaticText", [10,20,60,37], "Project");
   win.assetPanel.add("StaticText", [190,20,240,37], "Group");
@@ -29,17 +29,17 @@ function Open()
   win.assetPanel.groupList = win.assetPanel.add("DropDownList", [240,20,346,35]);
   win.assetPanel.assetList = win.assetPanel.add("DropDownList", [410,20,516,35]);
 
-  win.elementPanel.add("StaticText", [10,10,111,27], "Class");
-  win.elementPanel.add("StaticText", [10,140,111,157], "Type");
-  win.elementPanel.add("StaticText", [190,10,291,27], "Name");
-  win.elementPanel.add("StaticText", [370,10,471,27], "Version");
-  win.elementPanel.classList = win.elementPanel.add("ListBox", [10,30,180,130]);
-  win.elementPanel.typeList = win.elementPanel.add("ListBox", [10,160,180,260]);
-  win.elementPanel.nameList = win.elementPanel.add("ListBox", [190,30,360,260]);
-  win.elementPanel.versList = win.elementPanel.add("ListBox", [370,30,540,260]);
-
-  win.okButton = win.add("Button", [450,370,550,390], "OK");
-  win.cancelButton = win.add("Button", [340,370,440,390], "Cancel");
+  win.elementPanel.add("StaticText", [10,20,60,37], "Class");
+  win.elementPanel.add("StaticText", [10,50,60,67], "Type");
+  win.elementPanel.add("StaticText", [10,80,60,97], "Name");
+  win.elementPanel.classList = win.elementPanel.add("DropDownList", [70,20,190,35]);
+  win.elementPanel.typeList = win.elementPanel.add("DropDownList", [70,50,190,65]);
+  win.elementPanel.nameList = win.elementPanel.add("DropDownList", [70,80,190,95]);
+  win.elementPanel.typeBox = win.elementPanel.add("EditText", [200,50,370,66]);
+  win.elementPanel.nameBox = win.elementPanel.add("EditText", [200,80,370,96]);
+	
+  win.okButton = win.add("Button", [450,220,550,240], "OK");
+  win.cancelButton = win.add("Button", [340,220,440,240], "Cancel");
   
   var projects = getProjectsList();
   for(var p = 0; p < projects.length; p++)
@@ -72,36 +72,27 @@ function Open()
     win.elementPanel.classList.add("item", elclasses[c]);
   }
 
+  win.elementPanel.classList.items[0].selected = true;
+  ueclass = win.elementPanel.classList.selection.text;
+
   if (ueclass in elements)
   {
-    win.elementPanel.classList.items[0].selected = true;
-    ueclass = win.elementPanel.classList.selection.text;
+  for(e in elements[ueclass])
+  {
+    win.elementPanel.typeList.add("item", e);
+  }
+  win.elementPanel.typeList.items[0].selected = true;
+  uetype = win.elementPanel.typeList.selection.text;
 
-    for(e in elements[ueclass])
+  if (uetype in elements[ueclass])
+  {
+    for(e in elements[ueclass][uetype])
     {
-      win.elementPanel.typeList.add("item", e);
+      win.elementPanel.nameList.add("item", e);
     }
-    win.elementPanel.typeList.items[0].selected = true;
-    uetype = win.elementPanel.typeList.selection.text;
-
-    if (win.elementPanel.typeList.selection != null)
-    {
-      for(e in elements[ueclass][uetype])
-      {
-        win.elementPanel.nameList.add("item", e);
-      }
-      win.elementPanel.nameList.items[0].selected = true;
-      uename = win.elementPanel.nameList.selection.text;
-
-      var versions = getVersions(ueproj, uegrp, ueasst, ueclass, uetype, uename);
-
-      for(var v = 0; v < versions.length; v++)
-      {
-        win.elementPanel.versList.add("item", versions[v]["version"]);
-      }
-      win.elementPanel.versList.items[0].selected = true;
-      uevers = win.elementPanel.versList.selection.text;
-    }
+    win.elementPanel.nameList.items[0].selected = true;
+    uename = win.elementPanel.nameList.selection.text;
+  }
   }
 
   win.assetPanel.projectList.onChange = setGroups;
@@ -109,15 +100,23 @@ function Open()
   win.assetPanel.assetList.onChange = setElements;
   win.elementPanel.classList.onChange = setTypes;
   win.elementPanel.typeList.onChange = setNames;
-  win.elementPanel.nameList.onChange = setVers;
-  win.elementPanel.versList.onChange = selectVers;
-  win.okButton.onClick = openFile;
+  win.elementPanel.nameList.onChange = setName;
+  win.elementPanel.typeBox.onChange = setNewType;
+  win.elementPanel.nameBox.onChange = setNewName;
+  win.okButton.onClick = saveFile;
   
   win.show();
 }
 
 
-function openFile() {
+function saveFile() {
+  if (getElement(ueproj, uegrp, ueasst, ueclass, uetype, uename) == null)
+  {
+    createElement(ueproj, uegrp, ueasst, ueclass, uetype, uename);
+  }
+  createVersion(ueproj, uegrp, ueasst, ueclass, uetype, uename);
+
+  var uevers = getVersions(ueproj, uegrp, ueasst, ueclass, uetype, uename).length;
   var version = getVersion(ueproj, uegrp, ueasst, ueclass, uetype, uename, uevers);
 
   var path = version["path"];
@@ -128,11 +127,18 @@ function openFile() {
 
   if (BridgeTalk.appName == "photoshop")
   {
-    open(f);
+    var doc = activeDocument;
+    var saveOptions = new PhotoshopSaveOptions();
+
+    doc.info.title = file;
+
+    doc.saveAs(f, saveOptions, false, Extension.LOWERCASE);
   }
   else if (BridgeTalk.appName == "aftereffects")
   {
-    app.open(f);
+    var doc = app.project;
+
+    doc.save(f);
   }
 
   win.close();
@@ -159,12 +165,10 @@ function setGroups() {
     ueclass = null;
     uetype = null;
     uename = null;
-    uevers = null;
     win.assetPanel.assetList.removeAll();
     win.elementPanel.classList.removeAll();
     win.elementPanel.typeList.removeAll();
     win.elementPanel.nameList.removeAll();
-    win.elementPanel.versList.removeAll();
   }
 }
 
@@ -189,11 +193,9 @@ function setAssets() {
       ueclass = null;
       uetype = null;
       uename = null;
-      uevers = null;
       win.elementPanel.classList.removeAll();
       win.elementPanel.typeList.removeAll();
       win.elementPanel.nameList.removeAll();
-      win.elementPanel.versList.removeAll();
     }
   }
 }
@@ -213,12 +215,20 @@ function setElements() {
   }
 }
 
+function setNewType() {
+  uetype = win.elementPanel.typeBox.text;
+}
+
+function setNewName() {
+  uename = win.elementPanel.nameBox.text;
+}
+
 function setTypes() {
   if (win.elementPanel.classList.selection != null)
   {
     ueclass = win.elementPanel.classList.selection.text;
     win.elementPanel.typeList.removeAll();
-    if (ueclass in elements)
+	if (ueclass in elements)
     {
       for(e in elements[ueclass])
       {
@@ -244,28 +254,10 @@ function setNames() {
   }
 }
 
-function setVers() {
+function setName() {
   if (win.elementPanel.nameList.selection != null)
   {
     uename = win.elementPanel.nameList.selection.text;
-    var versions = getVersions(ueproj, uegrp, ueasst, ueclass, uetype, uename);
-    win.elementPanel.versList.removeAll();
-    for (var v = 0; v < versions.length; v++)
-    {
-      win.elementPanel.versList.add("item", versions[v]["version"]);
-    }
-    if (versions.length > 0)
-    {
-      win.elementPanel.versList.items[0].selected = true;
-      uevers = win.elementPanel.versList.selection.text;
-    }
-  }
-}
-
-function selectVers() {
-  if (win.elementPanel.versList.selection != null)
-  {
-    uevers = win.elementPanel.versList.selection.text;
   }
 }
 
