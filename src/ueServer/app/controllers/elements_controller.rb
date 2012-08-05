@@ -19,7 +19,9 @@ class ElementsController < ApplicationController
   end
 
   def create
-    @asset = Asset.get_asset(params[:proj], params[:grp], params[:asst])
+    @asset = Project.where(:name => params[:proj]).first.groups.where(
+                           :name => params[:grp]).first.assets.where(
+                           :name =>  params[:asst]).first
     @element = @asset.elements.new(params[:element])
     @element.elclass = params[:elclass]
     @element.eltype = params[:eltype]
@@ -146,5 +148,10 @@ class ElementsController < ApplicationController
                       :status => :unprocessable_entity }
       end
     end
+  end
+
+  private
+
+  def add_connection
   end
 end

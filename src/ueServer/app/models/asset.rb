@@ -28,7 +28,8 @@ class Asset
   end
 
   def self.get_asset project, group, asset
-    g = Group.get_group project, group
+    g = Project.where(:name => project).first.groups.where(
+                      :name => group).first
     if g == {} || g.nil?
       {}
     else
@@ -42,7 +43,8 @@ class Asset
   end
 
   def self.get_assets project, group
-    g = Group.get_group project, group
+    g = Project.where(:name => project).first.groups.where(
+                      :name => group).first
     if g == {} || g.nil?
       []
     else

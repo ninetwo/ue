@@ -29,7 +29,9 @@ class Element
   end
 
   def self.get_element project, group, asset, elclass, eltype, elname
-    a = Asset.get_asset project, group, asset
+    a = Project.where(:name => project).first.groups.where(
+                      :name => group).first.assets.where(
+                      :name => asset).first
     if a == {} || a.nil?
       {}
     else
@@ -43,7 +45,9 @@ class Element
   end
 
   def self.get_elements project, group, asset
-    a = Asset.get_asset project, group, asset
+    a = Project.where(:name => project).first.groups.where(
+                      :name => group).first.assets.where(
+                      :name => asset).first
     if a == {} || a.nil?
       []
     else

@@ -28,7 +28,7 @@ class Group
   end
 
   def self.get_group project, group
-    p = Project.get_project project
+    p = Project.where(:name => project).first
     if p == {} || p.nil?
       {}
     else
@@ -42,7 +42,7 @@ class Group
   end
 
   def self.get_groups project
-    p = Project.get_project project
+    p = Project.where(:name => project).first
     if p == {} || p.nil?
       []
     else
